@@ -1,4 +1,65 @@
 import { test, expect } from "@playwright/test";
+import { createServer } from "node:http";
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+
+test("downloaded custom elements run in a raw browser without a bundler or Node globals", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  const server = createServer(async (req, res) => {
+    try {
+      const path = new URL(req.url || "/", "http://localhost").pathname;
+      if (path === "/") {
+        res.setHeader("Content-Type", "text/html");
+        res.end(
+          `<!doctype html><html lang="en"><head><link rel="stylesheet" href="/dist/themes.css"><title>Raw Hearth consumer</title></head><body style="margin:0"><hearth-theme theme="sunset" mode="dark"><hearth-auth-page brand="Raw HTML"></hearth-auth-page><output id="result"></output></hearth-theme><script type="module">import '/dist/elements/auto.js';document.querySelector('hearth-auth-page').addEventListener('submit',e=>document.querySelector('#result').textContent=e.detail[0].username);</script></body></html>`,
+        );
+      } else if (path.startsWith("/dist/")) {
+        res.setHeader(
+          "Content-Type",
+          path.endsWith(".css") ? "text/css" : "text/javascript",
+        );
+        res.end(await readFile(resolve("." + path)));
+      } else {
+        res.writeHead(404);
+        res.end();
+      }
+    } catch {
+      res.writeHead(404);
+      res.end();
+    }
+  });
+  await new Promise<void>((done) => server.listen(0, "127.0.0.1", done));
+  try {
+    const address = server.address();
+    if (!address || typeof address === "string")
+      throw new Error("No test server port");
+    await page.goto(`http://127.0.0.1:${address.port}/`);
+    await expect(
+      page.getByRole("heading", { name: "Welcome home." }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Sign in", exact: true }),
+    ).toHaveCSS("background-color", "rgb(255, 122, 47)");
+    await page.getByLabel(/^Username/).fill("Browser owner");
+    await page.getByLabel(/^Password/).fill("demo");
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page.locator("#result")).toHaveText("Browser owner");
+    expect(
+      await page.evaluate(
+        () =>
+          typeof (globalThis as typeof globalThis & { process?: unknown })
+            .process,
+      ),
+    ).toBe("undefined");
+    expect(errors).toEqual([]);
+  } finally {
+    server.closeAllConnections();
+    await new Promise<void>((done) => server.close(() => done()));
+  }
+});
 
 test("native Vue: themes, scoped islands, dialogs, login template, and dashboard actions", async ({
   page,

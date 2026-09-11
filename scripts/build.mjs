@@ -21,3 +21,4 @@ execFileSync(
 );
 mkdirSync("dist", { recursive: true });
 cpSync("src/styles/themes.css", "dist/themes.css");
+cpSync("node_modules/vue/LICENSE", "dist/VUE-LICENSE");

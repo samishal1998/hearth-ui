@@ -87,7 +87,7 @@ Extract the release package, serve its `dist/` directory, and load:
 </hearth-theme>
 ```
 
-Keep the files inside `dist/elements/` together: entry points import a shared runtime chunk. See the live [plain HTML example](https://samishal1998.github.io/hearth-ui/elements.html) and [React 19 example](https://samishal1998.github.io/hearth-ui/react.html).
+Keep the files inside `dist/elements/` together: entry points import a shared runtime chunk. The build resolves Vue's production flags, so no Node globals or host bundler are required. Vue's bundled runtime license is included at `dist/VUE-LICENSE`. See the live [plain HTML example](https://samishal1998.github.io/hearth-ui/elements.html) and [React 19 example](https://samishal1998.github.io/hearth-ui/react.html).
 
 ## Components
 
