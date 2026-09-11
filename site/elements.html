@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en" data-hearth-theme="sunset" data-hearth-mode="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Hearth UI · Plain HTML web components</title>
+  </head>
+  <body>
+    <hearth-theme id="island" theme="sunset" mode="dark"
+      ><hearth-public-shell brand="hearth" brand-href="./"
+        ><div slot="actions">
+          <hearth-button href="./#guide">Back to guide</hearth-button>
+        </div>
+        <div class="fixture-content">
+          <hearth-page-header
+            title="Native HTML. Familiar components."
+            description="This page has no host framework. It consumes the compiled web-component distribution."
+            eyebrow="The web-component example"
+          ></hearth-page-header>
+          <div class="fixture-grid">
+            <hearth-card
+              title="A real HTML form"
+              description="FormData, validation, reset, and disabled fieldsets cross the shadow boundary."
+              ><form id="example-form">
+                <fieldset id="fields">
+                  <hearth-input
+                    id="name"
+                    name="name"
+                    label="Workspace name"
+                    value="Homestead"
+                    required
+                  ></hearth-input
+                  ><hearth-input
+                    id="email"
+                    name="email"
+                    label="Email address"
+                    type="email"
+                    required
+                  ></hearth-input
+                  ><hearth-select
+                    id="category"
+                    name="category"
+                    label="Category"
+                    value="media"
+                    required
+                  ></hearth-select
+                  ><hearth-switch
+                    id="public"
+                    name="public"
+                    label="Public page"
+                    value="yes"
+                    checked
+                  ></hearth-switch>
+                  <div class="fixture-actions">
+                    <hearth-button type="submit" variant="primary"
+                      >Save workspace</hearth-button
+                    ><hearth-button type="reset">Reset form</hearth-button>
+                  </div>
+                </fieldset>
+              </form>
+              <div slot="footer">
+                <hearth-button id="disable-fields"
+                  >Toggle disabled fieldset</hearth-button
+                ><output id="form-result" aria-live="polite"
+                  >Submit the form to inspect its values.</output
+                >
+              </div></hearth-card
+            ><hearth-card title="Slots and events"
+              ><hearth-tabs id="example-tabs" label="Example tabs"
+                ><div slot="overview">
+                  The overview panel is a native named slot.
+                </div>
+                <div slot="details">
+                  The detail panel is another native named slot.
+                </div></hearth-tabs
+              >
+              <div class="fixture-spacer"></div>
+              <hearth-app-card
+                id="example-app"
+                name="Photo library"
+                description="A self-hosted application card."
+                category="Media"
+                status="healthy"
+                editable
+              ></hearth-app-card>
+              <div class="fixture-spacer"></div>
+              <hearth-button id="open-dialog">Open dialog</hearth-button
+              ><hearth-button id="ocean">Use Ocean</hearth-button
+              ><hearth-button id="light"
+                >Use light mode</hearth-button
+              ></hearth-card
+            >
+          </div>
+          <hearth-theme theme="forest" mode="light"
+            ><hearth-card title="An independent theme island"
+              ><hearth-button id="nested-button" variant="primary"
+                >Forest primary action</hearth-button
+              ></hearth-card
+            ></hearth-theme
+          >
+        </div></hearth-public-shell
+      ><hearth-dialog
+        id="example-dialog"
+        title="Native focus containment"
+        description="Try Tab or Escape."
+        ><label class="plain-label"
+          >Your project<input id="dialog-project"
+        /></label>
+        <div slot="footer">
+          <hearth-button id="close-dialog">Close example</hearth-button>
+        </div></hearth-dialog
+      ></hearth-theme
+    >
+    <script type="module" src="/elements-demo.ts"></script>
+  </body>
+</html>

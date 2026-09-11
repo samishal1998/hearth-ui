@@ -1,0 +1,54 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Check version
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: test "$VERSION" = "v$(node -p "require('./package.json').version")"
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm test && npm run test:package
+      - name: Pack verified distribution
+        run: |
+          mkdir release-dist
+          npm pack --ignore-scripts --pack-destination release-dist
+      - name: Write checksum manifest
+        working-directory: release-dist
+        run: sha256sum *.tgz > SHA256SUMS
+      - name: Publish package
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if state=$(gh release view "$VERSION" --json isDraft --jq .isDraft); then
+            [[ "$state" == true ]] || { printf '%s\n' 'Publish a new version instead of replacing a public release.' >&2; exit 1; }
+          else
+            gh release create "$VERSION" --draft --verify-tag --generate-notes --title "Hearth UI $VERSION"
+          fi
+          gh release upload "$VERSION" release-dist/* --clobber
+          if [[ "$VERSION" == *-* ]]; then
+            gh release edit "$VERSION" --draft=false --prerelease --latest=false
+          else
+            gh release edit "$VERSION" --draft=false --latest
+          fi

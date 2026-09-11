@@ -1,0 +1,87 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--h-bg);
+  font-family: var(--h-font);
+  color: var(--h-text);
+}
+.fixture-content {
+  padding: 35px 0;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.fixture-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 30px 0;
+}
+fieldset {
+  display: grid;
+  gap: 20px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.fixture-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.fixture-spacer {
+  height: 22px;
+}
+output {
+  display: block;
+  font: 12px/1.8 var(--h-font-mono);
+  color: var(--h-muted);
+  overflow-wrap: anywhere;
+  margin-top: 16px;
+}
+.plain-label {
+  display: grid;
+  gap: 8px;
+  color: var(--h-text);
+  font-family: var(--h-font);
+  font-size: 13px;
+}
+.plain-label input {
+  min-height: 44px;
+  border: 1px solid var(--h-border);
+  background: var(--h-bg);
+  color: var(--h-text);
+  padding: 10px;
+  border-radius: var(--h-radius-control);
+  margin-bottom: 20px;
+}
+.react-toolbar {
+  padding: 18px 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  background: var(--h-surface);
+}
+.react-toolbar span {
+  font-size: 12px;
+  color: var(--h-muted);
+}
+#react-root .fixture-content {
+  padding: 25px;
+  max-width: 800px;
+}
+@media (max-width: 700px) {
+  .fixture-grid {
+    grid-template-columns: 1fr;
+  }
+  .fixture-content {
+    padding-block: 25px;
+  }
+  .react-toolbar {
+    padding: 15px;
+    font-size: 11px;
+  }
+}

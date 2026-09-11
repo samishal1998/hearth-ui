@@ -1,0 +1,140 @@
+/* Sunset is the default. Set these attributes on html or a theme island. */
+:root,
+[data-hearth-theme] {
+  color-scheme: dark;
+  --h-bg: #0b1220;
+  --h-surface: #101a2b;
+  --h-raised: #111c2d;
+  --h-panel: rgba(16, 26, 43, 0.84);
+  --h-border: rgba(255, 255, 255, 0.09);
+  --h-border-strong: #536177;
+  --h-text: #f7f8fb;
+  --h-muted: #aeb8ca;
+  --h-faint: #91a0b6;
+  --h-accent: #ff7a2f;
+  --h-accent-hover: #ffb15c;
+  --h-accent-text: #ffb15c;
+  --h-on-accent: #24160f;
+  --h-accent-subtle: color-mix(in srgb, var(--h-accent) 10%, transparent);
+  --h-success: #24c978;
+  --h-warning: #f4b21a;
+  --h-danger: #ff8290;
+  --h-info: #86b8f5;
+  --h-focus: var(--h-accent-text);
+  --h-focus-width: 2px;
+  --h-font:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  --h-font-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+  --h-font-size: 14px;
+  --h-radius-control: 10px;
+  --h-radius-card: 16px;
+  --h-radius-panel: 20px;
+  --h-radius-pill: 999px;
+  --h-space: 4px;
+  --h-control-height: 44px;
+  --h-control-padding: 16px;
+  --h-card-padding: 24px;
+  --h-page-padding: clamp(20px, 3vw, 40px);
+  --h-sidebar-width: 232px;
+  --h-content-max: 1440px;
+  --h-shadow: 0 12px 40px rgb(0 0 0 / 0.18);
+  --h-shadow-soft: 0 4px 14px rgb(0 0 0 / 0.1);
+  --h-motion: 150ms;
+  --h-scene-bg: linear-gradient(145deg, #162338, #0d1727 65%, #292934);
+  --h-scene-text: #f7f8fb;
+  --h-scene-muted: #b5bfd1;
+  --h-mountain-back: #485064;
+  --h-mountain-mid: #1a2c44;
+  --h-mountain-front: #0b1424;
+}
+[data-hearth-theme="ocean"] {
+  --h-bg: #0b1620;
+  --h-surface: #102330;
+  --h-raised: #142a38;
+  --h-panel: rgba(16, 35, 48, 0.88);
+  --h-accent: #70baff;
+  --h-accent-hover: #aad8ff;
+  --h-accent-text: #9bd1ff;
+  --h-on-accent: #082438;
+  --h-scene-bg: linear-gradient(145deg, #122b40, #0c1c2b 65%, #194047);
+  --h-mountain-back: #355c70;
+  --h-mountain-mid: #1d3d51;
+  --h-mountain-front: #0c2130;
+}
+[data-hearth-theme="forest"] {
+  --h-bg: #0c1813;
+  --h-surface: #15251d;
+  --h-raised: #1b2e23;
+  --h-panel: rgba(21, 37, 29, 0.88);
+  --h-accent: #8bd7a4;
+  --h-accent-hover: #b8e9c6;
+  --h-accent-text: #a8e2ba;
+  --h-on-accent: #152a1c;
+  --h-scene-bg: linear-gradient(145deg, #1b3026, #101f18 65%, #37412b);
+  --h-mountain-back: #4b6151;
+  --h-mountain-mid: #2b4737;
+  --h-mountain-front: #102319;
+}
+[data-hearth-mode="light"] {
+  color-scheme: light;
+  --h-bg: #f4f7fb;
+  --h-surface: #fff;
+  --h-raised: #fff;
+  --h-panel: rgba(255, 255, 255, 0.9);
+  --h-border: rgba(18, 31, 52, 0.13);
+  --h-border-strong: #8391a7;
+  --h-text: #111827;
+  --h-muted: #526075;
+  --h-faint: #65738a;
+  --h-accent-text: #a4421b;
+  --h-success: #117b4a;
+  --h-warning: #886211;
+  --h-danger: #b02e40;
+  --h-info: #245f9d;
+  --h-shadow: 0 12px 40px rgb(38 51 77 / 0.08);
+  --h-shadow-soft: 0 3px 14px rgb(38 51 77 / 0.05);
+}
+[data-hearth-theme="ocean"][data-hearth-mode="light"] {
+  --h-bg: #f2f7fb;
+  --h-accent-text: #185689;
+}
+[data-hearth-theme="forest"][data-hearth-mode="light"] {
+  --h-bg: #f3f7f2;
+  --h-accent-text: #28603c;
+}
+@media (prefers-color-scheme: light) {
+  [data-hearth-mode="system"] {
+    color-scheme: light;
+    --h-bg: #f4f7fb;
+    --h-surface: #fff;
+    --h-raised: #fff;
+    --h-panel: rgba(255, 255, 255, 0.9);
+    --h-border: rgba(18, 31, 52, 0.13);
+    --h-border-strong: #8391a7;
+    --h-text: #111827;
+    --h-muted: #526075;
+    --h-faint: #65738a;
+    --h-accent-text: #a4421b;
+    --h-success: #117b4a;
+    --h-warning: #886211;
+    --h-danger: #b02e40;
+    --h-info: #245f9d;
+    --h-shadow: 0 12px 40px rgb(38 51 77 / 0.08);
+    --h-shadow-soft: 0 3px 14px rgb(38 51 77 / 0.05);
+  }
+  [data-hearth-theme="ocean"][data-hearth-mode="system"] {
+    --h-bg: #f2f7fb;
+    --h-accent-text: #185689;
+  }
+  [data-hearth-theme="forest"][data-hearth-mode="system"] {
+    --h-bg: #f3f7f2;
+    --h-accent-text: #28603c;
+  }
+}
+[data-hearth-density="compact"] {
+  --h-control-height: 40px;
+  --h-control-padding: 12px;
+  --h-card-padding: 18px;
+  --h-font-size: 13px;
+}
