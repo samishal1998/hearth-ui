@@ -18,7 +18,7 @@ The application owns its router, authentication, authorization, storage, and dat
 Install the built npm-compatible package from GitHub Releases:
 
 ```sh
-npm install https://github.com/samishal1998/hearth-ui/releases/download/v0.1.0/samishal1998-hearth-ui-0.1.0.tgz
+npm install https://github.com/samishal1998/hearth-ui/releases/download/v0.2.0/samishal1998-hearth-ui-0.2.0.tgz
 ```
 
 No npm registry publication is assumed. Vue is a peer dependency for native components and their TypeScript declarations. The web-component JavaScript is self-contained and does not look for a global Vue installation when served directly.
@@ -101,7 +101,61 @@ Keep the files inside `dist/elements/` together: entry points import a shared ru
 |            |           | `HEmptyState`       |                   |
 |            |           | `HDialog`           |                   |
 
-The [component catalog](https://samishal1998.github.io/hearth-ui/#components) documents props, events, slots, and CSS parts for all 19 components. Vue declarations are included in the package.
+### New in 0.2
+
+| Selection & forms | Navigation & layout | Feedback & identity |
+| ----------------- | ------------------- | ------------------- |
+| `HCombobox`       | `HSidebar`          | `HProgress`         |
+| `HMultiSelect`    | `HNavigationMenu`   | `HAvatar`           |
+| `HCheckbox`       | `HButtonBar`        | `HSkeleton`         |
+| `HRadioGroup`     | `HBreadcrumbs`      | `HSeparator`        |
+| `HTextarea`       | `HPagination`       |                     |
+| `HRange`          | `HAccordion`        |                     |
+
+The [component catalog](https://samishal1998.github.io/hearth-ui/#components) includes interactive previews and documents props, events, slots, and CSS parts for all **35 components**. Vue declarations and web-component constructors are included for every component.
+
+### Searchable selection
+
+`HCombobox` supports single selection or `multiple` mode with a `string | string[]` model. `HMultiSelect` uses the same implementation with an array-only model, making it convenient with Vue's typed `ref<string[]>`.
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { HMultiSelect } from "@samishal1998/hearth-ui";
+import "@samishal1998/hearth-ui/styles.css";
+
+const providers = ref<string[]>(["docker"]);
+const options = [
+  { value: "docker", label: "Docker", keywords: ["containers", "compose"] },
+  { value: "traefik", label: "Traefik", description: "Reverse-proxy routes" },
+  { value: "caddy", label: "Caddy", disabled: true },
+];
+</script>
+
+<template>
+  <HMultiSelect
+    v-model="providers"
+    :options="options"
+    label="Providers"
+    name="providers"
+    required
+  />
+</template>
+```
+
+Search matches labels, descriptions, and optional keywords. Arrow keys move the active option, Enter selects, Escape closes, and Backspace removes the last multi-selection when the query is empty. The `search(query)` event and `loading` prop allow application-owned remote search. Unknown selected IDs keep their values while option data loads; no free-form options are invented.
+
+Popup content stays local to the component, so overflow-clipping ancestors can clip it. The current option list is not virtualized; a future anchored/virtualized popup can extend that ceiling without changing the selection API.
+
+### Radio groups, tabs, and navigation
+
+Use `HRadioGroup` for a complete radio field. Its native radio inputs share a DOM tree, including in custom-element mode. Separate web-component shadow roots do not share native radio grouping, which is why the component owns the whole group. Options may include descriptions and disabled states. Arrow, Home, and End keys move between enabled choices.
+
+`HTabs` now supports `orientation="vertical"`, `variant="underline"`, and `activation="manual"`. Manual activation moves focus with arrows and switches the panel with Enter/Space; the original automatic pill tabs remain the default.
+
+`HNavigationMenu` uses navigation links and native disclosure elements, not application-menu ARIA roles. Use Tab, Enter, ArrowDown on a group trigger, and Escape. `HSidebar` can be composed independently of the full dashboard shell, with grouped sections and a collapsible icon rail. `HButtonBar` groups actions while keeping normal button keyboard behavior.
+
+`HProgress` wraps native `<progress>` and supports indeterminate state. `HRange` uses the browser's slider behavior and displays its actual stepped value. `HAccordion` uses native `<details>` and can allow one or multiple sections open. Pagination emits page changes; data fetching stays with your application.
 
 ## Theme your application
 
@@ -209,6 +263,10 @@ Native Vue controls support `v-model`. Custom-element fields use `ElementInterna
 ```
 
 `FormData`, native validation, disabled fieldsets, reset, and Enter-to-submit are supported. Keep the form and its custom-element fields in the same DOM tree. Do not expect a native form inside one shadow tree to own arbitrary slotted inputs from another tree. For the full auth page, the supplied form is internally composed from native Vue controls; replacing its `form` slot means you own that replacement form.
+
+Multi-select fields submit one entry per selected value under the same name. Read them with `new FormData(form).getAll('providers')`; `Object.fromEntries()` would retain only the last duplicate entry. Use arrays as DOM properties for `hearth-multi-select`, and set initial properties before connecting the element when they should become its reset baseline.
+
+Checkboxes support `indeterminate` and emit `update:indeterminate(false)` after a user change. `HTextarea` preserves normal Enter/newline behavior; the custom-element form bridge only interprets Enter as submission for suitable single-line fields. `formDisabled` and `control-sync` are internal compound-control plumbing, not application-owned state.
 
 Web-component emitted events carry an **array** in `event.detail`:
 

@@ -27,12 +27,20 @@ declare module "react" {
         name?: string;
         ref?: React.Ref<HTMLElement>;
       };
+      "hearth-multi-select": React.HTMLAttributes<HTMLElement> & {
+        label: string;
+        modelValue: string[];
+        options: { value: string; label: string }[];
+        ref?: React.Ref<HTMLElement>;
+      };
     }
   }
 }
 function Example() {
   const auth = useRef<HTMLElement>(null);
   const input = useRef<HTMLElement>(null);
+  const multi = useRef<HTMLElement>(null);
+  const [selected, setSelected] = useState<string[]>(["docker"]);
   const [user, setUser] = useState("");
   const [value, setValue] = useState("");
   const [theme, setTheme] = useState("sunset");
@@ -47,6 +55,14 @@ function Example() {
     };
     el.addEventListener("submit", onSubmit);
     return () => el.removeEventListener("submit", onSubmit);
+  }, []);
+  useEffect(() => {
+    const el = multi.current;
+    if (!el) return;
+    const change = (event: Event) =>
+      setSelected((event as CustomEvent<[string[]]>).detail[0]);
+    el.addEventListener("change", change);
+    return () => el.removeEventListener("change", change);
   }, []);
   useEffect(() => {
     const el = input.current;
@@ -71,6 +87,19 @@ function Example() {
         <hearth-input ref={input} label="React-controlled event example" />
         <output aria-live="polite" id="react-value">
           {value}
+        </output>
+        <div className="fixture-spacer" />
+        <hearth-multi-select
+          ref={multi}
+          label="React providers"
+          modelValue={selected}
+          options={[
+            { value: "docker", label: "Docker" },
+            { value: "traefik", label: "Traefik" },
+          ]}
+        />
+        <output aria-live="polite" id="react-selections">
+          {selected.join(", ")}
         </output>
         {user && (
           <p role="status" id="react-result">

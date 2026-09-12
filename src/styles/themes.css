@@ -37,6 +37,9 @@
   --h-card-padding: 24px;
   --h-page-padding: clamp(20px, 3vw, 40px);
   --h-sidebar-width: 232px;
+  --h-sidebar-height: 420px;
+  --h-progress-height: 8px;
+  --h-separator-space: 20px;
   --h-content-max: 1440px;
   --h-shadow: 0 12px 40px rgb(0 0 0 / 0.18);
   --h-shadow-soft: 0 4px 14px rgb(0 0 0 / 0.1);

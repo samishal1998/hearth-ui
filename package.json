@@ -1,6 +1,6 @@
 {
   "name": "@samishal1998/hearth-ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Themeable Vue components and web components for self-hosted dashboards, public pages, and authentication.",
   "type": "module",
   "files": [

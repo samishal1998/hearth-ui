@@ -1,5 +1,195 @@
 export const catalog = [
   {
+    name: "HMultiSelect",
+    tag: "hearth-multi-select",
+    category: "Controls",
+    description:
+      "An array-typed multi-select combobox using the same searchable selection engine as HCombobox.",
+    props:
+      "Same selection props as HCombobox; modelValue and value are string[]. Multiple selection is always enabled.",
+    events: "update:modelValue(values), change(values), search(query)",
+    slots: "None",
+    parts: "base, label, control, selection, popup, option, hint",
+  },
+  {
+    name: "HCombobox",
+    tag: "hearth-combobox",
+    category: "Controls",
+    description:
+      "Searchable single or multi-select with selected chips, disabled options, keyboard navigation, and repeated form values.",
+    props:
+      "label, name, placeholder, hint, error, emptyText: string · options: {value, label, description?, keywords?, disabled?}[] · modelValue, value: string | string[] · multiple, required, disabled, loading, clearable: boolean",
+    events: "update:modelValue(value), change(value), search(query)",
+    slots: "None",
+    parts: "base, label, control, selection, popup, option, hint",
+  },
+  {
+    name: "HCheckbox",
+    tag: "hearth-checkbox",
+    category: "Controls",
+    description:
+      "A native checkbox with a mixed-state option and optional description.",
+    props:
+      "label, description, name, value: string · modelValue, checked, indeterminate, required, disabled: boolean",
+    events:
+      "update:modelValue(checked), update:indeterminate(false), change(checked)",
+    slots: "None",
+    parts: "base, control, label, description",
+  },
+  {
+    name: "HRadioGroup",
+    tag: "hearth-radio-group",
+    category: "Controls",
+    description:
+      "One native radio group per component, with descriptions, disabled choices, and arrow/Home/End keyboard control.",
+    props:
+      "label, name, modelValue, value, description, error: string · options: {value, label, description?, disabled?}[] · required, disabled: boolean · orientation: horizontal | vertical",
+    events: "update:modelValue(value), change(value)",
+    slots: "None",
+    parts: "base, label, option, control",
+  },
+  {
+    name: "HTextarea",
+    tag: "hearth-textarea",
+    category: "Controls",
+    description:
+      "A labeled multiline field with native constraints and form reset support.",
+    props:
+      "label, name, modelValue, value, placeholder, hint, error: string · rows, minlength, maxlength: number · required, disabled, readonly: boolean · resize: vertical | none | both",
+    events: "update:modelValue(value), change(value)",
+    slots: "None",
+    parts: "base, label, control, hint",
+  },
+  {
+    name: "HRange",
+    tag: "hearth-range",
+    category: "Controls",
+    description:
+      "A native numeric slider with a visible value and optional unit.",
+    props:
+      "label, name, unit, hint: string · modelValue, value, min, max, step: number · disabled: boolean",
+    events: "update:modelValue(number), change(number)",
+    slots: "None",
+    parts: "base, label, value, control",
+  },
+  {
+    name: "HButtonBar",
+    tag: "hearth-button-bar",
+    category: "Controls",
+    description:
+      "Group actions without changing native button focus or submission behavior.",
+    props:
+      "label: string · align: start | center | end | between · orientation: horizontal | vertical",
+    events: "None (children retain their own events)",
+    slots: "default",
+    parts: "base",
+  },
+  {
+    name: "HNavigationMenu",
+    tag: "hearth-navigation-menu",
+    category: "Layouts",
+    description:
+      "A navigation disclosure menu with native links, nested groups, outside-click dismissal, and Escape support.",
+    props:
+      "items: (NavItem & {children?: NavItem[]})[] · active, label: string",
+    events: "navigate(id)",
+    slots: "None",
+    parts: "base, trigger, popup, item",
+  },
+  {
+    name: "HSidebar",
+    tag: "hearth-sidebar",
+    category: "Layouts",
+    description:
+      "A standalone, collapsible sidebar with grouped navigation and optional custom header/footer.",
+    props:
+      "brand, logo, active, label: string · items: NavItem[] · sections: {label, items: NavItem[]}[] · collapsed, collapsible: boolean",
+    events: "navigate(id), update:collapsed(boolean)",
+    slots: "header, default, footer",
+    parts: "base, header, navigation, footer",
+  },
+  {
+    name: "HProgress",
+    tag: "hearth-progress",
+    category: "Feedback",
+    description:
+      "Native determinate or indeterminate progress, with percentage text and semantic colors.",
+    props:
+      "label, description: string · value, max: number · indeterminate, showValue: boolean · tone: Tone",
+    events: "None",
+    slots: "None",
+    parts: "base, label, value, track, description",
+  },
+  {
+    name: "HBreadcrumbs",
+    tag: "hearth-breadcrumbs",
+    category: "Layouts",
+    description: "A wrapping breadcrumb trail with an accessible current page.",
+    props: "items: NavItem[] · label: string",
+    events: "navigate(id)",
+    slots: "None",
+    parts: "base, item, current",
+  },
+  {
+    name: "HAvatar",
+    tag: "hearth-avatar",
+    category: "Foundation",
+    description:
+      "An image avatar with initials fallback and an optional decorative mode.",
+    props:
+      "name, src: string · size: number = 40 · shape: circle | rounded · tone: Tone · decorative: boolean",
+    events: "None",
+    slots: "None",
+    parts: "base, image, fallback",
+  },
+  {
+    name: "HSeparator",
+    tag: "hearth-separator",
+    category: "Surfaces",
+    description:
+      "A structural divider, optionally labeled or exposed as an accessible separator.",
+    props:
+      "orientation: horizontal | vertical · label: string · decorative: boolean = true",
+    events: "None",
+    slots: "None",
+    parts: "base",
+  },
+  {
+    name: "HSkeleton",
+    tag: "hearth-skeleton",
+    category: "Feedback",
+    description:
+      "Text, rectangle, and circular loading placeholders with reduced-motion support.",
+    props:
+      "variant: text | rectangle | circle · lines: number (1–20) · width, height, label: string · animated: boolean",
+    events: "None",
+    slots: "None",
+    parts: "base, block",
+  },
+  {
+    name: "HAccordion",
+    tag: "hearth-accordion",
+    category: "Controls",
+    description:
+      "Native details/summary disclosures with single or multiple expansion.",
+    props:
+      "items: {id, title, description?, disabled?}[] · modelValue, value: string[] · multiple: boolean",
+    events: "update:modelValue(ids), change(ids)",
+    slots: "One named slot per item.id",
+    parts: "base, item, trigger, panel",
+  },
+  {
+    name: "HPagination",
+    tag: "hearth-pagination",
+    category: "Controls",
+    description:
+      "Bounded page navigation with current-page semantics and ellipses for long lists.",
+    props: "modelValue, total, pageSize: number · label: string",
+    events: "update:modelValue(page), change(page)",
+    slots: "None",
+    parts: "base, previous, page, next",
+  },
+  {
     name: "HTheme",
     tag: "hearth-theme",
     category: "Foundation",
@@ -132,7 +322,8 @@ export const catalog = [
     category: "Controls",
     description:
       "Tabs with roving focus, arrow/Home/End keys, and properly associated panels.",
-    props: "items: {value, label, disabled?}[] · modelValue, label: string",
+    props:
+      "items: {value, label, disabled?}[] · modelValue, label: string · orientation: horizontal | vertical · activation: automatic | manual · variant: pill | underline",
     events: "update:modelValue(value), change(value)",
     slots: "One named slot per item.value",
     parts: "base, list, tab, panel",

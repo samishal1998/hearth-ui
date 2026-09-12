@@ -38,8 +38,8 @@ try {
   writeFileSync(
     join(work, "consumer.ts"),
     `import { h } from 'vue';
-import { HInput, HTheme, themeStyle } from '@samishal1998/hearth-ui';
-import { HearthInputElement, HearthSelectElement, registerElements } from '@samishal1998/hearth-ui/elements';
+import { HInput, HTheme, HMultiSelect, themeStyle } from '@samishal1998/hearth-ui';
+import { HearthInputElement, HearthSelectElement, HearthMultiSelectElement, HearthComboboxElement, registerElements } from '@samishal1998/hearth-ui/elements';
 const field = new HearthInputElement();
 field.modelValue = 'hello';
 field.checkValidity();
@@ -47,6 +47,15 @@ field.checkValidity();
 field.modelValue = 123;
 const select = new HearthSelectElement();
 select.options = [{ value: 'media', label: 'Media' }];
+const multi = new HearthMultiSelectElement();
+multi.modelValue = ['media'];
+multi.checkValidity();
+// @ts-expect-error dedicated multi-selects only accept arrays
+multi.modelValue = 'media';
+const combo = new HearthComboboxElement();
+combo.modelValue = ['media'];
+combo.multiple = true;
+h(HMultiSelect, { label: 'Providers', modelValue: ['media'], options: [{ value:'media', label:'Media' }] });
 h(HInput, { label: 'Name', modelValue: 'Home' });
 h(HTheme, { tokens: themeStyle({ '--h-accent': '#ff7a2f' }) });
 registerElements('my-app');

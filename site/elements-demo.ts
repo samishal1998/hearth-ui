@@ -10,6 +10,12 @@ import type {
 } from "../src/elements";
 registerElements();
 registerElements();
+import { mountAdvancedExamples } from "./advanced-elements";
+const advanced = document.createElement("section");
+advanced.id = "advanced-examples";
+advanced.className = "fixture-grid";
+document.querySelector(".fixture-content")!.appendChild(advanced);
+mountAdvancedExamples(advanced);
 const select = document.querySelector("#category") as InstanceType<
   typeof HearthSelectElement
 >;

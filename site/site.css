@@ -424,13 +424,13 @@ dd code {
   gap: 10px;
   margin-top: 25px;
 }
-details {
+.api-list details {
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-control);
   background: var(--h-surface);
   padding: 0 20px;
 }
-summary {
+.api-list summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -439,32 +439,32 @@ summary {
   cursor: pointer;
   list-style: none;
 }
-summary::-webkit-details-marker {
+.api-list summary::-webkit-details-marker {
   display: none;
 }
-summary > span {
+.api-list summary > span {
   display: flex;
   align-items: center;
   gap: 18px;
   flex-wrap: wrap;
 }
-summary strong {
+.api-list summary strong {
   font-size: 14px;
   font-weight: 550;
 }
-summary code {
+.api-list summary code {
   font-size: 11px;
   color: var(--h-muted);
 }
-details > p {
+.api-list details > p {
   font-size: 13px;
   color: var(--h-muted);
   margin-top: 8px;
 }
-details dl {
+.api-list details dl {
   margin: 20px 0 24px;
 }
-details dl > div {
+.api-list details dl > div {
   display: grid;
   grid-template-columns: 70px 1fr;
   gap: 20px;
@@ -867,20 +867,20 @@ input[type="range"] {
   .api-section {
     margin-top: 45px;
   }
-  summary > span {
+  .api-list summary > span {
     display: grid;
     gap: 4px;
   }
-  summary code {
+  .api-list summary code {
     font-size: 10px;
   }
-  summary > .h-badge {
+  .api-list summary > .h-badge {
     font-size: 10px;
   }
-  details {
+  .api-list details {
     padding-inline: 15px;
   }
-  details dl > div {
+  .api-list details dl > div {
     grid-template-columns: 1fr;
     gap: 2px;
     font-size: 11px;

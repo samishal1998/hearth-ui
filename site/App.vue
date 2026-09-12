@@ -30,6 +30,7 @@ import {
   type AuthCredentials,
 } from "../src";
 import { catalog } from "./catalog";
+import ExpandedExamples from "./ExpandedExamples.vue";
 const document = window.document;
 
 const route = ref(location.hash.slice(1) || "home");
@@ -568,7 +569,8 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
           </div>
         </section>
         <div class="principle-strip">
-          <span><strong>19</strong> components, one family</span
+          <span
+            ><strong>{{ catalog.length }}</strong> components, one family</span
           ><span><strong>2</strong> ways to use them</span
           ><span><strong>3</strong> palettes, endless possibilities</span
           ><span><strong>0</strong> backend assumptions</span>
@@ -666,7 +668,15 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
             title="Small details. A complete system."
             description="From the button you press a hundred times to the page that welcomes you home."
             eyebrow="The component collection"
-          />
+            ><HButton
+              variant="primary"
+              trailing-icon="arrow"
+              @click="
+                document.getElementById('expanded-components')?.scrollIntoView()
+              "
+              >Explore what's new in 0.2</HButton
+            ></HPageHeader
+          >
         </section>
         <div class="catalog-toolbar">
           <div class="filter-buttons">
@@ -823,6 +833,7 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
             >Reset filters</HButton
           ></HEmptyState
         >
+        <ExpandedExamples id="expanded-components" @notice="notify" />
         <section class="api-section">
           <h2>The component API</h2>
           <p class="muted">
@@ -1061,7 +1072,7 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
                 Use the built npm-compatible tarball from GitHub Releases. An
                 npm registry publication is not required.
               </p>
-              <pre><code>npm install https://github.com/samishal1998/hearth-ui/releases/download/v0.1.0/samishal1998-hearth-ui-0.1.0.tgz</code></pre>
+              <pre><code>npm install https://github.com/samishal1998/hearth-ui/releases/download/v0.2.0/samishal1998-hearth-ui-0.2.0.tgz</code></pre>
               <p>
                 Vue applications also need <code>vue@^3.5</code>. The
                 web-component build bundles its own Vue runtime and does not

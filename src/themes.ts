@@ -23,6 +23,46 @@ export interface SelectOption {
   label: string;
   disabled?: boolean;
 }
+export interface ChoiceOption extends SelectOption {
+  description?: string;
+}
+export interface ComboboxOption extends ChoiceOption {
+  keywords?: string[];
+}
+export interface ComboboxProps {
+  modelValue?: string | string[];
+  value?: string | string[];
+  label: string;
+  name?: string;
+  options: ComboboxOption[];
+  multiple?: boolean;
+  placeholder?: string;
+  hint?: string;
+  error?: string;
+  required?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
+  clearable?: boolean;
+  emptyText?: string;
+  formDisabled?: boolean;
+}
+export type MultiSelectProps = Omit<
+  ComboboxProps,
+  "modelValue" | "value" | "multiple"
+> & { modelValue?: string[]; value?: string[] };
+export interface NavigationItem extends NavItem {
+  children?: NavItem[];
+}
+export interface SidebarSection {
+  label: string;
+  items: NavItem[];
+}
+export interface AccordionItem {
+  id: string;
+  title: string;
+  description?: string;
+  disabled?: boolean;
+}
 export interface AuthCredentials {
   username: string;
   password: string;

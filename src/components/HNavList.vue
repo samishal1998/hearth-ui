@@ -2,11 +2,24 @@
 import HIcon from "./HIcon.vue";
 import { safeHref } from "../internal";
 import type { NavItem } from "../themes";
-defineProps<{ items: NavItem[]; active?: string }>();
+withDefaults(
+  defineProps<{
+    items: NavItem[];
+    active?: string;
+    label?: string;
+    collapsed?: boolean;
+  }>(),
+  { label: "Workspace" },
+);
 const emit = defineEmits<{ navigate: [id: string] }>();
 </script>
 <template>
-  <nav aria-label="Workspace" class="h-navigation">
+  <nav
+    :aria-label="label"
+    class="h-navigation"
+    :class="{ collapsed }"
+    part="base"
+  >
     <component
       :is="safeHref(item.href) ? 'a' : 'button'"
       v-for="item in items"
@@ -17,6 +30,9 @@ const emit = defineEmits<{ navigate: [id: string] }>();
       :aria-disabled="item.disabled || undefined"
       :tabindex="item.disabled ? -1 : undefined"
       :aria-current="active === item.id ? 'page' : undefined"
+      :aria-label="collapsed ? item.label : undefined"
+      :title="collapsed ? item.label : undefined"
+      part="item"
       :class="{ active: active === item.id }"
       @click="
         (e: Event) => {
@@ -27,9 +43,11 @@ const emit = defineEmits<{ navigate: [id: string] }>();
           emit('navigate', item.id);
         }
       "
-      ><HIcon v-if="item.icon" :name="item.icon" :size="18" /><span>{{
-        item.label
-      }}</span
+      ><HIcon
+        v-if="item.icon || collapsed"
+        :name="item.icon || 'apps'"
+        :size="18"
+      /><span>{{ item.label }}</span
       ><small v-if="item.badge !== undefined">{{
         item.badge
       }}</small></component
@@ -85,5 +103,16 @@ small {
 [aria-disabled="true"] {
   opacity: 0.5;
   cursor: not-allowed;
+}
+.collapsed a,
+.collapsed button {
+  justify-content: center;
+  padding: 10px;
+  min-height: 44px;
+}
+.collapsed a > span,
+.collapsed button > span,
+.collapsed small {
+  display: none;
 }
 </style>

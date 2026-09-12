@@ -2,17 +2,34 @@
 import { computed, ref, watch, useId } from "vue";
 import type { TabItem } from "../themes";
 const props = withDefaults(
-  defineProps<{ items: TabItem[]; modelValue?: string; label?: string }>(),
-  { items: () => [], label: "Sections" },
+  defineProps<{
+    items: TabItem[];
+    modelValue?: string;
+    label?: string;
+    orientation?: "horizontal" | "vertical";
+    activation?: "automatic" | "manual";
+    variant?: "pill" | "underline";
+  }>(),
+  {
+    items: () => [],
+    label: "Sections",
+    orientation: "horizontal",
+    activation: "automatic",
+    variant: "pill",
+  },
 );
 const emit = defineEmits<{
   "update:modelValue": [value: string];
   change: [value: string];
 }>();
 const local = ref(props.modelValue);
+const focused = ref<string>();
 watch(
   () => props.modelValue,
-  (v) => (local.value = v),
+  (v) => {
+    local.value = v;
+    focused.value = undefined;
+  },
 );
 const selected = computed(() =>
   props.items.some((i) => i.value === local.value && !i.disabled)
@@ -22,6 +39,7 @@ const selected = computed(() =>
 const root = ref<HTMLElement>();
 const id = useId();
 function select(value: string) {
+  focused.value = value;
   local.value = value;
   emit("update:modelValue", value);
   emit("change", value);
@@ -30,30 +48,40 @@ function key(e: KeyboardEvent) {
   const available = props.items.filter((i) => !i.disabled);
   if (
     !available.length ||
-    !["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)
+    !(
+      props.orientation === "vertical"
+        ? ["ArrowUp", "ArrowDown", "Home", "End"]
+        : ["ArrowLeft", "ArrowRight", "Home", "End"]
+    ).includes(e.key)
   )
     return;
   e.preventDefault();
-  const at = available.findIndex((i) => i.value === selected.value);
+  const at = available.findIndex(
+    (i) => i.value === (focused.value || selected.value),
+  );
   const next =
     e.key === "Home"
       ? 0
       : e.key === "End"
         ? available.length - 1
-        : (at + (e.key === "ArrowRight" ? 1 : -1) + available.length) %
+        : (at +
+            (["ArrowRight", "ArrowDown"].includes(e.key) ? 1 : -1) +
+            available.length) %
           available.length;
-  select(available[next].value);
+  focused.value = available[next].value;
+  if (props.activation === "automatic") select(available[next].value);
   const index = props.items.indexOf(available[next]);
   root.value?.querySelectorAll<HTMLButtonElement>("[role=tab]")[index]?.focus();
 }
 </script>
 <template>
-  <div ref="root" class="h-tabs" part="base">
+  <div ref="root" class="h-tabs" :class="[orientation, variant]" part="base">
     <div
       class="h-tablist"
       part="list"
       role="tablist"
       :aria-label="label"
+      :aria-orientation="orientation"
       @keydown="key"
     >
       <button
@@ -64,10 +92,17 @@ function key(e: KeyboardEvent) {
         role="tab"
         :aria-selected="selected === item.value"
         :aria-controls="`${id}-panel-${i}`"
-        :tabindex="selected === item.value ? 0 : -1"
+        :tabindex="
+          (props.items.some((i) => i.value === focused && !i.disabled)
+            ? focused
+            : selected) === item.value
+            ? 0
+            : -1
+        "
         :disabled="item.disabled"
         part="tab"
         @click="select(item.value)"
+        @focus="focused = item.value"
       >
         {{ item.label }}
       </button>
@@ -127,5 +162,44 @@ section {
 }
 section[hidden] {
   display: none;
+}
+.vertical {
+  display: grid;
+  grid-template-columns: minmax(100px, 180px) minmax(0, 1fr);
+  gap: 20px;
+}
+.vertical .h-tablist {
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+}
+.vertical button {
+  text-align: left;
+  white-space: normal;
+}
+.vertical section {
+  margin-top: 0;
+  overflow-wrap: anywhere;
+}
+.underline .h-tablist {
+  border: 0;
+  border-bottom: 1px solid var(--h-border);
+  border-radius: 0;
+  background: none;
+  padding: 0;
+}
+.underline button {
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  box-shadow: none;
+}
+.underline button[aria-selected="true"] {
+  color: var(--h-accent-text);
+  border-bottom-color: var(--h-accent);
+}
+.vertical.underline .h-tablist {
+  border-bottom: 0;
+  border-inline-end: 1px solid var(--h-border);
 }
 </style>

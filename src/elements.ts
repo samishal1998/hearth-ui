@@ -23,9 +23,30 @@ import {
   HPublicShell,
   HDashboardShell,
   HAuthPage,
+  HCombobox,
+  HMultiSelect,
+  HCheckbox,
+  HRadioGroup,
+  HTextarea,
+  HRange,
+  HButtonBar,
+  HNavigationMenu,
+  HSidebar,
+  HProgress,
+  HBreadcrumbs,
+  HAvatar,
+  HSeparator,
+  HSkeleton,
+  HAccordion,
+  HPagination,
 } from "./index";
 
-type NativeControl = HTMLInputElement | HTMLSelectElement | HTMLButtonElement;
+type NativeControl =
+  | HTMLInputElement
+  | HTMLSelectElement
+  | HTMLButtonElement
+  | HTMLTextAreaElement;
+type FormKind = "field" | "button" | "compound";
 type SFC = {
   new (...args: any[]): ComponentPublicInstance<any>;
   styles?: string[];
@@ -51,12 +72,12 @@ function element<T extends SFC>(
 function element<T extends SFC>(
   component: T,
   inline: boolean,
-  formKind: "field" | "button",
+  formKind: FormKind,
 ): VueElementConstructor<ElementProps<T> & FormControlAPI>;
 function element(
   component: SFC,
   inline = false,
-  formKind?: "field" | "button",
+  formKind?: FormKind,
 ): VueElementConstructor<unknown> {
   const Base: VueElementConstructor<unknown> = defineCustomElement(component, {
     styles: [
@@ -64,11 +85,36 @@ function element(
       ...(component.styles || []),
     ],
   });
+  // React and other hosts check property presence before connecting an element.
+  // Queue only explicitly assigned values; Vue upgrades these own properties on mount.
+  const declared = (
+    component as SFC & { props?: string[] | Record<string, unknown> }
+  ).props;
+  for (const key of Array.isArray(declared)
+    ? declared
+    : Object.keys(declared || {})) {
+    if (key in Base.prototype) continue;
+    Object.defineProperty(Base.prototype, key, {
+      configurable: true,
+      get() {
+        return undefined;
+      },
+      set(value: unknown) {
+        Object.defineProperty(this, key, {
+          value,
+          writable: true,
+          enumerable: true,
+          configurable: true,
+        });
+      },
+    });
+  }
   if (!formKind) return Base;
   return class extends Base {
     static formAssociated = true;
     private internals: ElementInternals;
-    private initially: { value: string; checked: boolean } | undefined;
+    private initially:
+      { value: string; checked: boolean; values: string[] } | undefined;
     private fieldsetDisabled = false;
     constructor(props?: Record<string, unknown>) {
       super(props);
@@ -79,11 +125,12 @@ function element(
       this.shadowRoot?.addEventListener("keydown", (e) => {
         const event = e as KeyboardEvent;
         if (
-          formKind === "field" &&
+          formKind !== "button" &&
           event.key === "Enter" &&
           !event.isComposing &&
+          !event.defaultPrevented &&
           event.target instanceof HTMLInputElement &&
-          event.target.type !== "checkbox"
+          !["checkbox", "radio"].includes(event.target.type)
         ) {
           event.preventDefault();
           this.internals.form?.requestSubmit();
@@ -98,9 +145,21 @@ function element(
     }
     private control(): NativeControl | null {
       return (
-        this.shadowRoot?.querySelector<NativeControl>("input,select,button") ||
+        this.shadowRoot?.querySelector<NativeControl>(
+          "[data-h-form-control]:not(:disabled),input:not([type=hidden]):not(:disabled),select:not(:disabled),textarea:not(:disabled)",
+        ) ||
+        this.shadowRoot?.querySelector<NativeControl>(
+          "input:not([type=hidden]),select,textarea,button",
+        ) ||
         null
       );
+    }
+    private selectedFields() {
+      return [
+        ...(this.shadowRoot?.querySelectorAll<HTMLInputElement>(
+          "input[data-h-form-value]",
+        ) || []),
+      ].filter((c) => !["checkbox", "radio"].includes(c.type) || c.checked);
     }
     private sync() {
       const c = this.control();
@@ -112,12 +171,32 @@ function element(
         this.initially = {
           value: c.value,
           checked: c instanceof HTMLInputElement && c.checked,
+          values: this.selectedFields().map((c) => c.value),
         };
       if (formKind === "button") {
         c.disabled =
           this.fieldsetDisabled ||
           this.hasAttribute("disabled") ||
           this.hasAttribute("loading");
+        return;
+      }
+      if (formKind === "compound") {
+        const fields = this.selectedFields();
+        const data = new FormData();
+        const name = this.getAttribute("name");
+        if (name)
+          for (const field of fields)
+            if (!field.matches(":disabled")) data.append(name, field.value);
+        const disabled = this.fieldsetDisabled || this.hasAttribute("disabled");
+        this.internals.setFormValue(
+          disabled ? null : data,
+          JSON.stringify(fields.map((f) => f.value)),
+        );
+        this.internals.setValidity(
+          disabled ? {} : c.validity,
+          disabled ? "" : c.validationMessage,
+          c,
+        );
         return;
       }
       c.disabled = this.fieldsetDisabled || this.hasAttribute("disabled");
@@ -143,14 +222,29 @@ function element(
     }
     formDisabledCallback(disabled: boolean) {
       this.fieldsetDisabled = disabled;
+      if (formKind === "compound")
+        Object.assign(this, { formDisabled: disabled });
       this.sync();
     }
     formResetCallback() {
-      if (!this.initially || formKind !== "field") return;
+      if (!this.initially || formKind === "button") return;
+      if (formKind === "compound") {
+        Object.assign(this, {
+          modelValue: this.control()?.hasAttribute("data-h-multiple")
+            ? [...this.initially.values]
+            : this.initially.values[0] || "",
+        });
+        queueMicrotask(() => this.sync());
+        return;
+      }
       const c = this.control();
       const isCheck = c instanceof HTMLInputElement && c.type === "checkbox";
       Object.assign(this, {
-        modelValue: isCheck ? this.initially.checked : this.initially.value,
+        modelValue: isCheck
+          ? this.initially.checked
+          : c?.hasAttribute("data-h-number")
+            ? Number(this.initially.value)
+            : this.initially.value,
       });
       if (c) {
         c.value = this.initially.value;
@@ -160,12 +254,31 @@ function element(
     }
     formStateRestoreCallback(state: string | File | FormData | null) {
       if (typeof state !== "string") return;
+      if (formKind === "compound") {
+        try {
+          const values: unknown = JSON.parse(state);
+          if (
+            !Array.isArray(values) ||
+            !values.every((v) => typeof v === "string")
+          )
+            return;
+          Object.assign(this, {
+            modelValue: this.control()?.hasAttribute("data-h-multiple")
+              ? values
+              : values[0] || "",
+          });
+          queueMicrotask(() => this.sync());
+        } catch {}
+        return;
+      }
       const c = this.control();
       Object.assign(this, {
         modelValue:
           c instanceof HTMLInputElement && c.type === "checkbox"
             ? state === "checked"
-            : state,
+            : c?.hasAttribute("data-h-number")
+              ? Number(state)
+              : state,
       });
       queueMicrotask(() => this.sync());
     }
@@ -191,7 +304,9 @@ function element(
     }
     focus(options?: FocusOptions) {
       this.shadowRoot
-        ?.querySelector<HTMLElement>("input,select,button,a")
+        ?.querySelector<HTMLElement>(
+          "input:not([type=hidden]),select,textarea,button,a",
+        )
         ?.focus(options);
     }
   };
@@ -255,6 +370,52 @@ export const HearthDashboardShellElement: Constructor<typeof HDashboardShell> =
   element(HDashboardShell);
 export const HearthAuthPageElement: Constructor<typeof HAuthPage> =
   element(HAuthPage);
+export const HearthComboboxElement: FormConstructor<typeof HCombobox> = element(
+  HCombobox,
+  false,
+  "compound",
+);
+export const HearthMultiSelectElement: FormConstructor<typeof HMultiSelect> =
+  element(HMultiSelect, false, "compound");
+export const HearthCheckboxElement: FormConstructor<typeof HCheckbox> = element(
+  HCheckbox,
+  false,
+  "field",
+);
+export const HearthRadioGroupElement: FormConstructor<typeof HRadioGroup> =
+  element(HRadioGroup, false, "compound");
+export const HearthTextareaElement: FormConstructor<typeof HTextarea> = element(
+  HTextarea,
+  false,
+  "field",
+);
+export const HearthRangeElement: FormConstructor<typeof HRange> = element(
+  HRange,
+  false,
+  "field",
+);
+export const HearthButtonBarElement: Constructor<typeof HButtonBar> =
+  element(HButtonBar);
+export const HearthNavigationMenuElement: Constructor<typeof HNavigationMenu> =
+  element(HNavigationMenu);
+export const HearthSidebarElement: Constructor<typeof HSidebar> =
+  element(HSidebar);
+export const HearthProgressElement: Constructor<typeof HProgress> =
+  element(HProgress);
+export const HearthBreadcrumbsElement: Constructor<typeof HBreadcrumbs> =
+  element(HBreadcrumbs);
+export const HearthAvatarElement: Constructor<typeof HAvatar> = element(
+  HAvatar,
+  true,
+);
+export const HearthSeparatorElement: Constructor<typeof HSeparator> =
+  element(HSeparator);
+export const HearthSkeletonElement: Constructor<typeof HSkeleton> =
+  element(HSkeleton);
+export const HearthAccordionElement: Constructor<typeof HAccordion> =
+  element(HAccordion);
+export const HearthPaginationElement: Constructor<typeof HPagination> =
+  element(HPagination);
 
 const elements: Record<string, VueElementConstructor<unknown>> = {
   theme: HearthThemeElement,
@@ -276,6 +437,22 @@ const elements: Record<string, VueElementConstructor<unknown>> = {
   "public-shell": HearthPublicShellElement,
   "dashboard-shell": HearthDashboardShellElement,
   "auth-page": HearthAuthPageElement,
+  combobox: HearthComboboxElement,
+  "multi-select": HearthMultiSelectElement,
+  checkbox: HearthCheckboxElement,
+  "radio-group": HearthRadioGroupElement,
+  textarea: HearthTextareaElement,
+  range: HearthRangeElement,
+  "button-bar": HearthButtonBarElement,
+  "navigation-menu": HearthNavigationMenuElement,
+  sidebar: HearthSidebarElement,
+  progress: HearthProgressElement,
+  breadcrumbs: HearthBreadcrumbsElement,
+  avatar: HearthAvatarElement,
+  separator: HearthSeparatorElement,
+  skeleton: HearthSkeletonElement,
+  accordion: HearthAccordionElement,
+  pagination: HearthPaginationElement,
 };
 
 /** Register once, or use a different prefix to coexist with another design system. */
