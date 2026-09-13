@@ -1,0 +1,177 @@
+# HCombobox
+
+> Searchable single or multi-select with selected chips, disabled options, keyboard navigation, and repeated form values.
+
+[Start with the Hearth UI agent index](../../../llms.txt). This reference describes repository source; package.json version: 0.2.0. Match it to the source/release you are using.
+
+## Identity
+
+- Vue export: `HCombobox` from `@samishal1998/hearth-ui`.
+- Custom element: `<hearth-combobox>`.
+- Individual constructor: `HearthComboboxElement` from `@samishal1998/hearth-ui/elements`.
+- Category: Controls.
+- [Implementation](https://github.com/samishal1998/hearth-ui/blob/main/src/components/HCombobox.vue).
+
+## Choose and use it correctly
+
+- Single selection uses a string; multiple mode uses string[]. The public model type is the union. Prefer HMultiSelect when you want an array-only TypeScript API.
+- Filtering matches labels, descriptions, and keywords. This is selection from options, not free-form tag creation.
+- Arrow keys navigate enabled results, Enter selects an active result, Escape closes, and Tab leaves. Enter while choosing must not submit the surrounding form.
+- Handle search(query) in application code for remote fetching and bind loading. Existing selected IDs are retained while option data changes.
+- The popup is local, not portaled; overflow-clipping ancestors can clip it. Large option lists are not virtualized.
+
+## Public API
+
+label, name, placeholder, hint, error, emptyText: string · options: {value, label, description?, keywords?, disabled?}[] · modelValue, value: string | string[] · multiple, required, disabled, loading, clearable: boolean
+
+A `?` marks optional source props. A prop with a default may be omitted even when the source type is required. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
+
+```ts
+type Props = ComboboxProps;
+```
+
+### Defaults
+
+```ts
+{
+  options: () => [],
+  placeholder: "Search options…",
+  clearable: true,
+  emptyText: "No matching options.",
+}
+```
+
+### Events
+
+update:modelValue(value), change(value), search(query)
+
+```ts
+type Emits = {
+    "update:modelValue": [
+        value: string | string[]
+    ];
+    change: [
+        value: string | string[]
+    ];
+    search: [
+        query: string
+    ];
+};
+```
+
+Vue-emitted custom-element events expose arguments as `event.detail`, an array. Listen directly on the element. Native DOM events such as `click` keep their normal payloads.
+
+### Slots
+
+None
+
+Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Custom elements do not support Vue scoped slots.
+
+### CSS parts
+
+base, label, control, selection, popup, option, hint
+
+Use `hearth-combobox::part(part-name)` for an exposed part, or inherited `--h-*` tokens for system-level styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export interface ComboboxProps {
+    modelValue?: string | string[];
+    value?: string | string[];
+    label: string;
+    name?: string;
+    options: ComboboxOption[];
+    multiple?: boolean;
+    placeholder?: string;
+    hint?: string;
+    error?: string;
+    required?: boolean;
+    disabled?: boolean;
+    loading?: boolean;
+    clearable?: boolean;
+    emptyText?: string;
+}
+
+export interface ComboboxOption extends ChoiceOption {
+    keywords?: string[];
+}
+
+export interface ChoiceOption extends SelectOption {
+    description?: string;
+}
+
+export interface SelectOption {
+    value: string;
+    label: string;
+    disabled?: boolean;
+}
+```
+
+## Vue example
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { HCombobox } from '@samishal1998/hearth-ui';
+import '@samishal1998/hearth-ui/styles.css';
+const provider = ref<string | string[]>('docker');
+const options = [{ value: 'docker', label: 'Docker', keywords: ['containers'] }, { value: 'manual', label: 'Manual' }];
+</script>
+
+<template>
+  <HCombobox v-model="provider" label="Provider" name="provider" :options="options" required />
+</template>
+```
+
+## Web-component example
+
+Provide a mount point (use a `form` instead of `div` when demonstrating field submission):
+
+```html
+<div id="example"></div>
+```
+
+The following is bundler-based ESM. For raw HTML, load `dist/themes.css` with a stylesheet link and import `registerElements` from `./dist/elements/index.js` instead. Set array/object properties before connection when they should become reset defaults.
+
+```js
+import { registerElements } from '@samishal1998/hearth-ui/elements';
+import '@samishal1998/hearth-ui/themes.css';
+registerElements();
+
+const mount = document.querySelector('#example');
+const element = document.createElement('hearth-combobox');
+Object.assign(element, {
+  "label": "Provider",
+  "name": "provider",
+  "value": "docker",
+  "required": true,
+  "options": [
+    {
+      "value": "docker",
+      "label": "Docker",
+      "keywords": [
+        "containers"
+      ]
+    },
+    {
+      "value": "manual",
+      "label": "Manual"
+    }
+  ]
+});
+element.addEventListener('change', event => {
+  const [value] = event.detail;
+  // Update your application state using value.
+});
+mount.append(element);
+```
+
+## Related components
+
+- [HMultiSelect](../multi-select/llms.txt): An array-typed multi-select combobox using the same searchable selection engine as HCombobox.
+- [HSelect](../select/llms.txt): A native select with labeled options, not a recreated browser picker.
+- [HInput](../input/llms.txt): A labeled input with help/error text and native validation. Web components participate in their owning form.
+
+---
+Generated by `npm run docs:generate` from component source, `site/catalog.ts`, and `scripts/agent-examples.mjs`. Do not edit this generated file directly.

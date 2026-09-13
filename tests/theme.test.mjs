@@ -12,7 +12,7 @@ import {
 } from "../dist/vue/index.js";
 
 test("theme exports filter unrelated properties and the native Vue build renders on the server", async () => {
-  assert.deepEqual(themes, ["sunset", "ocean", "forest"]);
+  assert.deepEqual(themes, ["sunset", "ocean", "forest", "dusk", "rose"]);
   assert.deepEqual(
     themeStyle({
       "--h-accent": "#abcdef",

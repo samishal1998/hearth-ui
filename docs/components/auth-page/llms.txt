@@ -1,0 +1,166 @@
+# HAuthPage
+
+> The full split-screen welcome/login page. It emits credentials; your application owns authentication.
+
+[Start with the Hearth UI agent index](../../../llms.txt). This reference describes repository source; package.json version: 0.2.0. Match it to the source/release you are using.
+
+## Identity
+
+- Vue export: `HAuthPage` from `@samishal1998/hearth-ui`.
+- Custom element: `<hearth-auth-page>`.
+- Individual constructor: `HearthAuthPageElement` from `@samishal1998/hearth-ui/elements`.
+- Category: Layouts.
+- [Implementation](https://github.com/samishal1998/hearth-ui/blob/main/src/components/HAuthPage.vue).
+
+## Choose and use it correctly
+
+- This is a complete presentation template, not an authentication service. Enforce sessions, authorization, and private API access in application code.
+- submit emits {username, password}. Bind loading and error to application state; the component does not fetch or store credentials.
+- Copy, brand/logo, story, submit label, identifier type, and note are configurable. For OAuth or other fields, replace the entire form slot and own its submission.
+- Do not place fields in unrelated slots and expect them to join the internal form across shadow boundaries.
+
+## Public API
+
+brand, logo, title, description, eyebrow, storyTitle, storyAccent, storyDescription, storyEyebrow, storyFooter, submitLabel, usernameLabel, passwordAutocomplete, note, error: string · usernameType: text | email · passwordMinLength: number · loading, scenery: boolean
+
+A `?` marks optional source props. A prop with a default may be omitted even when the source type is required. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
+
+```ts
+type Props = {
+    brand?: string;
+    logo?: string;
+    title?: string;
+    description?: string;
+    eyebrow?: string;
+    storyTitle?: string;
+    storyAccent?: string;
+    storyDescription?: string;
+    storyEyebrow?: string;
+    storyFooter?: string;
+    submitLabel?: string;
+    usernameLabel?: string;
+    usernameType?: "text" | "email";
+    passwordAutocomplete?: string;
+    passwordMinLength?: number;
+    loading?: boolean;
+    error?: string;
+    note?: string;
+    scenery?: boolean;
+};
+```
+
+### Defaults
+
+```ts
+{
+    brand: "hearth",
+    title: "Welcome home.",
+    description:
+      "Sign in to your workspace. Everything is right where you left it.",
+    eyebrow: "Your space is waiting",
+    storyTitle: "Everything you host.",
+    storyAccent: "One place to start.",
+    storyDescription:
+      "A home for the things you build, the services you run, and the little corner of the internet you call your own.",
+    storyEyebrow: "Your self-hosted home",
+    storyFooter: "Built for your corner of the internet.",
+    submitLabel: "Sign in",
+    usernameLabel: "Username",
+    usernameType: "text",
+    passwordAutocomplete: "current-password",
+    note: "Private by default. Always yours.",
+    scenery: true,
+  }
+```
+
+### Events
+
+submit({username, password})
+
+```ts
+type Emits = {
+    submit: [
+        credentials: AuthCredentials
+    ];
+};
+```
+
+Vue-emitted custom-element events expose arguments as `event.detail`, an array. Listen directly on the element. Native DOM events such as `click` keep their normal payloads.
+
+### Slots
+
+brand, story-extra, form (replace the entire default form), note, footer
+
+Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Custom elements do not support Vue scoped slots.
+
+### CSS parts
+
+base, story, panel, title
+
+Use `hearth-auth-page::part(part-name)` for an exposed part, or inherited `--h-*` tokens for system-level styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export interface AuthCredentials {
+    username: string;
+    password: string;
+}
+```
+
+## Vue example
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { HAuthPage } from '@samishal1998/hearth-ui';
+import '@samishal1998/hearth-ui/styles.css';
+const loading = ref(false);
+const error = ref('');
+async function signIn(credentials: { username: string; password: string }) {
+  // Call your auth API, manage loading/error, and navigate after success.
+  // Do not persist or log credentials.
+}
+</script>
+
+<template>
+  <HAuthPage brand="homestead" :loading="loading" :error="error" @submit="signIn" />
+</template>
+```
+
+## Web-component example
+
+Provide a mount point (use a `form` instead of `div` when demonstrating field submission):
+
+```html
+<div id="example"></div>
+```
+
+The following is bundler-based ESM. For raw HTML, load `dist/themes.css` with a stylesheet link and import `registerElements` from `./dist/elements/index.js` instead. Set array/object properties before connection when they should become reset defaults.
+
+```js
+import { registerElements } from '@samishal1998/hearth-ui/elements';
+import '@samishal1998/hearth-ui/themes.css';
+registerElements();
+
+const mount = document.querySelector('#example');
+const element = document.createElement('hearth-auth-page');
+Object.assign(element, {
+  "brand": "homestead"
+});
+element.addEventListener('submit', async event => {
+  const [{ username, password }] = event.detail;
+  // Call your auth API and set element.loading / element.error.
+  // Do not persist or log credentials.
+});
+mount.append(element);
+```
+
+## Related components
+
+- [HTheme](../theme/llms.txt): A scoped theme island. CSS variables flow through Vue trees, native slots, and shadow roots.
+- [HPublicShell](../public-shell/llms.txt): A public landing-page frame: brand, a few links, an account action, and a quiet footer.
+- [HDashboardShell](../dashboard-shell/llms.txt): A complete dashboard frame with desktop sidebar, native mobile navigation dialog, account controls, and content area.
+
+---
+Generated by `npm run docs:generate` from component source, `site/catalog.ts`, and `scripts/agent-examples.mjs`. Do not edit this generated file directly.

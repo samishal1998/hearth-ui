@@ -5,7 +5,9 @@
   "type": "module",
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "llms.txt",
+    "docs/components"
   ],
   "sideEffects": [
     "**/*.css",
@@ -28,12 +30,14 @@
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "check": "vue-tsc --noEmit",
+    "check": "npm run docs:check && vue-tsc --noEmit",
     "build": "npm run check && node scripts/build.mjs",
-    "build:site": "vite build",
+    "build:site": "npm run docs:check && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "node --test tests/theme.test.mjs && playwright test",
     "test:package": "node tests/package-smoke.mjs",
+    "docs:generate": "node scripts/agent-docs.mjs",
+    "docs:check": "node scripts/agent-docs.mjs --check && node --test tests/agent-docs.test.mjs",
     "prepack": "npm run build"
   },
   "peerDependencies": {

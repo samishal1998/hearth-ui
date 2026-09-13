@@ -4,7 +4,27 @@
 
 **[Showcase & guide](https://samishal1998.github.io/hearth-ui/)** · **[Theme studio](https://samishal1998.github.io/hearth-ui/#themes)** · **[Downloads](https://github.com/samishal1998/hearth-ui/releases)**
 
-Hearth carries the visual direction of Apptrail into a standalone library. **Sunset** is the primary palette: deep navy, warm orange, restrained glass surfaces, rounded geometry, and calm typography. Ocean and Forest offer alternate atmospheres. Every palette has dark, light, and system modes.
+Hearth carries the visual direction of Apptrail into a standalone library. **Sunset** is the primary palette: deep navy, warm orange, restrained glass surfaces, rounded geometry, and calm typography. Ocean, Forest, Dusk, and Rose offer alternate atmospheres. Every palette has dark, light, and system modes. Match source documentation to your installed release when using newly added features.
+
+## Agent references
+
+Start at **[llms.txt](llms.txt)**. It routes agents to focused references for all 35 components under **`docs/components/<slug>/llms.txt`**, for example:
+
+- [Authentication page](docs/components/auth-page/llms.txt)
+- [Dashboard shell](docs/components/dashboard-shell/llms.txt)
+- [Multi-select](docs/components/multi-select/llms.txt)
+- [Theme system and tokens](docs/components/theme/llms.txt)
+
+Each file includes component selection guidance, source-derived public props/defaults/event types, supporting types, slots, CSS parts, Vue and web-component recipes, and related components. The index also documents the shared form/event/theming contracts.
+
+```sh
+npm run docs:generate
+npm run docs:check
+```
+
+The references are generated from `site/catalog.ts`, Vue component source, shared types, and `scripts/agent-examples.mjs`. Update those inputs instead of editing generated text. The check catches stale files, missing component coverage, broken local references, and invalid example syntax; it runs with normal build checks.
+
+The Vite development server and static showcase expose the same files as plain text at `llms.txt` and `docs/components/<slug>/llms.txt`, relative to the site's base path. New npm package builds also include the references. Existing release archives remain versioned snapshots.
 
 ## One source, two distributions
 
@@ -167,7 +187,7 @@ Use `HRadioGroup` for a complete radio field. Its native radio inputs share a DO
 </HTheme>
 ```
 
-- Palettes: `sunset`, `ocean`, `forest`.
+- Palettes in this source: `sunset`, `ocean`, `forest`, `dusk`, `rose`.
 - Modes: `dark`, `light`, `system` (CSS follows OS preference).
 - Densities: `comfortable` (44px controls) and `compact` (40px controls).
 

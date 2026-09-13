@@ -1,0 +1,178 @@
+# HMultiSelect
+
+> An array-typed multi-select combobox using the same searchable selection engine as HCombobox.
+
+[Start with the Hearth UI agent index](../../../llms.txt). This reference describes repository source; package.json version: 0.2.0. Match it to the source/release you are using.
+
+## Identity
+
+- Vue export: `HMultiSelect` from `@samishal1998/hearth-ui`.
+- Custom element: `<hearth-multi-select>`.
+- Individual constructor: `HearthMultiSelectElement` from `@samishal1998/hearth-ui/elements`.
+- Category: Controls.
+- [Implementation](https://github.com/samishal1998/hearth-ui/blob/main/src/components/HMultiSelect.vue).
+
+## Choose and use it correctly
+
+- Always uses string[] and multiple selection. Do not pass a multiple flag; this is the typed wrapper around HCombobox.
+- Inherits the combobox search, disabled-option, loading, keyboard, and local-popup behavior. Backspace removes the last selected item when the query is empty.
+- One form entry is submitted per selected value under the same name. Read FormData.getAll("providers"), not Object.fromEntries() for this field.
+- Set initial array properties before connecting the element if they should become its form-reset baseline.
+
+## Public API
+
+Same selection props as HCombobox; modelValue and value are string[]. Multiple selection is always enabled.
+
+A `?` marks optional source props. A prop with a default may be omitted even when the source type is required. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
+
+```ts
+type Props = MultiSelectProps;
+```
+
+### Defaults
+
+```ts
+{
+  clearable: true,
+  options: () => [],
+}
+```
+
+### Events
+
+update:modelValue(values), change(values), search(query)
+
+```ts
+type Emits = {
+    "update:modelValue": [
+        value: string[]
+    ];
+    change: [
+        value: string[]
+    ];
+    search: [
+        query: string
+    ];
+};
+```
+
+Vue-emitted custom-element events expose arguments as `event.detail`, an array. Listen directly on the element. Native DOM events such as `click` keep their normal payloads.
+
+### Slots
+
+None
+
+Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Custom elements do not support Vue scoped slots.
+
+### CSS parts
+
+base, label, control, selection, popup, option, hint
+
+Use `hearth-multi-select::part(part-name)` for an exposed part, or inherited `--h-*` tokens for system-level styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export type MultiSelectProps = Omit<ComboboxProps, "modelValue" | "value" | "multiple"> & {
+    modelValue?: string[];
+    value?: string[];
+};
+
+export interface ComboboxProps {
+    modelValue?: string | string[];
+    value?: string | string[];
+    label: string;
+    name?: string;
+    options: ComboboxOption[];
+    multiple?: boolean;
+    placeholder?: string;
+    hint?: string;
+    error?: string;
+    required?: boolean;
+    disabled?: boolean;
+    loading?: boolean;
+    clearable?: boolean;
+    emptyText?: string;
+}
+
+export interface ComboboxOption extends ChoiceOption {
+    keywords?: string[];
+}
+
+export interface ChoiceOption extends SelectOption {
+    description?: string;
+}
+
+export interface SelectOption {
+    value: string;
+    label: string;
+    disabled?: boolean;
+}
+```
+
+## Vue example
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { HMultiSelect } from '@samishal1998/hearth-ui';
+import '@samishal1998/hearth-ui/styles.css';
+const providers = ref<string[]>(['docker']);
+const options = [{ value: 'docker', label: 'Docker' }, { value: 'traefik', label: 'Traefik' }];
+</script>
+
+<template>
+  <HMultiSelect v-model="providers" label="Providers" name="providers" :options="options" required />
+</template>
+```
+
+## Web-component example
+
+Provide a mount point (use a `form` instead of `div` when demonstrating field submission):
+
+```html
+<div id="example"></div>
+```
+
+The following is bundler-based ESM. For raw HTML, load `dist/themes.css` with a stylesheet link and import `registerElements` from `./dist/elements/index.js` instead. Set array/object properties before connection when they should become reset defaults.
+
+```js
+import { registerElements } from '@samishal1998/hearth-ui/elements';
+import '@samishal1998/hearth-ui/themes.css';
+registerElements();
+
+const mount = document.querySelector('#example');
+const element = document.createElement('hearth-multi-select');
+Object.assign(element, {
+  "label": "Providers",
+  "name": "providers",
+  "value": [
+    "docker"
+  ],
+  "required": true,
+  "options": [
+    {
+      "value": "docker",
+      "label": "Docker"
+    },
+    {
+      "value": "traefik",
+      "label": "Traefik"
+    }
+  ]
+});
+element.addEventListener('change', event => {
+  const [value] = event.detail;
+  // Update your application state using value.
+});
+mount.append(element);
+```
+
+## Related components
+
+- [HCombobox](../combobox/llms.txt): Searchable single or multi-select with selected chips, disabled options, keyboard navigation, and repeated form values.
+- [HCheckbox](../checkbox/llms.txt): A native checkbox with a mixed-state option and optional description.
+- [HSelect](../select/llms.txt): A native select with labeled options, not a recreated browser picker.
+
+---
+Generated by `npm run docs:generate` from component source, `site/catalog.ts`, and `scripts/agent-examples.mjs`. Do not edit this generated file directly.

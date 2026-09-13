@@ -1,0 +1,164 @@
+# HDashboardShell
+
+> A complete dashboard frame with desktop sidebar, native mobile navigation dialog, account controls, and content area.
+
+[Start with the Hearth UI agent index](../../../llms.txt). This reference describes repository source; package.json version: 0.2.0. Match it to the source/release you are using.
+
+## Identity
+
+- Vue export: `HDashboardShell` from `@samishal1998/hearth-ui`.
+- Custom element: `<hearth-dashboard-shell>`.
+- Individual constructor: `HearthDashboardShellElement` from `@samishal1998/hearth-ui/elements`.
+- Category: Layouts.
+- [Implementation](https://github.com/samishal1998/hearth-ui/blob/main/src/components/HDashboardShell.vue).
+
+## Choose and use it correctly
+
+- Use as the authenticated workspace frame. It supplies desktop/sidebar and mobile-drawer presentation, not authentication or authorization.
+- The desktop navigation slot can replace the default list, but the mobile drawer uses items. Keep items populated even when customizing desktop navigation.
+- header-actions, sidebar-footer, brand, and footer support application composition. The default slot is the content region.
+
+## Public API
+
+brand, logo, workspace, workspaceDescription, active, pageTitle, username, userRole, footerNote: string · items: NavItem[]
+
+A `?` marks optional source props. A prop with a default may be omitted even when the source type is required. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
+
+```ts
+type Props = {
+    brand?: string;
+    logo?: string;
+    workspace?: string;
+    workspaceDescription?: string;
+    items: NavItem[];
+    active?: string;
+    pageTitle?: string;
+    username?: string;
+    userRole?: string;
+    footerNote?: string;
+};
+```
+
+### Defaults
+
+```ts
+{
+    brand: "hearth",
+    workspace: "My workspace",
+    workspaceDescription: "Self-hosted & personal",
+    items: () => [],
+    pageTitle: "Overview",
+    userRole: "Workspace owner",
+    footerNote: "Hosted by you. Right where it belongs.",
+  }
+```
+
+### Events
+
+navigate(id), logout()
+
+```ts
+type Emits = {
+    navigate: [
+        id: string
+    ];
+    logout: [
+    ];
+};
+```
+
+Vue-emitted custom-element events expose arguments as `event.detail`, an array. Listen directly on the element. Native DOM events such as `click` keep their normal payloads.
+
+### Slots
+
+brand, navigation (desktop), header-actions, sidebar-footer, default, footer
+
+Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Custom elements do not support Vue scoped slots.
+
+### CSS parts
+
+base, sidebar, header, content, footer, mobile-navigation
+
+Use `hearth-dashboard-shell::part(part-name)` for an exposed part, or inherited `--h-*` tokens for system-level styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export interface NavItem {
+    id: string;
+    label: string;
+    icon?: string;
+    href?: string;
+    badge?: string | number;
+    disabled?: boolean;
+}
+```
+
+## Vue example
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { HDashboardShell, HPageHeader } from '@samishal1998/hearth-ui';
+import '@samishal1998/hearth-ui/styles.css';
+const active = ref('overview');
+const items = [{ id: 'overview', label: 'Overview', icon: 'home' }, { id: 'apps', label: 'Applications', icon: 'apps' }];
+function signOut() { /* Revoke the application session. */ }
+</script>
+
+<template>
+  <HDashboardShell brand="homestead" :items="items" :active="active" page-title="Overview" username="Owner" @navigate="active = $event" @logout="signOut">
+    <HPageHeader title="Your workspace." />
+  </HDashboardShell>
+</template>
+```
+
+## Web-component example
+
+Provide a mount point (use a `form` instead of `div` when demonstrating field submission):
+
+```html
+<div id="example"></div>
+```
+
+The following is bundler-based ESM. For raw HTML, load `dist/themes.css` with a stylesheet link and import `registerElements` from `./dist/elements/index.js` instead. Set array/object properties before connection when they should become reset defaults.
+
+```js
+import { registerElements } from '@samishal1998/hearth-ui/elements';
+import '@samishal1998/hearth-ui/themes.css';
+registerElements();
+
+const mount = document.querySelector('#example');
+const element = document.createElement('hearth-dashboard-shell');
+Object.assign(element, {
+  "brand": "homestead",
+  "active": "overview",
+  "pageTitle": "Overview",
+  "username": "Owner",
+  "items": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "icon": "home"
+    },
+    {
+      "id": "apps",
+      "label": "Applications",
+      "icon": "apps"
+    }
+  ]
+});
+element.innerHTML = "<hearth-page-header title=\"Your workspace.\"></hearth-page-header>"; // Static example markup only; never inject untrusted HTML.
+element.addEventListener('navigate', event => { element.active = event.detail[0]; });
+element.addEventListener('logout', () => { /* Revoke the application session. */ });
+mount.append(element);
+```
+
+## Related components
+
+- [HPublicShell](../public-shell/llms.txt): A public landing-page frame: brand, a few links, an account action, and a quiet footer.
+- [HAuthPage](../auth-page/llms.txt): The full split-screen welcome/login page. It emits credentials; your application owns authentication.
+- [HSidebar](../sidebar/llms.txt): A standalone, collapsible sidebar with grouped navigation and optional custom header/footer.
+
+---
+Generated by `npm run docs:generate` from component source, `site/catalog.ts`, and `scripts/agent-examples.mjs`. Do not edit this generated file directly.

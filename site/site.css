@@ -380,6 +380,24 @@ dd code {
 .palette-swatches.forest i:nth-child(3) {
   background: #8bd7a4;
 }
+.palette-swatches.dusk i {
+  background: #151120;
+}
+.palette-swatches.dusk i:nth-child(2) {
+  background: #3e3053;
+}
+.palette-swatches.dusk i:nth-child(3) {
+  background: #bca7f5;
+}
+.palette-swatches.rose i {
+  background: #1d1318;
+}
+.palette-swatches.rose i:nth-child(2) {
+  background: #4d323e;
+}
+.palette-swatches.rose i:nth-child(3) {
+  background: #dda0b0;
+}
 .build-section {
   padding-block: 70px 85px;
 }

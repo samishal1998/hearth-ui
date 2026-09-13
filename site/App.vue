@@ -121,6 +121,13 @@ const themeOptions = themes.map((t) => ({
   value: t,
   label: t[0].toUpperCase() + t.slice(1),
 }));
+const themeDescriptions: Record<Theme, string> = {
+  sunset: "Warm. Familiar. The original.",
+  ocean: "Clear skies. A quieter blue.",
+  forest: "A breath of green. Room to grow.",
+  dusk: "Soft violet. A little evening calm.",
+  rose: "Muted rose. A warmer welcome.",
+};
 const modeOptions = [
   { value: "dark", label: "After sunset · dark" },
   { value: "light", label: "First light · light" },
@@ -572,7 +579,8 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
           <span
             ><strong>{{ catalog.length }}</strong> components, one family</span
           ><span><strong>2</strong> ways to use them</span
-          ><span><strong>3</strong> palettes, endless possibilities</span
+          ><span
+            ><strong>{{ themes.length }}</strong> palettes, endless possibilities</span
           ><span><strong>0</strong> backend assumptions</span>
         </div>
         <section class="landing-section">
@@ -635,13 +643,7 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
             >
               <span class="palette-swatches" :class="t"><i /><i /><i /></span
               ><strong>{{ t[0].toUpperCase() + t.slice(1) }}</strong
-              ><span>{{
-                t === "sunset"
-                  ? "Warm. Familiar. The original."
-                  : t === "ocean"
-                    ? "Clear skies. A quieter blue."
-                    : "A breath of green. Room to grow."
-              }}</span
+              ><span>{{ themeDescriptions[t] }}</span
               ><HIcon v-if="theme === t" name="check" :size="16" />
             </button>
           </div>
@@ -1120,8 +1122,8 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
             <section id="theming">
               <h2>Theme with variables, not rewrites.</h2>
               <p>
-                Sunset is the default palette. Ocean and Forest share the same
-                visual geometry. Every preset has light and dark modes;
+                Sunset is the default palette. Ocean, Forest, Dusk, and Rose
+                share the same visual geometry. Every preset has light and dark modes;
                 <code>system</code> follows the browser's preference through
                 CSS.
               </p>

@@ -360,8 +360,14 @@ test("built-in palettes retain readable semantic text and system-mode support", 
   await expect(
     page.getByRole("heading", { name: "Native HTML. Familiar components." }),
   ).toBeVisible();
-  for (const theme of ["sunset", "ocean", "forest"])
-    for (const mode of ["dark", "light"]) {
+  for (const theme of ["sunset", "ocean", "forest", "dusk", "rose"])
+    for (const { mode, colorScheme } of [
+      { mode: "dark", colorScheme: "dark" },
+      { mode: "light", colorScheme: "light" },
+      { mode: "system", colorScheme: "light" },
+      { mode: "system", colorScheme: "dark" },
+    ] as const) {
+      await page.emulateMedia({ colorScheme });
       await page
         .locator("hearth-theme#island")
         .evaluate((el, { theme, mode }) => Object.assign(el, { theme, mode }), {
@@ -379,6 +385,10 @@ test("built-in palettes retain readable semantic text and system-mode support", 
           );
         },
         { theme, mode },
+      );
+      await expect(page.getByLabel(/^Workspace name/)).toHaveCSS(
+        "color-scheme",
+        colorScheme,
       );
       const ratios = await page
         .locator("hearth-theme#island")
@@ -400,10 +410,13 @@ test("built-in palettes retain readable semantic text and system-mode support", 
           return [
             ["--h-text", "--h-bg"],
             ["--h-muted", "--h-surface"],
+            ["--h-accent-text", "--h-surface"],
             ["--h-on-accent", "--h-accent"],
+            ["--h-on-accent", "--h-accent-hover"],
             ["--h-success", "--h-surface"],
             ["--h-warning", "--h-surface"],
             ["--h-danger", "--h-surface"],
+            ["--h-info", "--h-surface"],
           ].map(([a, b]) => {
             const x = luminance(a),
               y = luminance(b);
@@ -416,7 +429,7 @@ test("built-in palettes retain readable semantic text and system-mode support", 
       for (const pair of ratios)
         expect(
           pair.ratio,
-          `${theme}/${mode} ${pair.pair}`,
+          `${theme}/${mode}/${colorScheme} ${pair.pair}`,
         ).toBeGreaterThanOrEqual(4.5);
     }
   await page

@@ -95,6 +95,8 @@ registerElements('my-app');
     "dist/elements/auto.js",
     "dist/themes.css",
     "dist/VUE-LICENSE",
+    "llms.txt",
+    "docs/components/multi-select/llms.txt",
     "dist/types/index.d.ts",
   ])
     assert.ok(
