@@ -2,13 +2,13 @@
 
 > A native modal dialog with focus containment, Escape dismissal, and focus return. Keep it inside your theme island.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This reference describes repository source; package.json version: 0.2.0. Match it to the source/release you are using.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.4.0. Match documentation to your installed source/release.
 
 ## Identity
 
-- Vue export: `HDialog` from `@samishal1998/hearth-ui`.
+- Vue export: `HDialog` from `@hearth-ui/vue`.
 - Custom element: `<hearth-dialog>`.
-- Individual constructor: `HearthDialogElement` from `@samishal1998/hearth-ui/elements`.
+- Constructor: `HearthDialogElement` from `@hearth-ui/elements`.
 - Category: Feedback.
 - [Implementation](https://github.com/samishal1998/hearth-ui/blob/main/src/components/HDialog.vue).
 
@@ -22,7 +22,7 @@
 
 open: boolean · title: string · description: string
 
-A `?` marks optional source props. A prop with a default may be omitted even when the source type is required. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
+A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
 ```ts
 type Props = {
@@ -34,7 +34,7 @@ type Props = {
 
 ### Defaults
 
-No component defaults; omitted optional props are undefined (Vue casts absent boolean props to false unless explicitly defaulted).
+No component defaults; optional props are undefined (absent boolean props cast to false unless explicitly defaulted).
 
 ### Events
 
@@ -47,27 +47,27 @@ type Emits = {
 };
 ```
 
-Vue-emitted custom-element events expose arguments as `event.detail`, an array. Listen directly on the element. Native DOM events such as `click` keep their normal payloads.
+Vue-emitted custom-element events expose argument arrays in `event.detail`. Listen on the element. Native events such as `click` retain their normal payloads. The elements package provides framework-independent DOM event types.
 
 ### Slots
 
 default, footer
 
-Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Custom elements do not support Vue scoped slots.
+Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 
 ### CSS parts
 
 dialog, header, body
 
-Use `hearth-dialog::part(part-name)` for an exposed part, or inherited `--h-*` tokens for system-level styling. Native Vue components use the shared stylesheet and `h-*` classes.
+Use `hearth-dialog::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
 
 ## Vue example
 
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue';
-import { HDialog, HButton, HInput } from '@samishal1998/hearth-ui';
-import '@samishal1998/hearth-ui/styles.css';
+import { HDialog, HButton, HInput } from '@hearth-ui/vue';
+import '@hearth-ui/vue/styles.css';
 const open = ref(false);
 </script>
 
@@ -82,17 +82,17 @@ const open = ref(false);
 
 ## Web-component example
 
-Provide a mount point (use a `form` instead of `div` when demonstrating field submission):
+Provide a mount point. For field submission, use an owning native form; the auth page already contains its own form.
 
 ```html
 <div id="example"></div>
 ```
 
-The following is bundler-based ESM. For raw HTML, load `dist/themes.css` with a stylesheet link and import `registerElements` from `./dist/elements/index.js` instead. Set array/object properties before connection when they should become reset defaults.
+This is bundler-based ESM. For raw HTML, load `dist/themes.css` with a link and import `registerElements` from `./dist/elements/index.js` instead. Initial array/object properties are assigned before connection to establish reset defaults.
 
 ```js
-import { registerElements } from '@samishal1998/hearth-ui/elements';
-import '@samishal1998/hearth-ui/themes.css';
+import { registerElements } from '@hearth-ui/elements';
+import '@hearth-ui/elements/themes.css';
 registerElements();
 
 const mount = document.querySelector('#example');
@@ -100,12 +100,15 @@ const element = document.createElement('hearth-dialog');
 Object.assign(element, {
   "title": "Workspace details"
 });
+
 element.innerHTML = "<hearth-input label=\"Workspace name\"></hearth-input>"; // Static example markup only; never inject untrusted HTML.
+
 element.addEventListener('close', () => { element.open = false; });
 const trigger = document.createElement('button');
 trigger.textContent = 'Edit workspace';
 trigger.addEventListener('click', () => { element.open = true; });
 mount.before(trigger);
+
 mount.append(element);
 ```
 

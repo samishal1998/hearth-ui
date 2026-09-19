@@ -2,13 +2,13 @@
 
 > Native details/summary disclosures with single or multiple expansion.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This reference describes repository source; package.json version: 0.2.0. Match it to the source/release you are using.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.4.0. Match documentation to your installed source/release.
 
 ## Identity
 
-- Vue export: `HAccordion` from `@samishal1998/hearth-ui`.
+- Vue export: `HAccordion` from `@hearth-ui/vue`.
 - Custom element: `<hearth-accordion>`.
-- Individual constructor: `HearthAccordionElement` from `@samishal1998/hearth-ui/elements`.
+- Constructor: `HearthAccordionElement` from `@hearth-ui/elements`.
 - Category: Controls.
 - [Implementation](https://github.com/samishal1998/hearth-ui/blob/main/src/components/HAccordion.vue).
 
@@ -22,7 +22,7 @@
 
 items: {id, title, description?, disabled?}[] · modelValue, value: string[] · multiple: boolean
 
-A `?` marks optional source props. A prop with a default may be omitted even when the source type is required. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
+A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
 ```ts
 type Props = {
@@ -54,19 +54,19 @@ type Emits = {
 };
 ```
 
-Vue-emitted custom-element events expose arguments as `event.detail`, an array. Listen directly on the element. Native DOM events such as `click` keep their normal payloads.
+Vue-emitted custom-element events expose argument arrays in `event.detail`. Listen on the element. Native events such as `click` retain their normal payloads. The elements package provides framework-independent DOM event types.
 
 ### Slots
 
 One named slot per item.id
 
-Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Custom elements do not support Vue scoped slots.
+Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 
 ### CSS parts
 
 base, item, trigger, panel
 
-Use `hearth-accordion::part(part-name)` for an exposed part, or inherited `--h-*` tokens for system-level styling. Native Vue components use the shared stylesheet and `h-*` classes.
+Use `hearth-accordion::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
 
 ## Supporting types
 
@@ -84,8 +84,8 @@ export interface AccordionItem {
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue';
-import { HAccordion } from '@samishal1998/hearth-ui';
-import '@samishal1998/hearth-ui/styles.css';
+import { HAccordion } from '@hearth-ui/vue';
+import '@hearth-ui/vue/styles.css';
 const open = ref<string[]>([]);
 const items = [{ id: 'storage', title: 'Where is data stored?' }];
 </script>
@@ -99,17 +99,17 @@ const items = [{ id: 'storage', title: 'Where is data stored?' }];
 
 ## Web-component example
 
-Provide a mount point (use a `form` instead of `div` when demonstrating field submission):
+Provide a mount point. For field submission, use an owning native form; the auth page already contains its own form.
 
 ```html
 <div id="example"></div>
 ```
 
-The following is bundler-based ESM. For raw HTML, load `dist/themes.css` with a stylesheet link and import `registerElements` from `./dist/elements/index.js` instead. Set array/object properties before connection when they should become reset defaults.
+This is bundler-based ESM. For raw HTML, load `dist/themes.css` with a link and import `registerElements` from `./dist/elements/index.js` instead. Initial array/object properties are assigned before connection to establish reset defaults.
 
 ```js
-import { registerElements } from '@samishal1998/hearth-ui/elements';
-import '@samishal1998/hearth-ui/themes.css';
+import { registerElements } from '@hearth-ui/elements';
+import '@hearth-ui/elements/themes.css';
 registerElements();
 
 const mount = document.querySelector('#example');
@@ -122,11 +122,14 @@ Object.assign(element, {
     }
   ]
 });
+
 element.innerHTML = "<div slot=\"storage\">Your application owns its storage.</div>"; // Static example markup only; never inject untrusted HTML.
+
 element.addEventListener('change', event => {
   const [value] = event.detail;
   // Update your application state using value.
 });
+
 mount.append(element);
 ```
 

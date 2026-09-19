@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { registerElements } from "@hearth/elements";
-import "../dist/themes.css";
+import "../packages/elements/dist/themes.css";
 import "./fixtures.css";
 registerElements();
 

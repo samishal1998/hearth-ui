@@ -1,0 +1,15 @@
+.git
+node_modules
+dist
+**/dist
+packages/*/docs
+packages/*/llms.txt
+packages/*/LICENSE
+site-dist
+test-results
+playwright-report
+release-dist
+*.tgz
+*.log
+*.tsbuildinfo
+.env*

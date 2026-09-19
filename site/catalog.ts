@@ -1,5 +1,317 @@
 export const catalog = [
   {
+    name: "HPopover",
+    tag: "hearth-popover",
+    category: "Controls",
+    description:
+      "A nonmodal top-layer panel anchored to its trigger, with viewport-aware positioning and focus handling.",
+    props:
+      "open, disabled: boolean · label, title, icon: string · placement: top | bottom | left | right · variant: primary | secondary | ghost",
+    events: "update:open(boolean), close()",
+    slots: "default",
+    parts: "base, panel, title",
+  },
+  {
+    name: "HTooltip",
+    tag: "hearth-tooltip",
+    category: "Feedback",
+    description:
+      "Hoverable, keyboard-accessible help text with a configurable delay and Escape dismissal.",
+    props:
+      "text, label, icon: string · placement: top | bottom | left | right · delay: number · disabled: boolean",
+    events: "None",
+    slots: "default (focusable trigger; an info button is provided otherwise)",
+    parts: "base, trigger, content",
+  },
+  {
+    name: "HDropdownMenu",
+    tag: "hearth-dropdown-menu",
+    category: "Controls",
+    description:
+      "A keyboard-operated command menu for edit, copy, refresh, and destructive actions.",
+    props:
+      "items: MenuAction[] · label, icon: string · open, disabled: boolean · placement: top | bottom | left | right",
+    events: "select(id), update:open(boolean)",
+    slots: "None",
+    parts: "base, menu, item",
+  },
+  {
+    name: "HToast",
+    tag: "hearth-toast",
+    category: "Feedback",
+    description:
+      "A dismissible notification with optional action, a timer, and pause-on-hover/focus behavior.",
+    props:
+      "title, description, actionLabel: string · tone: Tone · duration: milliseconds (0 persists) · dismissible: boolean",
+    events: "dismiss(), action()",
+    slots: "default",
+    parts: "base, title, description, action",
+  },
+  {
+    name: "HToaster",
+    tag: "hearth-toaster",
+    category: "Feedback",
+    description:
+      "A controlled, positioned notification stack that composes HToast.",
+    props:
+      "items: ToastItem[] · position: top-right | top-left | bottom-right | bottom-left · limit: number · label: string",
+    events: "dismiss(id), action(id)",
+    slots: "default",
+    parts: "base",
+  },
+  {
+    name: "HSheet",
+    tag: "hearth-sheet",
+    category: "Feedback",
+    description:
+      "A native modal side panel for inspection and editing without leaving the current page.",
+    props:
+      "open: boolean · title, description, width: string · side: left | right",
+    events: "close()",
+    slots: "default, footer",
+    parts: "panel, header, body, footer",
+  },
+  {
+    name: "HDataTable",
+    tag: "hearth-data-table",
+    category: "Surfaces",
+    description:
+      "Semantic data tables with sorting, selection, paging, loading/empty states, and row actions.",
+    props:
+      "rows: TableRow[] · columns: TableColumn[] · label, caption, emptyText: string · selected, disabledRows: string[] · sort: TableSort · page, pageSize, total: number · selectable, loading, manual, stickyHeader: boolean · actions: MenuAction[]",
+    events:
+      "update:selected(ids), selection-change(ids), sort-change(sort), update:page(page), page-change(page), row-action({id, action})",
+    slots: "Per-cell names from tableCellSlot(rowId, columnKey)",
+    parts: "base, viewport, header-cell, row, cell, footer",
+  },
+  {
+    name: "HDescriptionList",
+    tag: "hearth-description-list",
+    category: "Surfaces",
+    description:
+      "Responsive native key/value metadata with links and per-value slots.",
+    props: "items: DescriptionItem[] · columns: 1 | 2 | 3",
+    events: "None",
+    slots: "value:<item.key>",
+    parts: "base, item, label, value",
+  },
+  {
+    name: "HList",
+    tag: "hearth-list",
+    category: "Surfaces",
+    description:
+      "A semantic list container for integrations, activity, and settings rows.",
+    props: "label: string · divided: boolean",
+    events: "None",
+    slots: "default",
+    parts: "base",
+  },
+  {
+    name: "HListItem",
+    tag: "hearth-list-item",
+    category: "Surfaces",
+    description:
+      "A readable row with icon, description, badge, and separate action content.",
+    props:
+      "title, description, icon, badge, href: string · tone: Tone · interactive, disabled, selected: boolean",
+    events: "activate()",
+    slots: "leading, trailing, actions",
+    parts: "base, content, title, description",
+  },
+  {
+    name: "HChip",
+    tag: "hearth-chip",
+    category: "Controls",
+    description:
+      "A compact selectable or removable label with distinct toggle and remove actions.",
+    props:
+      "label, value: string · selected, selectable, removable, disabled: boolean · tone: Tone",
+    events: "select(value), remove(value)",
+    slots: "None",
+    parts: "base, label, remove",
+  },
+  {
+    name: "HChipGroup",
+    tag: "hearth-chip-group",
+    category: "Controls",
+    description:
+      "An array-valued filter group or removable set of selected tags.",
+    props:
+      "options: SelectOption[] · modelValue: string[] · label: string · removable, disabled: boolean",
+    events: "update:modelValue(values), change(values), remove(value)",
+    slots: "default",
+    parts: "base",
+  },
+  {
+    name: "HSegmentedControl",
+    tag: "hearth-segmented-control",
+    category: "Controls",
+    description:
+      "A compact exclusive-value selector backed by the shared native radio-group engine.",
+    props:
+      "modelValue, value, label, name: string · options: ChoiceOption[] · required, disabled: boolean",
+    events: "update:modelValue(value), change(value)",
+    slots: "None",
+    parts: "base, label, option, control",
+  },
+  {
+    name: "HFileUpload",
+    tag: "hearth-file-upload",
+    category: "Controls",
+    description:
+      "Native file selection and drag/drop with configurable validation, file lists, and application-owned progress.",
+    props:
+      "label, name, accept, description, error: string · modelValue: File[] · multiple, required, disabled: boolean · maxSize, maxFiles, resetKey, progress: number",
+    events: "update:modelValue(files), change(files), reject(FileRejection[])",
+    slots: "None",
+    parts: "base, label, dropzone, control, files",
+  },
+  {
+    name: "HCodeBlock",
+    tag: "hearth-code-block",
+    category: "Surfaces",
+    description:
+      "Escaped, copyable code or configuration text with optional wrapping and line numbers.",
+    props:
+      "code, language, title: string · wrap, lineNumbers, copyable: boolean",
+    events: "copied(), copy-error(message)",
+    slots: "None",
+    parts: "base, header, code",
+  },
+  {
+    name: "HCommandPalette",
+    tag: "hearth-command-palette",
+    category: "Controls",
+    description:
+      "A searchable keyboard command dialog with grouping, shortcuts, and disabled commands.",
+    props:
+      "items: CommandItem[] · open, shortcut: boolean · label, placeholder: string",
+    events: "update:open(boolean), close(), select(id), search(query)",
+    slots: "None",
+    parts: "list, option (dialog parts are also exposed)",
+  },
+  {
+    name: "HLogViewer",
+    tag: "hearth-log-viewer",
+    category: "Surfaces",
+    description:
+      "A bounded log tail with search, level filtering, pause/follow controls, and copy support.",
+    props:
+      "entries: LogEntry[] · label: string · follow, wrap: boolean · maxLines: number = 500",
+    events:
+      "update:follow(boolean), search-change(query), copied(), copy-error(message)",
+    slots: "None",
+    parts: "base, header, viewport, line",
+  },
+  {
+    name: "HCopyField",
+    tag: "hearth-copy-field",
+    category: "Controls",
+    description:
+      "A read-only endpoint, identifier, or secret field with explicit clipboard and reveal actions.",
+    props: "label, value: string · secret, disabled: boolean",
+    events: "copied(), copy-error(message)",
+    slots: "None",
+    parts: "base, label, value",
+  },
+  {
+    name: "HConnectionState",
+    tag: "hearth-connection-state",
+    category: "Feedback",
+    description:
+      "Connection lifecycle feedback with an optional application-owned retry action.",
+    props:
+      "state: connecting | connected | reconnecting | failed | offline · label, description: string · retryable: boolean",
+    events: "retry()",
+    slots: "None",
+    parts: "base, title, description",
+  },
+  {
+    name: "HSparkline",
+    tag: "hearth-sparkline",
+    category: "Surfaces",
+    description:
+      "A small SVG trend with a textual summary, finite-data handling, and semantic tones.",
+    props:
+      "values: number[] · label, description: string · tone: Tone · width, height: number · decorative: boolean",
+    events: "None",
+    slots: "None",
+    parts: "base",
+  },
+  {
+    name: "HSettingsPage",
+    tag: "hearth-settings-page",
+    category: "Layouts",
+    description:
+      "Grouped settings content with dirty-state feedback and save/reset requests.",
+    props:
+      "title, description, error, saveLabel: string · dirty, saving: boolean",
+    events: "save(), reset()",
+    slots: "default, actions",
+    parts: "base, content, actions",
+  },
+  {
+    name: "HProviderSetup",
+    tag: "hearth-provider-setup",
+    category: "Layouts",
+    description:
+      "A connection setup recipe with required fields, test/save requests, and connection feedback.",
+    props:
+      "title, description, message, endpointPlaceholder: string · modelValue: ConnectionDraft · testing, saving: boolean · state: connection state",
+    events: "update:modelValue(draft), test(draft), save(draft)",
+    slots: "footer",
+    parts: "base",
+  },
+  {
+    name: "HResourceDetail",
+    tag: "hearth-resource-detail",
+    category: "Layouts",
+    description:
+      "A resource introduction with breadcrumbs, state, metadata, and tabbed details.",
+    props:
+      "title, description, activeTab, status: string · breadcrumbs: NavItem[] · fields: DescriptionItem[] · tabs: TabItem[] · tone: Tone",
+    events: "navigate(id), update:activeTab(value)",
+    slots: "actions, summary, default or a named slot per tab.value",
+    parts: "base",
+  },
+  {
+    name: "HStatusPage",
+    tag: "hearth-status-page",
+    category: "Layouts",
+    description:
+      "A public status-page recipe with service groups, derived summary, and incident updates.",
+    props:
+      "brand, title, description, updatedAt: string · groups: StatusGroup[] · incidents: StatusIncident[]",
+    events: "None",
+    slots: "actions, default",
+    parts: "base (public shell parts are also exposed)",
+  },
+  {
+    name: "HErrorPage",
+    tag: "hearth-error-page",
+    category: "Layouts",
+    description:
+      "Not-found, access-denied, and unavailable page treatments with clear recovery actions.",
+    props:
+      "kind: not-found | forbidden | unavailable · brand, title, description, homeHref: string · retryable: boolean",
+    events: "retry()",
+    slots: "actions, footer",
+    parts: "base, code, title, description",
+  },
+  {
+    name: "HFirstRunSetup",
+    tag: "hearth-first-run-setup",
+    category: "Layouts",
+    description:
+      "An application-controlled owner-account, provider, and completion setup recipe.",
+    props:
+      "step: 0 | 1 | 2 · title, error, connectionMessage: string · busy, allowBack: boolean · passwordMinLength: number · connectionState: connection state",
+    events:
+      "update:step(number), account(credentials), test-provider(draft), provider(draft), complete()",
+    slots: "account, footer",
+    parts: "base, steps",
+  },
+  {
     name: "HMultiSelect",
     tag: "hearth-multi-select",
     category: "Controls",
@@ -242,7 +554,7 @@ export const catalog = [
     description:
       "A labeled input with help/error text and native validation. Web components participate in their owning form.",
     props:
-      "modelValue, value, label, name, placeholder, hint, error, autocomplete, pattern: string · type: text | email | password | url | search | number | tel · required, disabled, readonly: boolean · minlength, maxlength: number · min, max: string | number",
+      "modelValue, value, label, name, placeholder, hint, error, autocomplete, pattern: string · type: text | email | password | url | search | number | tel | date | time | datetime-local · required, disabled, readonly: boolean · minlength, maxlength: number · min, max, step: string | number",
     events: "update:modelValue(value), change(value)",
     slots: "None",
     parts: "base, label, control, hint",

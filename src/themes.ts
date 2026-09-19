@@ -68,6 +68,94 @@ export interface AuthCredentials {
   password: string;
 }
 
+export interface MenuAction {
+  id: string;
+  label: string;
+  icon?: string;
+  shortcut?: string;
+  disabled?: boolean;
+  danger?: boolean;
+  separatorBefore?: boolean;
+}
+export interface ToastItem {
+  id: string;
+  title: string;
+  description?: string;
+  tone?: Tone;
+  duration?: number;
+  actionLabel?: string;
+}
+export type TableCell = string | number | boolean | null | undefined;
+export interface TableRow {
+  id: string;
+  [key: string]: TableCell;
+}
+export interface TableColumn {
+  key: string;
+  label: string;
+  sortable?: boolean;
+  align?: "start" | "end";
+  width?: string;
+}
+export interface TableSort {
+  key: string;
+  direction: "ascending" | "descending";
+}
+export interface DescriptionItem {
+  key: string;
+  label: string;
+  value?: TableCell;
+  href?: string;
+}
+export interface CommandItem {
+  id: string;
+  label: string;
+  description?: string;
+  icon?: string;
+  group?: string;
+  shortcut?: string;
+  keywords?: string[];
+  disabled?: boolean;
+}
+export interface LogEntry {
+  id: string;
+  message: string;
+  timestamp?: string;
+  level?: "debug" | "info" | "warning" | "error";
+}
+export interface FileRejection {
+  name: string;
+  reason: string;
+}
+export interface ConnectionDraft {
+  name: string;
+  endpoint: string;
+}
+export type ServiceState =
+  "operational" | "degraded" | "outage" | "maintenance" | "unknown";
+export interface StatusService {
+  id: string;
+  name: string;
+  status: ServiceState;
+  description?: string;
+  href?: string;
+}
+export interface StatusGroup {
+  id: string;
+  label: string;
+  services: StatusService[];
+}
+export interface StatusIncident {
+  id: string;
+  title: string;
+  description: string;
+  status: "investigating" | "monitoring" | "resolved";
+  updatedAt?: string;
+}
+export function tableCellSlot(rowId: string, columnKey: string): string {
+  return `cell:${encodeURIComponent(rowId)}:${encodeURIComponent(columnKey)}`;
+}
+
 /** Filters to Hearth variables; values are CSS authored by the consuming application. */
 export function themeStyle(tokens: ThemeTokens = {}): Record<string, string> {
   return Object.fromEntries(

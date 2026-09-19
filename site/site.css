@@ -63,6 +63,17 @@ dd code {
 .spacer {
   height: 22px;
 }
+.recipe-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-bottom: 60px;
+}
+@media (max-width: 650px) {
+  .recipe-gallery {
+    grid-template-columns: 1fr;
+  }
+}
 .eyebrow {
   display: block;
   text-transform: uppercase;

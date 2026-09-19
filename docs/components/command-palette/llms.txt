@@ -1,0 +1,160 @@
+# HCommandPalette
+
+> A searchable keyboard command dialog with grouping, shortcuts, and disabled commands.
+
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.4.0. Match documentation to your installed source/release.
+
+## Identity
+
+- Vue export: `HCommandPalette` from `@hearth-ui/vue`.
+- Custom element: `<hearth-command-palette>`.
+- Constructor: `HearthCommandPaletteElement` from `@hearth-ui/elements`.
+- Category: Controls.
+- [Implementation](https://github.com/samishal1998/hearth-ui/blob/main/src/components/HCommandPalette.vue).
+
+## Choose and use it correctly
+
+- Search includes labels, descriptions, groups, and keywords. Disabled commands cannot execute.
+- Global Ctrl/Cmd+K binding is opt-in with shortcut=true; enable it on only the intended palette. The component requests actions and never owns the router.
+
+## Public API
+
+items: CommandItem[] · open, shortcut: boolean · label, placeholder: string
+
+A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
+
+```ts
+type Props = {
+    open?: boolean;
+    items: CommandItem[];
+    label?: string;
+    placeholder?: string;
+    shortcut?: boolean;
+};
+```
+
+### Defaults
+
+```ts
+{
+    items: () => [],
+    label: "Command palette",
+    placeholder: "Search commands…",
+  }
+```
+
+### Events
+
+update:open(boolean), close(), select(id), search(query)
+
+```ts
+type Emits = {
+    "update:open": [
+        open: boolean
+    ];
+    close: [
+    ];
+    select: [
+        id: string
+    ];
+    search: [
+        query: string
+    ];
+};
+```
+
+Vue-emitted custom-element events expose argument arrays in `event.detail`. Listen on the element. Native events such as `click` retain their normal payloads. The elements package provides framework-independent DOM event types.
+
+### Slots
+
+None
+
+Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
+
+### CSS parts
+
+list, option (dialog parts are also exposed)
+
+Use `hearth-command-palette::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export interface CommandItem {
+    id: string;
+    label: string;
+    description?: string;
+    icon?: string;
+    group?: string;
+    shortcut?: string;
+    keywords?: string[];
+    disabled?: boolean;
+}
+```
+
+## Vue example
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { HCommandPalette, HButton } from '@hearth-ui/vue';
+import '@hearth-ui/vue/styles.css';
+const open = ref(false);
+const commands = [{id:'apps',label:'Open applications',group:'Navigate',icon:'apps'},{id:'settings',label:'Open settings',group:'Navigate',icon:'settings'}];
+function run(id: string) { /* Route or execute the selected command. */ }
+</script>
+
+<template>
+  <HButton @click="open=true">Find an action</HButton>
+  <HCommandPalette v-model:open="open" :items="commands" @select="run" />
+</template>
+```
+
+## Web-component example
+
+Provide a mount point. For field submission, use an owning native form; the auth page already contains its own form.
+
+```html
+<div id="example"></div>
+```
+
+This is bundler-based ESM. For raw HTML, load `dist/themes.css` with a link and import `registerElements` from `./dist/elements/index.js` instead. Initial array/object properties are assigned before connection to establish reset defaults.
+
+```js
+import { registerElements } from '@hearth-ui/elements';
+import '@hearth-ui/elements/themes.css';
+registerElements();
+
+const mount = document.querySelector('#example');
+const element = document.createElement('hearth-command-palette');
+Object.assign(element, {
+  "items": [
+    {
+      "id": "apps",
+      "label": "Open applications",
+      "group": "Navigate",
+      "icon": "apps"
+    },
+    {
+      "id": "settings",
+      "label": "Open settings",
+      "group": "Navigate",
+      "icon": "settings"
+    }
+  ]
+});
+
+element.addEventListener('update:open', event => { element.open = event.detail[0]; });
+const trigger = document.createElement('button'); trigger.textContent = 'Find an action'; trigger.addEventListener('click', () => { element.open = true; }); mount.before(trigger);
+
+mount.append(element);
+```
+
+## Related components
+
+- [HDialog](../dialog/llms.txt): A native modal dialog with focus containment, Escape dismissal, and focus return. Keep it inside your theme island.
+- [HCombobox](../combobox/llms.txt): Searchable single or multi-select with selected chips, disabled options, keyboard navigation, and repeated form values.
+- [HDropdownMenu](../dropdown-menu/llms.txt): A keyboard-operated command menu for edit, copy, refresh, and destructive actions.
+
+---
+Generated by `npm run docs:generate` from component source, `site/catalog.ts`, and `scripts/agent-examples.mjs`. Do not edit this generated file directly.

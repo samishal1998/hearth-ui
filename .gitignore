@@ -7,3 +7,6 @@ playwright-report/
 *.log
 *.tsbuildinfo
 release-dist/
+packages/*/docs/
+packages/*/llms.txt
+packages/*/LICENSE

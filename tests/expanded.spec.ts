@@ -118,9 +118,14 @@ test("Vue comboboxes, selection controls, navigation, and disclosure primitives"
       { exact: true },
     ),
   ).not.toBeVisible();
-  await page.getByRole("button", { name: "Next page", exact: true }).click();
+  await page
+    .locator("#expanded-components")
+    .getByRole("button", { name: "Next page", exact: true })
+    .click();
   await expect(
-    page.getByRole("button", { name: "Page 2", exact: true }),
+    page
+      .locator("#expanded-components")
+      .getByRole("button", { name: "Page 2", exact: true }),
   ).toHaveAttribute("aria-current", "page");
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
@@ -360,11 +365,16 @@ test("web component navigation, progress, skeletons, accordions, and manual tabs
   await expect(
     page.getByRole("progressbar", { name: "Scan progress", exact: true }),
   ).toHaveAttribute("value", "50");
-  await page.getByRole("button", { name: "Next page", exact: true }).click();
+  await page
+    .getByTitle("Navigation and feedback")
+    .getByRole("button", { name: "Next page", exact: true })
+    .click();
   await expect(page.locator("#page-result")).toHaveText("Page 2");
   await page.getByRole("button", { name: "Page 10", exact: true }).click();
   await expect(
-    page.getByRole("button", { name: "Next page", exact: true }),
+    page
+      .getByTitle("Navigation and feedback")
+      .getByRole("button", { name: "Next page", exact: true }),
   ).toBeDisabled();
   await page.getByText("Where is the data?", { exact: true }).click();
   await expect(

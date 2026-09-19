@@ -1,5 +1,5 @@
 import { registerElements } from "@hearth/elements";
-import "../dist/themes.css";
+import "../packages/elements/dist/themes.css";
 import "./fixtures.css";
 import type {
   HearthSelectElement,
@@ -11,11 +11,13 @@ import type {
 registerElements();
 registerElements();
 import { mountAdvancedExamples } from "./advanced-elements";
+import {mountDashboardElements} from './dashboard-elements';
 const advanced = document.createElement("section");
 advanced.id = "advanced-examples";
 advanced.className = "fixture-grid";
 document.querySelector(".fixture-content")!.appendChild(advanced);
 mountAdvancedExamples(advanced);
+const dashboard=document.createElement('section');dashboard.id='dashboard-examples';dashboard.className='fixture-grid';document.querySelector('.fixture-content')!.appendChild(dashboard);mountDashboardElements(dashboard);
 const select = document.querySelector("#category") as InstanceType<
   typeof HearthSelectElement
 >;

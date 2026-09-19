@@ -1,58 +1,65 @@
 # Hearth UI
 
-> A themeable Vue and web-component system for self-hosted dashboards, public pages, and authentication screens. Start here, then read only the component references needed for the task.
+> Themeable Vue and web components for self-hosted dashboards, public pages, and authentication. Start here, then read only the component references needed for the task.
 
-This index covers 35 public components from repository source. The current package.json version is 0.2.0; the working tree may contain unreleased changes. Check the installed version and matching source/tag before assuming a feature is in a published release.
+This index covers 61 public components in source version 0.4.0. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
 
 ## Agent workflow
 
-1. Identify the host framework and choose native Vue components or web components. Do not create another implementation of an existing Hearth component.
-2. Pick a page frame first: [HPublicShell](docs/components/public-shell/llms.txt), [HAuthPage](docs/components/auth-page/llms.txt), or [HDashboardShell](docs/components/dashboard-shell/llms.txt).
-3. Read [HTheme](docs/components/theme/llms.txt) before changing tokens, palettes, density, or scoped theme islands.
-4. Follow the relevant component links below for props, defaults, events, slots, examples, and constraints. Do not invent props, tags, or event payload shapes.
-5. Keep authentication, authorization, routing, network requests, persistence, and business logic in the consuming application.
-6. If changing this repository, regenerate these files with `npm run docs:generate` and verify them with `npm run docs:check`.
+1. Choose the native Vue or web-component distribution for the host framework. Reuse existing Hearth components.
+2. Choose a frame: [HPublicShell](docs/components/public-shell/llms.txt), [HAuthPage](docs/components/auth-page/llms.txt), or [HDashboardShell](docs/components/dashboard-shell/llms.txt).
+3. Read [HTheme](docs/components/theme/llms.txt) before changing palettes, tokens, or density.
+4. Follow the component links for props, defaults, events, slots, recipes, and constraints. Do not invent APIs.
+5. Keep authentication, authorization, routing, requests, and persistence in the application.
+6. After editing repository APIs, run `npm run docs:generate` and `npm run docs:check`.
 
-## Installation and entry points
+## Packages and entry points
 
-- Package name: `@samishal1998/hearth-ui`. [GitHub releases](https://github.com/samishal1998/hearth-ui/releases) provide npm-compatible tarballs; do not assume an npm registry publication. For current unreleased source, build this checkout.
-- Vue: import named components from the package and load `@samishal1998/hearth-ui/styles.css`. Use the host's Vue 3.5+ runtime.
-- Web components: import `registerElements` from `@samishal1998/hearth-ui/elements`, load `@samishal1998/hearth-ui/themes.css`, and call `registerElements()`.
-- Auto-registration: `@samishal1998/hearth-ui/elements/auto`. A custom prefix is supported through `registerElements('my-app')`.
-- Raw browser: serve the extracted package contents, link `dist/themes.css`, and load `dist/elements/auto.js` as a module. Keep the shared chunks alongside the entry files. No Node globals or host Vue global are needed.
-- Native Vue supports SSR. Web components render when connected in the browser; declarative shadow-DOM hydration is not provided.
+- Native Vue: `@hearth-ui/vue`. Import named components and `@hearth-ui/vue/styles.css`. Vue 3.5+ is a peer dependency; this build does not bundle Vue.
+- Web components: `@hearth-ui/elements`. Import `registerElements` from its root and load `@hearth-ui/elements/themes.css`. No Vue dependency or Vue types are required by the host.
+- Auto-registration: `@hearth-ui/elements/auto`. Custom prefixes use `registerElements('my-app')`.
+- Both packages export theme helpers/types and include these references. Install from npm after publication, or use tarballs from `npm run pack:packages` / [GitHub Releases](https://github.com/samishal1998/hearth-ui/releases). Do not assume a prepared package is already on npm.
+- Raw HTML: extract the elements package, link `dist/themes.css`, and load `dist/elements/auto.js` as a module. Keep shared chunks together. No Node globals or global Vue are required.
+- Native Vue supports SSR. Custom elements render when connected in the browser; declarative shadow-DOM hydration is not provided.
+- The repository root is a private build workspace, not a publishable UI package. Earlier `@samishal1998/hearth-ui` release artifacts were a combined distribution; use matching version documentation when maintaining those installs.
 
 ## Shared integration rules
 
-- Vue prop names use camelCase; HTML attributes use kebab-case. Array/object values are DOM properties, never JSON strings in attributes.
-- Boolean attributes use presence/absence. Set `element.disabled = false`, not `disabled="false"`.
-- Vue-emitted events become custom events with argument arrays: `const [value] = event.detail`. Listen on the element itself; do not assume bubbling. Native `click` is still a normal DOM event.
-- Native Vue models use `v-model` (or a named model when documented). Update consumer-owned state for callbacks such as `favorite-change`, `close`, and navigation.
-- Native slots use `slot="name"`; Vue uses `#name`. There are no web-component scoped slots.
-- Fields need names to participate in form submission. Custom fields bridge to their owning native form through ElementInternals. Multi-selection uses repeated values: `new FormData(form).getAll(name)`.
-- Keep form and field hosts in the same DOM tree. Configure initial properties before connection if they should become reset defaults. Do not attach unrelated slotted fields to an internal auth form.
-- `formDisabled` and `control-sync` are internal adapter plumbing. Do not configure or subscribe to them in application code.
-- Palettes in this source: `sunset`, `ocean`, `forest`, `dusk`, `rose`. Sunset is the default. Modes: dark, light, system. Density: comfortable, compact.
-- Prefer `--h-*` tokens for consistent changes; use documented CSS parts for targeted web-component styling. Do not reach into shadow roots to patch implementation DOM.
-- Use visible labels, meaningful state text, and native keyboard behavior. Validate custom palettes and your composed application; component tests are not an application-wide accessibility certification.
+- Vue props use camelCase; HTML attributes use kebab-case. Array/object values are DOM properties, never JSON attributes.
+- Boolean attributes use presence/absence. Assign `element.disabled = false`, not `disabled="false"`.
+- Custom events emitted by Vue use argument arrays: `const [value] = event.detail`. Listen on the element; do not assume bubbling. Native `click` remains a MouseEvent.
+- Vue uses `v-model` or a documented named model. Apply consumer-owned state changes for favorite, close, and navigation events.
+- Vue named slots use `#name`; native slots use `slot="name"`. Web components have no scoped slots.
+- Named fields join their owning form through ElementInternals. Multi-selects submit repeated values: read `FormData.getAll(name)`.
+- Keep forms and field hosts in one DOM tree. Set initial properties before connection for reset defaults. Do not put unrelated fields into an auth page's non-form slots.
+- `formDisabled` and `control-sync` are internal plumbing, not application APIs.
+- Source palettes: `sunset`, `ocean`, `forest`, `dusk`, `rose`. Sunset is default. Modes: dark, light, system. Densities: comfortable, compact.
+- Prefer inherited `--h-*` variables, then exposed CSS parts. Do not patch shadow-root implementation DOM.
+- Use visible labels, state text, and native keyboard behavior. Verify your custom palette and complete application, not just isolated components.
 
 ## Quick component selection
 
-- Short fixed choice: HSelect. Searchable choice: HCombobox. Array-typed searchable choices: HMultiSelect. One visible choice among alternatives: HRadioGroup.
-- Selection/agreement: HCheckbox. On/off setting: HSwitch. Free text: HInput/HTextarea. Bounded numeric adjustment: HRange.
-- Revealing panels: HTabs. Expandable sections: HAccordion. Route navigation: HNavigationMenu/HSidebar/HBreadcrumbs.
-- Known/unknown work progress: HProgress. Loading shapes: HSkeleton. Empty/no-results state: HEmptyState. Feedback: HAlert. Compact state label: HBadge.
-- Generic content: HCard. Application launchers: HAppCard. Metrics: HStatCard.
+- Fixed choice: HSelect. Searchable choice: HCombobox. Array-only searchable choice: HMultiSelect. Visible exclusive choices: HRadioGroup.
+- Selection/agreement: HCheckbox. On/off setting: HSwitch. Text: HInput/HTextarea. Numeric adjustment: HRange.
+- Panels: HTabs. Expandable sections: HAccordion. Routes: HNavigationMenu/HSidebar/HBreadcrumbs.
+- Work progress: HProgress. Loading shapes: HSkeleton. Empty results: HEmptyState. Feedback: HAlert. State label: HBadge.
+- Content: HCard. App launcher: HAppCard. Metric: HStatCard.
 
 ## Layouts
 
 - [HAuthPage](docs/components/auth-page/llms.txt): The full split-screen welcome/login page. It emits credentials; your application owns authentication.
 - [HBreadcrumbs](docs/components/breadcrumbs/llms.txt): A wrapping breadcrumb trail with an accessible current page.
 - [HDashboardShell](docs/components/dashboard-shell/llms.txt): A complete dashboard frame with desktop sidebar, native mobile navigation dialog, account controls, and content area.
+- [HErrorPage](docs/components/error-page/llms.txt): Not-found, access-denied, and unavailable page treatments with clear recovery actions.
+- [HFirstRunSetup](docs/components/first-run-setup/llms.txt): An application-controlled owner-account, provider, and completion setup recipe.
 - [HNavigationMenu](docs/components/navigation-menu/llms.txt): A navigation disclosure menu with native links, nested groups, outside-click dismissal, and Escape support.
 - [HPageHeader](docs/components/page-header/llms.txt): A plain page introduction or the signature atmospheric dashboard hero.
+- [HProviderSetup](docs/components/provider-setup/llms.txt): A connection setup recipe with required fields, test/save requests, and connection feedback.
 - [HPublicShell](docs/components/public-shell/llms.txt): A public landing-page frame: brand, a few links, an account action, and a quiet footer.
+- [HResourceDetail](docs/components/resource-detail/llms.txt): A resource introduction with breadcrumbs, state, metadata, and tabbed details.
+- [HSettingsPage](docs/components/settings-page/llms.txt): Grouped settings content with dirty-state feedback and save/reset requests.
 - [HSidebar](docs/components/sidebar/llms.txt): A standalone, collapsible sidebar with grouped navigation and optional custom header/footer.
+- [HStatusPage](docs/components/status-page/llms.txt): A public status-page recipe with service groups, derived summary, and incident updates.
 
 ## Controls
 
@@ -60,12 +67,20 @@ This index covers 35 public components from repository source. The current packa
 - [HButton](docs/components/button/llms.txt): Native button or link behavior, clear focus, icon-only labels, and restrained press feedback.
 - [HButtonBar](docs/components/button-bar/llms.txt): Group actions without changing native button focus or submission behavior.
 - [HCheckbox](docs/components/checkbox/llms.txt): A native checkbox with a mixed-state option and optional description.
+- [HChip](docs/components/chip/llms.txt): A compact selectable or removable label with distinct toggle and remove actions.
+- [HChipGroup](docs/components/chip-group/llms.txt): An array-valued filter group or removable set of selected tags.
 - [HCombobox](docs/components/combobox/llms.txt): Searchable single or multi-select with selected chips, disabled options, keyboard navigation, and repeated form values.
+- [HCommandPalette](docs/components/command-palette/llms.txt): A searchable keyboard command dialog with grouping, shortcuts, and disabled commands.
+- [HCopyField](docs/components/copy-field/llms.txt): A read-only endpoint, identifier, or secret field with explicit clipboard and reveal actions.
+- [HDropdownMenu](docs/components/dropdown-menu/llms.txt): A keyboard-operated command menu for edit, copy, refresh, and destructive actions.
+- [HFileUpload](docs/components/file-upload/llms.txt): Native file selection and drag/drop with configurable validation, file lists, and application-owned progress.
 - [HInput](docs/components/input/llms.txt): A labeled input with help/error text and native validation. Web components participate in their owning form.
 - [HMultiSelect](docs/components/multi-select/llms.txt): An array-typed multi-select combobox using the same searchable selection engine as HCombobox.
 - [HPagination](docs/components/pagination/llms.txt): Bounded page navigation with current-page semantics and ellipses for long lists.
+- [HPopover](docs/components/popover/llms.txt): A nonmodal top-layer panel anchored to its trigger, with viewport-aware positioning and focus handling.
 - [HRadioGroup](docs/components/radio-group/llms.txt): One native radio group per component, with descriptions, disabled choices, and arrow/Home/End keyboard control.
 - [HRange](docs/components/range/llms.txt): A native numeric slider with a visible value and optional unit.
+- [HSegmentedControl](docs/components/segmented-control/llms.txt): A compact exclusive-value selector backed by the shared native radio-group engine.
 - [HSelect](docs/components/select/llms.txt): A native select with labeled options, not a recreated browser picker.
 - [HSwitch](docs/components/switch/llms.txt): A keyboard-operable switch backed by a real checkbox, with form participation in custom-element mode.
 - [HTabs](docs/components/tabs/llms.txt): Tabs with roving focus, arrow/Home/End keys, and properly associated panels.
@@ -75,17 +90,29 @@ This index covers 35 public components from repository source. The current packa
 
 - [HAppCard](docs/components/app-card/llms.txt): A launchable application card with source, status, and optional owner controls. Favorite state belongs to your app.
 - [HCard](docs/components/card/llms.txt): The common surface: restrained depth, a readable heading, and generous space for your content.
+- [HCodeBlock](docs/components/code-block/llms.txt): Escaped, copyable code or configuration text with optional wrapping and line numbers.
+- [HDataTable](docs/components/data-table/llms.txt): Semantic data tables with sorting, selection, paging, loading/empty states, and row actions.
+- [HDescriptionList](docs/components/description-list/llms.txt): Responsive native key/value metadata with links and per-value slots.
+- [HList](docs/components/list/llms.txt): A semantic list container for integrations, activity, and settings rows.
+- [HListItem](docs/components/list-item/llms.txt): A readable row with icon, description, badge, and separate action content.
+- [HLogViewer](docs/components/log-viewer/llms.txt): A bounded log tail with search, level filtering, pause/follow controls, and copy support.
 - [HSeparator](docs/components/separator/llms.txt): A structural divider, optionally labeled or exposed as an accessible separator.
+- [HSparkline](docs/components/sparkline/llms.txt): A small SVG trend with a textual summary, finite-data handling, and semantic tones.
 - [HStatCard](docs/components/stat-card/llms.txt): A quiet overview metric with tabular numbers, an icon, and a supporting label.
 
 ## Feedback
 
 - [HAlert](docs/components/alert/llms.txt): Inline feedback for success, information, and problems. Errors announce as alerts; other tones use status.
 - [HBadge](docs/components/badge/llms.txt): A compact label with optional status dot. Color always accompanies text.
+- [HConnectionState](docs/components/connection-state/llms.txt): Connection lifecycle feedback with an optional application-owned retry action.
 - [HDialog](docs/components/dialog/llms.txt): A native modal dialog with focus containment, Escape dismissal, and focus return. Keep it inside your theme island.
 - [HEmptyState](docs/components/empty-state/llms.txt): An inviting first-run or no-results state, with room for a useful next action.
 - [HProgress](docs/components/progress/llms.txt): Native determinate or indeterminate progress, with percentage text and semantic colors.
+- [HSheet](docs/components/sheet/llms.txt): A native modal side panel for inspection and editing without leaving the current page.
 - [HSkeleton](docs/components/skeleton/llms.txt): Text, rectangle, and circular loading placeholders with reduced-motion support.
+- [HToast](docs/components/toast/llms.txt): A dismissible notification with optional action, a timer, and pause-on-hover/focus behavior.
+- [HToaster](docs/components/toaster/llms.txt): A controlled, positioned notification stack that composes HToast.
+- [HTooltip](docs/components/tooltip/llms.txt): Hoverable, keyboard-accessible help text with a configurable delay and Escape dismissal.
 
 ## Foundation
 
@@ -96,13 +123,13 @@ This index covers 35 public components from repository source. The current packa
 
 ## Project references
 
-- [Repository](https://github.com/samishal1998/hearth-ui): source and contribution workflows.
-- [README](https://github.com/samishal1998/hearth-ui/blob/main/README.md): package setup and host integration.
-- [Live catalog](https://samishal1998.github.io/hearth-ui/#components): interactive examples.
-- [Theme studio](https://samishal1998.github.io/hearth-ui/#themes): visual token configuration.
-- [Shared source types](https://github.com/samishal1998/hearth-ui/blob/main/src/themes.ts): types and theme helpers.
+- [Repository](https://github.com/samishal1998/hearth-ui): source and workflows.
+- [README](https://github.com/samishal1998/hearth-ui/blob/main/README.md): integration and publishing.
+- [Live catalog](https://hearth-ui.samyx.net/#components): interactive examples.
+- [Theme studio](https://hearth-ui.samyx.net/#themes): configure tokens.
+- [Shared types](https://github.com/samishal1998/hearth-ui/blob/main/src/themes.ts): theme and data contracts.
 
-All local component links resolve in this repository and under the static site's base path. Source links point to main; use a matching tag when working with an older release.
+Relative links work in the repository and under the site's base path. Source links point to main; choose a matching tag when maintaining an older release.
 
 ---
-Generated by `npm run docs:generate`. Update source/catalog/recipes instead of editing generated references.
+Generated by `npm run docs:generate`; edit source, catalog, and recipes instead.

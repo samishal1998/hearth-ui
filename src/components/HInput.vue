@@ -8,7 +8,17 @@ const props = withDefaults(
     value?: string;
     label: string;
     name?: string;
-    type?: "text" | "email" | "password" | "url" | "search" | "number" | "tel";
+    type?:
+      | "text"
+      | "email"
+      | "password"
+      | "url"
+      | "search"
+      | "number"
+      | "tel"
+      | "date"
+      | "time"
+      | "datetime-local";
     placeholder?: string;
     hint?: string;
     error?: string;
@@ -20,6 +30,7 @@ const props = withDefaults(
     maxlength?: number;
     min?: string | number;
     max?: string | number;
+    step?: string | number;
     pattern?: string;
   }>(),
   { type: "text", value: "" },
@@ -61,6 +72,7 @@ controlSync(emit);
       :maxlength="maxlength"
       :min="min"
       :max="max"
+      :step="step"
       :pattern="pattern"
       :aria-invalid="!!error"
       :aria-describedby="error || hint ? `${id}-help` : undefined"

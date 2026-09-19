@@ -31,6 +31,8 @@ import {
 } from "../src";
 import { catalog } from "./catalog";
 import ExpandedExamples from "./ExpandedExamples.vue";
+import DashboardExamples from "./DashboardExamples.vue";
+import RecipeExamples from "./RecipeExamples.vue";
 const document = window.document;
 
 const route = ref(location.hash.slice(1) || "home");
@@ -247,6 +249,7 @@ const publicNav = [
   { id: "components", label: "Components", href: "#components" },
   { id: "themes", label: "Themes", href: "#themes" },
   { id: "guide", label: "Get started", href: "#guide" },
+  { id: "recipes", label: "Page recipes", href: "#recipes" },
 ];
 const dashboardNav = [
   { id: "overview", label: "Overview", icon: "home" },
@@ -277,7 +280,7 @@ function addApp(e: SubmitEvent) {
   addOpen.value = false;
   notify("Added to this demo workspace.");
 }
-const vueExample = `<script setup>\nimport { HTheme, HAuthPage } from '@samishal1998/hearth-ui'\nimport '@samishal1998/hearth-ui/styles.css'\n\nfunction signIn({ username, password }) {\n  // Call your authentication API here.\n}\n<\/script>\n\n<template>\n  <HTheme theme="sunset" mode="dark">\n    <HAuthPage brand="homestead" @submit="signIn" />\n  </HTheme>\n</template>`;
+const vueExample = `<script setup>\nimport { HTheme, HAuthPage } from '@hearth-ui/vue'\nimport '@hearth-ui/vue/styles.css'\n\nfunction signIn({ username, password }) {\n  // Call your authentication API here.\n}\n<\/script>\n\n<template>\n  <HTheme theme="sunset" mode="dark">\n    <HAuthPage brand="homestead" @submit="signIn" />\n  </HTheme>\n</template>`;
 const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script type="module">\n  import { registerElements } from './dist/elements/index.js'\n  registerElements()\n\n  document.querySelector('hearth-auth-page')\n    .addEventListener('submit', event => {\n      const [{ username, password }] = event.detail\n      // Call your authentication API here.\n    })\n<\/script>\n\n<hearth-theme theme="sunset" mode="dark">\n  <hearth-auth-page brand="homestead"></hearth-auth-page>\n</hearth-theme>`;
 </script>
 
@@ -297,7 +300,8 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
         @dismiss="notice = ''"
       />
     </div>
-    <template v-if="route === 'login'">
+    <RecipeExamples v-if="route.startsWith('recipe-')" :kind="route.slice(7)" />
+    <template v-else-if="route === 'login'">
       <div class="demo-back">
         <HButton href="#home" icon="arrow" variant="ghost"
           >Back to Hearth UI</HButton
@@ -510,7 +514,8 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
       >
       <template
         v-if="
-          route === 'home' || !['components', 'themes', 'guide'].includes(route)
+          route === 'home' ||
+          !['components', 'themes', 'guide', 'recipes'].includes(route)
         "
       >
         <section class="landing-hero">
@@ -580,7 +585,8 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
             ><strong>{{ catalog.length }}</strong> components, one family</span
           ><span><strong>2</strong> ways to use them</span
           ><span
-            ><strong>{{ themes.length }}</strong> palettes, endless possibilities</span
+            ><strong>{{ themes.length }}</strong> palettes, endless
+            possibilities</span
           ><span><strong>0</strong> backend assumptions</span>
         </div>
         <section class="landing-section">
@@ -674,9 +680,11 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
               variant="primary"
               trailing-icon="arrow"
               @click="
-                document.getElementById('expanded-components')?.scrollIntoView()
+                document
+                  .getElementById('dashboard-components')
+                  ?.scrollIntoView()
               "
-              >Explore what's new in 0.2</HButton
+              >Explore what's new in 0.4</HButton
             ></HPageHeader
           >
         </section>
@@ -836,6 +844,7 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
           ></HEmptyState
         >
         <ExpandedExamples id="expanded-components" @notice="notify" />
+        <DashboardExamples @notice="notify" />
         <section class="api-section">
           <h2>The component API</h2>
           <p class="muted">
@@ -1025,6 +1034,63 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
           </div>
         </section>
       </template>
+      <template v-else-if="route === 'recipes'">
+        <section class="page-intro">
+          <HPageHeader
+            title="A good starting point, already assembled."
+            description="Six reusable page recipes built from the same component family. Supply your own data and application behavior."
+            eyebrow="From pieces to pages"
+          />
+        </section>
+        <div class="recipe-gallery">
+          <HCard
+            v-for="recipe in [
+              {
+                id: 'settings',
+                title: 'Settings page',
+                description:
+                  'Grouped preferences, dirty state, and save/reset actions.',
+              },
+              {
+                id: 'provider',
+                title: 'Provider setup',
+                description:
+                  'Connection fields, test feedback, and a save request.',
+              },
+              {
+                id: 'resource',
+                title: 'Resource detail',
+                description:
+                  'Breadcrumbs, metadata, status, tabs, and actions.',
+              },
+              {
+                id: 'status',
+                title: 'Public status page',
+                description:
+                  'Service groups, incident updates, and a current summary.',
+              },
+              {
+                id: 'error',
+                title: 'Error pages',
+                description:
+                  'Not found, access denied, and temporarily unavailable.',
+              },
+              {
+                id: 'setup',
+                title: 'First-run setup',
+                description:
+                  'Owner account, provider connection, and completion.',
+              },
+            ]"
+            :key="recipe.id"
+            :title="recipe.title"
+            :description="recipe.description"
+            ><HButton :href="`#recipe-${recipe.id}`" trailing-icon="arrow"
+              >Preview {{ recipe.title.toLowerCase() }}</HButton
+            ></HCard
+          >
+        </div>
+      </template>
       <template v-else-if="route === 'guide'">
         <section class="page-intro">
           <HPageHeader
@@ -1069,16 +1135,22 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
           </aside>
           <article class="guide-body">
             <section id="install">
-              <h2>Install the release package</h2>
+              <h2>Choose your package</h2>
               <p>
-                Use the built npm-compatible tarball from GitHub Releases. An
-                npm registry publication is not required.
+                Native Vue and web components have separate packages. Install
+                from npm after publication, or use the matching tarball from a
+                release/local package build.
               </p>
-              <pre><code>npm install https://github.com/samishal1998/hearth-ui/releases/download/v0.2.0/samishal1998-hearth-ui-0.2.0.tgz</code></pre>
+              <pre><code># Native Vue
+npm install @hearth-ui/vue vue
+
+# Web components
+npm install @hearth-ui/elements</code></pre>
               <p>
                 Vue applications also need <code>vue@^3.5</code>. The
                 web-component build bundles its own Vue runtime and does not
-                require Vue in the host framework.
+                require Vue in the host framework, including for its TypeScript
+                declarations.
               </p>
               <HButton
                 href="https://github.com/samishal1998/hearth-ui/releases"
@@ -1105,8 +1177,8 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
               <pre><code>{{docFramework==='vue'?vueExample:wcExample}}</code></pre>
               <p>
                 With a bundler, import custom elements from
-                <code>@samishal1998/hearth-ui/elements</code> and tokens from
-                <code>@samishal1998/hearth-ui/themes.css</code>. For plain HTML,
+                <code>@hearth-ui/elements</code> and tokens from
+                <code>@hearth-ui/elements/themes.css</code>. For plain HTML,
                 download and extract the package, then load
                 <code>dist/elements/auto.js</code> as a module and
                 <code>dist/themes.css</code> as a stylesheet.
@@ -1123,7 +1195,8 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
               <h2>Theme with variables, not rewrites.</h2>
               <p>
                 Sunset is the default palette. Ocean, Forest, Dusk, and Rose
-                share the same visual geometry. Every preset has light and dark modes;
+                share the same visual geometry. Every preset has light and dark
+                modes;
                 <code>system</code> follows the browser's preference through
                 CSS.
               </p>

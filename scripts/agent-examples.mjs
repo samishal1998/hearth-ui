@@ -1,6 +1,449 @@
 // Component-specific recipes complement the API extracted from source and catalog.
 // `props` are assigned before connection, preserving custom-element form reset defaults.
 export const examples = {
+  HPopover: {
+    vue: '<HPopover label="Filters" title="Filter applications"><HInput label="Name contains" /></HPopover>',
+    imports: ["HInput"],
+    props: { label: "Filters", title: "Filter applications" },
+    children: '<hearth-input label="Name contains"></hearth-input>',
+    notes: [
+      "A nonmodal native popover stays in the top layer, so clipped ancestors do not hide it and theme inheritance remains intact. Current browsers need the Popover API.",
+      "Use its built-in trigger, or control open and respond to update:open. Keep interactive content in the default slot. Escape closes and returns focus.",
+    ],
+    related: ["HDropdownMenu", "HTooltip", "HDialog"],
+  },
+  HTooltip: {
+    vue: '<HTooltip text="Refresh application metadata" label="Refresh help" />',
+    props: { text: "Refresh application metadata", label: "Refresh help" },
+    notes: [
+      "Provide short supplementary help, not essential instructions available only on hover.",
+      "The default trigger is focusable. A slotted custom trigger must also be focusable and have its own accessible name.",
+      "Hover delay, focus access, hover persistence, and Escape dismissal are supported; interactive content belongs in HPopover.",
+    ],
+    related: ["HPopover", "HButton"],
+  },
+  HDropdownMenu: {
+    vue: '<HDropdownMenu label="Application actions" :items="actions" @select="act" />',
+    script:
+      "const actions = [{id:'edit',label:'Edit',icon:'settings'},{id:'remove',label:'Remove',danger:true,separatorBefore:true}];\nfunction act(id: string) { /* Perform the selected application action. */ }",
+    props: {
+      label: "Application actions",
+      items: [
+        { id: "edit", label: "Edit", icon: "settings" },
+        { id: "remove", label: "Remove", danger: true, separatorBefore: true },
+      ],
+    },
+    event: "select",
+    notes: [
+      "This is a command menu with menuitem roles; use HNavigationMenu for route navigation.",
+      "Arrow keys, Home/End, typeahead, Escape, and Tab work with disabled commands excluded from focus navigation. select(id) requests an application action.",
+    ],
+    related: ["HNavigationMenu", "HPopover", "HDataTable"],
+  },
+  HToast: {
+    vue: '<HToast v-if="visible" title="Preferences saved" tone="success" :duration="5000" @dismiss="visible=false" />',
+    script: "const visible = ref(true);",
+    props: { title: "Preferences saved", tone: "success", duration: 5000 },
+    js: "element.addEventListener('dismiss', () => element.remove());",
+    notes: [
+      "The timer pauses while hovered, focused, or the document is hidden. duration=0 persists until dismissed.",
+      "dismiss requests removal; remove the toast in the consuming app. Use an appropriate lifetime for important errors.",
+      "action requests the supplied action; application code handles it.",
+    ],
+    related: ["HToaster", "HAlert"],
+  },
+  HToaster: {
+    vue: '<HToaster :items="messages" @dismiss="dismiss" />',
+    script:
+      "const messages = ref([{id:'saved',title:'Preferences saved',tone:'success' as const}]);\nfunction dismiss(id: string) { messages.value = messages.value.filter(item => item.id !== id); }",
+    props: {
+      items: [
+        {
+          id: "saved",
+          title: "Preferences saved",
+          tone: "success",
+          duration: 0,
+        },
+      ],
+    },
+    js: "element.addEventListener('dismiss', event => { element.items = element.items.filter(item => item.id !== event.detail[0]); });",
+    notes: [
+      "The items array is consumer-owned. Remove dismissed IDs and supply unique stable IDs for notifications.",
+      "The stack is a fixed-position region. Place it inside an active modal context when notifications must be available to that modal. It does not install a global notification service.",
+    ],
+    related: ["HToast", "HAlert", "HDialog"],
+  },
+  HSheet: {
+    vue: '<HButton @click="open=true">Inspect provider</HButton>\n<HSheet :open="open" title="Provider details" @close="open=false"><p>Your editor goes here.</p></HSheet>',
+    imports: ["HButton"],
+    script: "const open = ref(false);",
+    props: { title: "Provider details" },
+    children: "<p>Your editor goes here.</p>",
+    js: "element.addEventListener('close', () => { element.open = false; });\nconst trigger = document.createElement('button'); trigger.textContent = 'Inspect provider'; trigger.addEventListener('click', () => { element.open = true; }); mount.before(trigger);",
+    notes: [
+      "A modal native dialog styled as a left/right sheet. Handle close by setting open=false.",
+      "Keep it inside a theme island. Default and footer slots are application-owned; the component does not persist edits.",
+    ],
+    related: ["HDialog", "HResourceDetail", "HDescriptionList"],
+  },
+  HDataTable: {
+    vue: '<HDataTable :rows="rows" :columns="columns" label="Applications" selectable v-model:selected="selected" :page-size="10" />',
+    script:
+      "const selected = ref<string[]>([]);\nconst rows = [{id:'photos',name:'Photos',port:2283},{id:'media',name:'Media',port:8096}];\nconst columns = [{key:'name',label:'Name',sortable:true},{key:'port',label:'Port',sortable:true}];",
+    props: {
+      label: "Applications",
+      selectable: true,
+      rows: [
+        { id: "photos", name: "Photos", port: 2283 },
+        { id: "media", name: "Media", port: 8096 },
+      ],
+      columns: [
+        { key: "name", label: "Name", sortable: true },
+        { key: "port", label: "Port", sortable: true },
+      ],
+      pageSize: 10,
+    },
+    event: "selection-change",
+    notes: [
+      "Supply unique string row IDs and column keys. Default rendering escapes cell text and handles flat primitive values.",
+      "tableCellSlot(rowId, columnKey) returns a stable per-cell slot name usable in Vue and native slots. Scoped slots are not required.",
+      "Client mode sorts and paginates supplied rows. manual mode leaves data processing to the app; total controls the page count. Handle sort-change/page-change for server queries.",
+      "Selection on the header applies to enabled rows on the current page. selected/disabledRows are ID arrays. The table uses semantic table markup, not spreadsheet-grid keyboard behavior.",
+    ],
+    related: ["HPagination", "HDropdownMenu", "HCheckbox"],
+  },
+  HDescriptionList: {
+    vue: '<HDescriptionList :items="fields" :columns="2" />',
+    script:
+      "const fields = [{key:'version',label:'Version',value:'1.0.0'},{key:'endpoint',label:'Endpoint',value:'https://example.com',href:'https://example.com'}];",
+    props: {
+      columns: 2,
+      items: [
+        { key: "version", label: "Version", value: "1.0.0" },
+        {
+          key: "endpoint",
+          label: "Endpoint",
+          value: "https://example.com",
+          href: "https://example.com",
+        },
+      ],
+    },
+    notes: [
+      "Native dl/dt/dd semantics suit resource metadata and provenance. Values are escaped primitive text by default.",
+      "Override a value through a slot named value:<item.key>. Use HDataTable for comparable records with columns.",
+    ],
+    related: ["HResourceDetail", "HCopyField", "HDataTable"],
+  },
+  HList: {
+    vue: '<HList label="Integrations"><HListItem title="Docker" description="Local infrastructure" icon="server" badge="Connected" tone="success" /></HList>',
+    imports: ["HListItem"],
+    props: { label: "Integrations" },
+    children:
+      '<hearth-list-item title="Docker" description="Local infrastructure" icon="server" badge="Connected" tone="success"></hearth-list-item>',
+    notes: [
+      "Use HListItem children. The container supplies native list semantics and the divider token.",
+      "The default slot accepts app-owned rows; use descriptive labels when there are several lists.",
+    ],
+    related: ["HListItem", "HDataTable", "HCard"],
+  },
+  HListItem: {
+    vue: '<HList label="Integrations"><HListItem title="Docker" description="Local infrastructure" icon="server" interactive @activate="open" /></HList>',
+    imports: ["HList"],
+    script: "function open() { /* Open integration details. */ }",
+    mountTag: "ul",
+    props: {
+      title: "Docker",
+      description: "Local infrastructure",
+      icon: "server",
+      interactive: true,
+    },
+    event: "activate",
+    notes: [
+      "Place in HList or a native list. interactive creates a button; href creates a safe link.",
+      "Use the actions slot for separate interactive controls. Keep leading/trailing slots noninteractive when the main row is a button or link.",
+    ],
+    related: ["HList", "HAvatar", "HDropdownMenu"],
+  },
+  HChip: {
+    vue: '<HChip label="Media" value="media" :selected="selected" selectable @select="selected=!selected" />',
+    script: "const selected = ref(false);",
+    props: {
+      label: "Media",
+      value: "media",
+      selected: false,
+      selectable: true,
+    },
+    js: "element.addEventListener('select', () => { element.selected = !element.selected; });",
+    notes: [
+      "selected is consumer-owned. select(value) toggles application selection; remove(value) requests removal.",
+      "Selectable and remove controls are separate buttons. Use HBadge for a purely informational state label.",
+    ],
+    related: ["HChipGroup", "HBadge", "HMultiSelect"],
+  },
+  HChipGroup: {
+    vue: '<HChipGroup v-model="filters" label="Application filters" :options="options" />',
+    script:
+      "const filters = ref<string[]>(['media']);\nconst options = [{value:'media',label:'Media'},{value:'home',label:'Home'}];",
+    props: {
+      label: "Application filters",
+      modelValue: ["media"],
+      options: [
+        { value: "media", label: "Media" },
+        { value: "home", label: "Home" },
+      ],
+    },
+    event: "change",
+    notes: [
+      "The model is an array of selected values. Default mode shows all options as toggles; removable mode shows only selected options with remove actions.",
+      "This is filter/application state, not a form-associated field. Use HMultiSelect when repeated form submission values are needed.",
+    ],
+    related: ["HChip", "HMultiSelect", "HSegmentedControl"],
+  },
+  HSegmentedControl: {
+    vue: '<HSegmentedControl v-model="view" label="View mode" name="view" :options="options" />',
+    script:
+      "const view = ref('grid');\nconst options = [{value:'grid',label:'Grid'},{value:'list',label:'List'}];",
+    props: {
+      label: "View mode",
+      name: "view",
+      value: "grid",
+      options: [
+        { value: "grid", label: "Grid" },
+        { value: "list", label: "List" },
+      ],
+    },
+    event: "change",
+    notes: [
+      "Use for selecting one short value such as Grid/List. Native radios provide exclusive selection and form semantics.",
+      "Use HTabs when selecting a value reveals associated panels. HButtonBar groups commands without a selection model.",
+    ],
+    related: ["HRadioGroup", "HTabs", "HButtonBar"],
+  },
+  HFileUpload: {
+    vue: '<HFileUpload v-model="files" label="Import configuration" name="config" accept=".json" :max-size="1048576" required />',
+    script: "const files = ref<File[]>([]);",
+    props: {
+      label: "Import configuration",
+      name: "config",
+      accept: ".json",
+      maxSize: 1048576,
+      required: true,
+    },
+    event: "change",
+    notes: [
+      "Files stay in the browser until the app uploads them. progress is application-owned; this component sends no requests.",
+      "Client accept/size/count checks are usability checks, not server-side validation. An invalid selection is rejected as a batch.",
+      "File fields reset to empty; selected files are not restored automatically. Increment resetKey to clear from application code.",
+      "modelValue/change use File[], and form submission includes actual File values. Do not serialize files as JSON attributes.",
+    ],
+    related: ["HProgress", "HButtonBar", "HAlert"],
+  },
+  HCodeBlock: {
+    vue: '<HCodeBlock :code="command" title="Start your service" language="sh" line-numbers />',
+    script: "const command = 'docker compose up -d';",
+    props: {
+      code: "docker compose up -d",
+      title: "Start your service",
+      language: "sh",
+      lineNumbers: true,
+    },
+    notes: [
+      "Code is rendered as escaped plain text. language is a label, not a promise of syntax highlighting.",
+      "Clipboard actions require browser clipboard access. Handle copy-error or let the visible error guide manual copying. Raw code, not rendered line numbers, is copied.",
+    ],
+    related: ["HCopyField", "HLogViewer"],
+  },
+  HCommandPalette: {
+    vue: '<HButton @click="open=true">Find an action</HButton>\n<HCommandPalette v-model:open="open" :items="commands" @select="run" />',
+    imports: ["HButton"],
+    script:
+      "const open = ref(false);\nconst commands = [{id:'apps',label:'Open applications',group:'Navigate',icon:'apps'},{id:'settings',label:'Open settings',group:'Navigate',icon:'settings'}];\nfunction run(id: string) { /* Route or execute the selected command. */ }",
+    props: {
+      items: [
+        {
+          id: "apps",
+          label: "Open applications",
+          group: "Navigate",
+          icon: "apps",
+        },
+        {
+          id: "settings",
+          label: "Open settings",
+          group: "Navigate",
+          icon: "settings",
+        },
+      ],
+    },
+    js: "element.addEventListener('update:open', event => { element.open = event.detail[0]; });\nconst trigger = document.createElement('button'); trigger.textContent = 'Find an action'; trigger.addEventListener('click', () => { element.open = true; }); mount.before(trigger);",
+    notes: [
+      "Search includes labels, descriptions, groups, and keywords. Disabled commands cannot execute.",
+      "Global Ctrl/Cmd+K binding is opt-in with shortcut=true; enable it on only the intended palette. The component requests actions and never owns the router.",
+    ],
+    related: ["HDialog", "HCombobox", "HDropdownMenu"],
+  },
+  HLogViewer: {
+    vue: '<HLogViewer :entries="entries" label="Provider logs" :max-lines="500" wrap />',
+    script:
+      "const entries = [{id:'1',timestamp:'12:00:00',level:'info' as const,message:'Provider connected.'},{id:'2',timestamp:'12:00:01',level:'warning' as const,message:'One route is unresolved.'}];",
+    props: {
+      label: "Provider logs",
+      maxLines: 500,
+      wrap: true,
+      entries: [
+        {
+          id: "1",
+          timestamp: "12:00:00",
+          level: "info",
+          message: "Provider connected.",
+        },
+      ],
+    },
+    notes: [
+      "The component renders a bounded tail (500 entries by default), filters that tail, and follows new entries while follow is enabled. It does not fetch or stream logs.",
+      "Scrolling away from the bottom pauses following. Log content is escaped and not continuously announced as a live region.",
+      "Use server-paged/virtualized history for large archives. Copy includes only currently visible/filtered entries.",
+    ],
+    related: ["HCodeBlock", "HConnectionState", "HDataTable"],
+  },
+  HCopyField: {
+    vue: '<HCopyField label="Service endpoint" value="https://photos.example.com" />',
+    props: { label: "Service endpoint", value: "https://photos.example.com" },
+    notes: [
+      "This is a read-only display/copy field, not an editable form field.",
+      "secret masks the display and offers explicit reveal; masking does not protect the value from the consuming application or browser tools.",
+      "Clipboard failures are visible and emitted. The user can select/copy manually; successful copying emits no secret value.",
+    ],
+    related: ["HInput", "HCodeBlock", "HDescriptionList"],
+  },
+  HConnectionState: {
+    vue: '<HConnectionState state="failed" label="Docker provider" description="The endpoint is unreachable." @retry="retry" />',
+    script:
+      "function retry() { /* Retry through the application connection service. */ }",
+    props: {
+      state: "failed",
+      label: "Docker provider",
+      description: "The endpoint is unreachable.",
+    },
+    event: "retry",
+    notes: [
+      "The app supplies connection state and performs retry. This component does not monitor connectivity or create timers.",
+      "State text accompanies semantic color. Retry is offered for failed/offline states when retryable is enabled.",
+    ],
+    related: ["HProviderSetup", "HAlert", "HBadge"],
+  },
+  HSparkline: {
+    vue: '<HSparkline :values="[3,5,4,8,6,9]" label="Requests over six samples" tone="info" />',
+    props: {
+      values: [3, 5, 4, 8, 6, 9],
+      label: "Requests over six samples",
+      tone: "info",
+    },
+    notes: [
+      "A small trend, not a full charting/analytics engine. Supply a short, aggregated numeric series and a meaningful label or description.",
+      "Non-finite values are ignored; flat, single-value, and empty series have explicit rendering behavior. Set decorative only when adjacent content supplies equivalent information.",
+    ],
+    related: ["HStatCard", "HProgress"],
+  },
+  HSettingsPage: {
+    vue: '<HSettingsPage :dirty="dirty" @save="save" @reset="reset"><HCard title="Workspace"><HInput v-model="name" label="Workspace name" @update:model-value="dirty=true" /></HCard></HSettingsPage>',
+    imports: ["HCard", "HInput"],
+    script:
+      "const name = ref('Homestead');\nconst dirty = ref(false);\nfunction save() { /* Validate and persist, then clear dirty on success. */ }\nfunction reset() { name.value='Homestead'; dirty.value=false; }",
+    props: { dirty: true },
+    children:
+      '<hearth-card title="Workspace"><hearth-input label="Workspace name" value="Homestead"></hearth-input></hearth-card>',
+    notes: [
+      "This recipe owns presentation and dirty/saving feedback. save/reset are requests; validation and persistence belong to the application.",
+      "It does not wrap slots in an internal form. Put your own native form in the appropriate DOM tree when collecting slotted custom-element values.",
+    ],
+    related: ["HDashboardShell", "HCard", "HButtonBar"],
+  },
+  HProviderSetup: {
+    vue: '<HProviderSetup v-model="draft" @test="testConnection" @save="saveProvider" />',
+    script:
+      "const draft = ref({name:'Local provider',endpoint:'https://service.example.com'});\nfunction testConnection(value: {name:string;endpoint:string}) { /* Test using your API and update state/message. */ }\nfunction saveProvider(value: {name:string;endpoint:string}) { /* Persist after application validation. */ }",
+    props: {
+      modelValue: {
+        name: "Local provider",
+        endpoint: "https://service.example.com",
+      },
+    },
+    event: "test",
+    notes: [
+      "The built-in form collects a provider name and endpoint. Endpoints are text so your app can support HTTPS, Unix sockets, or another scheme.",
+      "test/save emit a draft. testing/saving/state/message are controlled by the app. No connectivity or persistence is performed by the recipe.",
+    ],
+    related: ["HConnectionState", "HFirstRunSetup", "HInput"],
+  },
+  HResourceDetail: {
+    vue: '<HResourceDetail title="Photo library" :fields="fields" :tabs="tabs" status="Healthy" tone="success"><template #overview><p>Application details go here.</p></template></HResourceDetail>',
+    script:
+      "const fields = [{key:'version',label:'Version',value:'1.0.0'}];\nconst tabs = [{value:'overview',label:'Overview'}];",
+    props: {
+      title: "Photo library",
+      status: "Healthy",
+      tone: "success",
+      fields: [{ key: "version", label: "Version", value: "1.0.0" }],
+      tabs: [{ value: "overview", label: "Overview" }],
+    },
+    children: '<p slot="overview">Application details go here.</p>',
+    notes: [
+      "Supply data, actions, and one named slot per tab value. Without tabs, the default slot is used.",
+      "Breadcrumb navigate(id) and active-tab changes are requests to the host app. The recipe does not fetch the resource.",
+    ],
+    related: ["HDescriptionList", "HTabs", "HSheet"],
+  },
+  HStatusPage: {
+    vue: '<HStatusPage brand="homestead" :groups="groups" updated-at="2026-09-19 12:00 UTC" />',
+    script:
+      "const groups = [{id:'apps',label:'Applications',services:[{id:'photos',name:'Photos',status:'operational' as const}]}];",
+    props: {
+      brand: "homestead",
+      updatedAt: "2026-09-19 12:00 UTC",
+      groups: [
+        {
+          id: "apps",
+          label: "Applications",
+          services: [{ id: "photos", name: "Photos", status: "operational" }],
+        },
+      ],
+    },
+    notes: [
+      "This recipe includes a public shell. Feed it only data that is appropriate for anonymous visitors; publication permissions are an application concern.",
+      "The summary derives from the supplied service states and remains unknown when status is missing. It does not perform health checks.",
+      "Timestamps are supplied display strings; the recipe does not invent update times or incident history.",
+    ],
+    related: ["HPublicShell", "HList", "HConnectionState"],
+  },
+  HErrorPage: {
+    vue: '<HErrorPage kind="unavailable" brand="homestead" home-href="/" retryable @retry="retry" />',
+    script:
+      "function retry() { /* Retry or reload through your application. */ }",
+    props: {
+      kind: "unavailable",
+      brand: "homestead",
+      homeHref: "/",
+      retryable: true,
+    },
+    event: "retry",
+    notes: [
+      "Choose not-found, forbidden, or unavailable and optionally override copy. It renders a full-page recovery view.",
+      "This changes presentation, not the HTTP response status or route authorization. Set those in the server/router.",
+    ],
+    related: ["HPublicShell", "HEmptyState", "HAlert"],
+  },
+  HFirstRunSetup: {
+    vue: '<HFirstRunSetup v-model:step="step" @account="createAccount" @provider="saveProvider" @complete="finish" />',
+    script:
+      "const step = ref(0);\nfunction createAccount(credentials: {username:string;password:string}) { /* Persist securely; set step=1 only after success. */ }\nfunction saveProvider(draft: {name:string;endpoint:string}) { /* Save through your API; then set step=2. */ }\nfunction finish() { /* Open the workspace. */ }",
+    props: { step: 0 },
+    notes: [
+      "Steps are 0=account, 1=provider, 2=completion. Application code advances only after its operations succeed.",
+      "busy/error describe application work. Account credentials are emitted but never logged, stored, or sent by the recipe.",
+      "The account slot replaces the default account form; own that replacement form and its submission.",
+    ],
+    related: ["HAuthPage", "HProviderSetup", "HDashboardShell"],
+  },
   HTheme: {
     vue: '<HTheme theme="sunset" mode="dark" :tokens="{ \'--h-accent\': \'#ff7a2f\' }">\n  <HButton variant="primary">Save</HButton>\n</HTheme>',
     imports: ["HButton"],

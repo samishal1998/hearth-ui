@@ -28,12 +28,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm test && npm run test:package
       - name: Pack verified distribution
-        run: |
-          mkdir release-dist
-          npm pack --ignore-scripts --pack-destination release-dist
-      - name: Write checksum manifest
-        working-directory: release-dist
-        run: sha256sum *.tgz > SHA256SUMS
+        run: npm run pack:packages
       - name: Publish package
         env:
           GH_TOKEN: ${{ github.token }}

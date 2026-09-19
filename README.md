@@ -8,7 +8,7 @@ Hearth carries the visual direction of Apptrail into a standalone library. **Sun
 
 ## Agent references
 
-Start at **[llms.txt](llms.txt)**. It routes agents to focused references for all 35 components under **`docs/components/<slug>/llms.txt`**, for example:
+Start at **[llms.txt](llms.txt)**. It routes agents to focused references for all 61 components under **`docs/components/<slug>/llms.txt`**, for example:
 
 - [Authentication page](docs/components/auth-page/llms.txt)
 - [Dashboard shell](docs/components/dashboard-shell/llms.txt)
@@ -28,31 +28,31 @@ The Vite development server and static showcase expose the same files as plain t
 
 ## One source, two distributions
 
-- **Native Vue 3 components:** typed props, events, slots, `v-model`, and SSR-compatible rendering. Uses the host application's Vue runtime.
-- **Web components:** the same components compiled with Vue's custom-element support. Their Vue runtime and component styles are bundled. Use them in React, Astro, plain HTML, or another framework through native properties, slots, and events.
+- **`@hearth-ui/vue`:** native Vue components with typed props, events, slots, `v-model`, and SSR-compatible rendering. Uses the host application's Vue runtime.
+- **`@hearth-ui/elements`:** the same components compiled as web components. The runtime and component styles are bundled; its DOM-based TypeScript declarations have no Vue dependency. Use it in React, Astro, plain HTML, or another framework.
 
 The application owns its router, authentication, authorization, storage, and data fetching. Hearth supplies the presentation and interaction primitives.
 
 ## Install
 
-Install the built npm-compatible package from GitHub Releases:
+The current release is **0.4.0**. Install the distribution you need:
 
 ```sh
-npm install https://github.com/samishal1998/hearth-ui/releases/download/v0.2.0/samishal1998-hearth-ui-0.2.0.tgz
+# Native Vue
+npm install @hearth-ui/vue vue
+
+# Web components (no Vue dependency in the host)
+npm install @hearth-ui/elements
 ```
 
-No npm registry publication is assumed. Vue is a peer dependency for native components and their TypeScript declarations. The web-component JavaScript is self-contained and does not look for a global Vue installation when served directly.
+Before publication, use `npm run build && npm run pack:packages` and install the relevant tarball from `release-dist/`. See [PUBLISHING.md](PUBLISHING.md) for first-publication and trusted-publisher setup. Existing `@samishal1998/hearth-ui` releases were a combined distribution; their immutable archives remain available for older consumers.
 
 ### Vue
 
 ```vue
 <script setup lang="ts">
-import {
-  HTheme,
-  HAuthPage,
-  type AuthCredentials,
-} from "@samishal1998/hearth-ui";
-import "@samishal1998/hearth-ui/styles.css";
+import { HTheme, HAuthPage, type AuthCredentials } from "@hearth-ui/vue";
+import "@hearth-ui/vue/styles.css";
 
 function signIn(credentials: AuthCredentials) {
   // Call your auth API. Bind loading/error to the response.
@@ -69,8 +69,8 @@ function signIn(credentials: AuthCredentials) {
 ### Web components with a bundler
 
 ```js
-import { registerElements } from "@samishal1998/hearth-ui/elements";
-import "@samishal1998/hearth-ui/themes.css";
+import { registerElements } from "@hearth-ui/elements";
+import "@hearth-ui/elements/themes.css";
 
 registerElements();
 ```
@@ -90,13 +90,13 @@ document
   });
 ```
 
-For automatic registration, import `@samishal1998/hearth-ui/elements/auto`. For a custom namespace, call `registerElements('my-app')` to get `<my-app-button>`, `<my-app-auth-page>`, and so on. Registration is idempotent; conflicting definitions produce an error rather than silently replacing another library.
+For automatic registration, import `@hearth-ui/elements/auto`. For a custom namespace, call `registerElements('my-app')` to get `<my-app-button>`, `<my-app-auth-page>`, and so on. Registration is idempotent; conflicting definitions produce an error rather than silently replacing another library.
 
 Individual constructors such as `HearthButtonElement` are exported for selective registration. The element collection shares one bundled Vue runtime; selective registration is not a promise of per-element bundle sizes.
 
 ### Plain HTML, no framework or bundler
 
-Extract the release package, serve its `dist/` directory, and load:
+Extract the elements package, serve its contents over HTTP, and load:
 
 ```html
 <link rel="stylesheet" href="./dist/themes.css" />
@@ -132,7 +132,17 @@ Keep the files inside `dist/elements/` together: entry points import a shared ru
 | `HTextarea`       | `HPagination`       |                     |
 | `HRange`          | `HAccordion`        |                     |
 
-The [component catalog](https://samishal1998.github.io/hearth-ui/#components) includes interactive previews and documents props, events, slots, and CSS parts for all **35 components**. Vue declarations and web-component constructors are included for every component.
+The [component catalog](https://samishal1998.github.io/hearth-ui/#components) includes interactive previews and documents props, events, slots, and CSS parts for all **61 components**. Vue declarations and web-component constructors are included for every component.
+
+### New in 0.4.0
+
+- Overlays and feedback: `HPopover`, `HTooltip`, `HDropdownMenu`, `HSheet`, `HToast`, and `HToaster`.
+- Data and selection: `HDataTable`, `HDescriptionList`, `HList`, `HListItem`, `HChip`, `HChipGroup`, and `HSegmentedControl`.
+- Dashboard utilities: `HFileUpload`, `HCodeBlock`, `HCommandPalette`, `HLogViewer`, `HCopyField`, `HConnectionState`, and `HSparkline`.
+- Six [page recipes](https://samishal1998.github.io/hearth-ui/#recipes): `HSettingsPage`, `HProviderSetup`, `HResourceDetail`, `HStatusPage`, `HErrorPage`, and `HFirstRunSetup`.
+- Native date, time, and local date-time inputs through `HInput`.
+
+Applications own persistence, requests, notification queues, and file uploads. The recipes demonstrate those boundaries with in-memory state. Tables support client-side sorting, selection, pagination, and per-cell slots using `tableCellSlot(rowId, columnKey)`; logs keep a bounded rendered window. See each component's agent reference for supported limits and event contracts.
 
 ### Searchable selection
 
@@ -141,8 +151,8 @@ The [component catalog](https://samishal1998.github.io/hearth-ui/#components) in
 ```vue
 <script setup lang="ts">
 import { ref } from "vue";
-import { HMultiSelect } from "@samishal1998/hearth-ui";
-import "@samishal1998/hearth-ui/styles.css";
+import { HMultiSelect } from "@hearth-ui/vue";
+import "@hearth-ui/vue/styles.css";
 
 const providers = ref<string[]>(["docker"]);
 const options = [
@@ -328,27 +338,58 @@ The showcase includes the component catalog, theme studio, auth/dashboard exampl
 
 ```sh
 npm run build:site
-npm pack
+npm run pack:packages
 ```
 
 Build outputs:
 
 ```text
-dist/vue/        Native Vue ESM and extracted component CSS
-dist/elements/   Bundled web components and optional auto-registration
-dist/themes.css Shared theme tokens
-dist/types/      Component and custom-element TypeScript declarations
-site-dist/      Static showcase
+src/                       Shared Vue component implementation
+dist/                      Intermediate library builds and declarations
+packages/vue/              @hearth-ui/vue manifest, README, and generated payload
+packages/elements/         @hearth-ui/elements manifest, README, and generated payload
+release-dist/              Two npm tarballs and SHA256SUMS
+site-dist/                 Static showcase
 ```
 
-Browser integration tests run in Chromium and cover both distributions, a React 19 host, form ownership/validation/reset/restore, disabled fieldsets, dynamic options, named slots, keyboard tabs/dialogs, mobile navigation, scoped themes, and credential non-persistence. A Node check exercises SSR rendering and token serialization; a package smoke check installs the actual tarball in an isolated consumer and type-checks its exports.
+Browser integration tests cover both distributions, raw packaged web components, a React 19 host, forms, keyboard interaction, mobile navigation, themes, and credential non-persistence. Node tests exercise SSR and tokens. Separate package smoke checks install both actual tarballs, type-check their APIs, and verify that the elements consumer has no Vue installation. Element props/event types are derived from the same component source used for agent docs.
 
 Use current browsers with Shadow DOM, Custom Elements, ElementInternals, native dialog, `color-mix()`, and `:has()` support. Focus, labels, reduced motion, and status text are built in. Validate custom palettes and your composed application's accessibility before shipping.
 
 ## Repository workflows
 
+### Self-host the docs with Docker
+
+The container builds both component distributions and the complete docs/showcase at the domain root, including `llms.txt` and all component references:
+
+```sh
+docker compose up --build -d --wait
+docker compose ps
+```
+
+The service listens on **127.0.0.1:8187** on the host. It serves static files as an unprivileged user; Node.js is only used during the image build. The health check verifies the agent index is available.
+
+Add the route from `deploy/host.Caddyfile` to the host's Caddy configuration:
+
+```caddyfile
+hearth-ui.samyx.net, hearth-ui.h02.samyx.net {
+    reverse_proxy 127.0.0.1:8187
+}
+```
+
+Validate and reload the host configuration after adding it. Both DNS names must point at the server, and ports 80/443 must reach Caddy for automatic HTTPS. `deploy/docs.Caddyfile` is the separate HTTP-only static-server configuration inside the container.
+
+Rebuild with the same Compose command after updating the checkout. Use `docker compose logs docs` for diagnostics or `docker compose down` to stop this docs deployment.
+
+### GitHub automation
+
 - **Checks:** builds both distributions, runs integration/package checks, and builds the showcase for pushes and pull requests.
 - **Showcase:** deploys the static site to GitHub Pages on `main`.
-- **Release:** validates a `v*` tag against `package.json`, verifies the build, and publishes an npm-compatible tarball plus `SHA256SUMS` to GitHub Releases. It does not publish to npm.
+- **Release:** validates a `v*` tag, verifies both packages, and uploads two tarballs plus `SHA256SUMS` to GitHub Releases.
+- **Publish npm packages:** manually publishes a selected release tag through npm trusted publishing/OIDC. Configure both npm packages as described in [PUBLISHING.md](PUBLISHING.md).
 
-To release an updated version, update `package.json` and its lockfile, commit, then push a matching version tag. The package's CSS tokens and public component API are the compatibility boundary.
+Keep the root and both package versions aligned, update the lockfile, and regenerate agent docs before tagging. The root is a private workspace and cannot be published to npm. Generated package payloads are rebuilt from shared source; do not edit them by hand.
+
+## License
+
+MIT; see [LICENSE](LICENSE). The elements distribution includes the bundled Vue runtime's MIT notice.

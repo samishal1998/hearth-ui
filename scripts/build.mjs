@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
-import { cpSync, mkdirSync } from "node:fs";
+import { cpSync, mkdirSync, rmSync } from "node:fs";
+import { preparePackages } from "./prepare-npm.mjs";
 
 for (const mode of ["vue", "elements"])
   execFileSync(
@@ -14,6 +15,7 @@ for (const mode of ["vue", "elements"])
     ],
     { stdio: "inherit" },
   );
+rmSync("dist/types", { recursive: true, force: true });
 execFileSync(
   process.execPath,
   ["node_modules/vue-tsc/bin/vue-tsc.js", "-p", "tsconfig.build.json"],
@@ -22,3 +24,4 @@ execFileSync(
 mkdirSync("dist", { recursive: true });
 cpSync("src/styles/themes.css", "dist/themes.css");
 cpSync("node_modules/vue/LICENSE", "dist/VUE-LICENSE");
+await preparePackages();

@@ -1,0 +1,57 @@
+{
+  "name": "@hearth-ui/elements",
+  "version": "0.4.0",
+  "description": "Framework-independent web components for self-hosted dashboards, public pages, and authentication.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/elements/index.js",
+  "module": "./dist/elements/index.js",
+  "types": "./dist/types/index.d.ts",
+  "sideEffects": [
+    "**/*.css",
+    "**/auto.js"
+  ],
+  "files": [
+    "dist",
+    "llms.txt",
+    "docs/components",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/elements/index.js"
+    },
+    "./auto": {
+      "types": "./dist/types/auto.d.ts",
+      "import": "./dist/elements/auto.js"
+    },
+    "./themes.css": "./dist/themes.css",
+    "./llms.txt": "./llms.txt",
+    "./docs/components/*/llms.txt": "./docs/components/*/llms.txt",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samishal1998/hearth-ui.git",
+    "directory": "packages/elements"
+  },
+  "homepage": "https://hearth-ui.samyx.net/",
+  "bugs": {
+    "url": "https://github.com/samishal1998/hearth-ui/issues"
+  },
+  "keywords": [
+    "web-components",
+    "custom-elements",
+    "components",
+    "design-system",
+    "dashboard",
+    "self-hosted",
+    "hearth-ui"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "name": "@hearth-ui/vue",
+  "version": "0.4.0",
+  "description": "Themeable native Vue components for self-hosted dashboards, public pages, and authentication.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/vue/index.js",
+  "module": "./dist/vue/index.js",
+  "types": "./dist/types/index.d.ts",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "llms.txt",
+    "docs/components",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/vue/index.js"
+    },
+    "./styles.css": "./dist/vue/hearth-ui.css",
+    "./themes.css": "./dist/themes.css",
+    "./llms.txt": "./llms.txt",
+    "./docs/components/*/llms.txt": "./docs/components/*/llms.txt",
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samishal1998/hearth-ui.git",
+    "directory": "packages/vue"
+  },
+  "homepage": "https://hearth-ui.samyx.net/",
+  "bugs": {
+    "url": "https://github.com/samishal1998/hearth-ui/issues"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "components",
+    "design-system",
+    "dashboard",
+    "self-hosted",
+    "hearth-ui"
+  ]
+}

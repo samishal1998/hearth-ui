@@ -15,7 +15,11 @@ const readAgentFile = (file: string) => readFileSync(resolve(file), "utf8");
 export default defineConfig({
   root: "site",
   base: process.env.SITE_BASE || "/",
-  resolve: { alias: { "@hearth/elements": resolve("dist/elements/index.js") } },
+  resolve: {
+    alias: {
+      "@hearth/elements": resolve("packages/elements/dist/elements/index.js"),
+    },
+  },
   plugins: [
     {
       name: "hearth-agent-docs",

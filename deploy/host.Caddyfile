@@ -1,0 +1,3 @@
+hearth-ui.samyx.net, hearth-ui.h02.samyx.net {
+	reverse_proxy 127.0.0.1:8187
+}

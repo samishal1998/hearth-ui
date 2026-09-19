@@ -1,0 +1,70 @@
+name: Publish npm packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version from an existing release tag, without v (for example 0.3.0)"
+        required: true
+        type: string
+      package:
+        description: "Publish both packages, or retry one package after a partial publication"
+        required: true
+        default: both
+        type: choice
+        options: [both, vue, elements]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-${{ inputs.version }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Validate requested version
+        env:
+          VERSION: ${{ inputs.version }}
+        shell: bash
+        run: '[[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]'
+      - uses: actions/checkout@v7
+        with:
+          ref: refs/tags/v${{ inputs.version }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Verify tag version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: test "$VERSION" = "$(node -p "require('./package.json').version")"
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm test && npm run test:package
+      - run: npm run pack:packages
+      - name: Publish with npm trusted publishing
+        env:
+          VERSION: ${{ inputs.version }}
+          SELECTED_PACKAGE: ${{ inputs.package }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag=latest
+          [[ "$VERSION" != *-* ]] || tag=next
+          case "$SELECTED_PACKAGE" in
+            both) packages=(vue elements) ;;
+            vue|elements) packages=("$SELECTED_PACKAGE") ;;
+            *) exit 1 ;;
+          esac
+          for package in "${packages[@]}"; do
+            npm publish "release-dist/hearth-ui-${package}-${VERSION}.tgz" --access public --provenance --tag "$tag"
+          done

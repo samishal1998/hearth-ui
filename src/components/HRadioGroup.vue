@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, useId, nextTick } from "vue";
+import { ref, watch, useId, nextTick, computed } from "vue";
 import { controlSync } from "../internal";
 import type { ChoiceOption } from "../themes";
 const props = withDefaults(
@@ -26,6 +26,11 @@ const emit = defineEmits<{
 const id = useId();
 const root = ref<HTMLElement>();
 const local = ref(props.modelValue ?? props.value);
+const tabStop = computed(() =>
+  props.options.some((o) => o.value === local.value && !o.disabled)
+    ? local.value
+    : props.options.find((o) => !o.disabled)?.value,
+);
 watch(
   () => [props.modelValue, props.value],
   () => (local.value = props.modelValue ?? props.value),
@@ -101,6 +106,7 @@ function key(e: KeyboardEvent) {
           :name="name"
           :value="option.value"
           :checked="local === option.value"
+          :tabindex="tabStop === option.value ? 0 : -1"
           :disabled="option.disabled"
           :required="required"
           :aria-invalid="!!error"

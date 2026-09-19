@@ -39,14 +39,41 @@ import {
   HSkeleton,
   HAccordion,
   HPagination,
+  HPopover,
+  HTooltip,
+  HDropdownMenu,
+  HToast,
+  HToaster,
+  HSheet,
+  HDataTable,
+  HDescriptionList,
+  HList,
+  HListItem,
+  HChip,
+  HChipGroup,
+  HSegmentedControl,
+  HFileUpload,
+  HCodeBlock,
+  HCommandPalette,
+  HLogViewer,
+  HCopyField,
+  HConnectionState,
+  HSparkline,
+  HSettingsPage,
+  HProviderSetup,
+  HResourceDetail,
+  HStatusPage,
+  HErrorPage,
+  HFirstRunSetup,
 } from "./index";
+export * from "./themes";
 
 type NativeControl =
   | HTMLInputElement
   | HTMLSelectElement
   | HTMLButtonElement
   | HTMLTextAreaElement;
-type FormKind = "field" | "button" | "compound";
+type FormKind = "field" | "button" | "compound" | "file";
 type SFC = {
   new (...args: any[]): ComponentPublicInstance<any>;
   styles?: string[];
@@ -130,7 +157,7 @@ function element(
           !event.isComposing &&
           !event.defaultPrevented &&
           event.target instanceof HTMLInputElement &&
-          !["checkbox", "radio"].includes(event.target.type)
+          !["checkbox", "radio", "file"].includes(event.target.type)
         ) {
           event.preventDefault();
           this.internals.form?.requestSubmit();
@@ -200,6 +227,20 @@ function element(
         return;
       }
       c.disabled = this.fieldsetDisabled || this.hasAttribute("disabled");
+      if (formKind === "file" && c instanceof HTMLInputElement) {
+        const data = new FormData();
+        const name = this.getAttribute("name");
+        if (name)
+          for (const file of Array.from(c.files || []))
+            data.append(name, file, file.name);
+        this.internals.setFormValue(c.disabled ? null : data);
+        this.internals.setValidity(
+          c.disabled ? {} : c.validity,
+          c.disabled ? "" : c.validationMessage,
+          c,
+        );
+        return;
+      }
       const value =
         c instanceof HTMLInputElement && c.type === "checkbox"
           ? c.checked
@@ -222,11 +263,21 @@ function element(
     }
     formDisabledCallback(disabled: boolean) {
       this.fieldsetDisabled = disabled;
-      if (formKind === "compound")
+      if (formKind === "compound" || formKind === "file")
         Object.assign(this, { formDisabled: disabled });
       this.sync();
     }
     formResetCallback() {
+      if (formKind === "file") {
+        const c = this.control();
+        if (c instanceof HTMLInputElement) c.value = "";
+        Object.assign(this, {
+          modelValue: [],
+          resetKey: Number(this.getAttribute("reset-key") || 0) + 1,
+        });
+        this.sync();
+        return;
+      }
       if (!this.initially || formKind === "button") return;
       if (formKind === "compound") {
         Object.assign(this, {
@@ -253,6 +304,10 @@ function element(
       this.sync();
     }
     formStateRestoreCallback(state: string | File | FormData | null) {
+      if (formKind === "file") {
+        this.formResetCallback();
+        return;
+      }
       if (typeof state !== "string") return;
       if (formKind === "compound") {
         try {
@@ -416,6 +471,64 @@ export const HearthAccordionElement: Constructor<typeof HAccordion> =
   element(HAccordion);
 export const HearthPaginationElement: Constructor<typeof HPagination> =
   element(HPagination);
+export const HearthPopoverElement: Constructor<typeof HPopover> = element(
+  HPopover,
+  true,
+);
+export const HearthTooltipElement: Constructor<typeof HTooltip> = element(
+  HTooltip,
+  true,
+);
+export const HearthDropdownMenuElement: Constructor<typeof HDropdownMenu> =
+  element(HDropdownMenu, true);
+export const HearthToastElement: Constructor<typeof HToast> = element(HToast);
+export const HearthToasterElement: Constructor<typeof HToaster> =
+  element(HToaster);
+export const HearthSheetElement: Constructor<typeof HSheet> = element(HSheet);
+export const HearthDataTableElement: Constructor<typeof HDataTable> =
+  element(HDataTable);
+export const HearthDescriptionListElement: Constructor<
+  typeof HDescriptionList
+> = element(HDescriptionList);
+export const HearthListElement: Constructor<typeof HList> = element(HList);
+export const HearthListItemElement: Constructor<typeof HListItem> =
+  element(HListItem);
+export const HearthChipElement: Constructor<typeof HChip> = element(
+  HChip,
+  true,
+);
+export const HearthChipGroupElement: Constructor<typeof HChipGroup> =
+  element(HChipGroup);
+export const HearthSegmentedControlElement: FormConstructor<
+  typeof HSegmentedControl
+> = element(HSegmentedControl, false, "compound");
+export const HearthFileUploadElement: FormConstructor<typeof HFileUpload> =
+  element(HFileUpload, false, "file");
+export const HearthCodeBlockElement: Constructor<typeof HCodeBlock> =
+  element(HCodeBlock);
+export const HearthCommandPaletteElement: Constructor<typeof HCommandPalette> =
+  element(HCommandPalette);
+export const HearthLogViewerElement: Constructor<typeof HLogViewer> =
+  element(HLogViewer);
+export const HearthCopyFieldElement: Constructor<typeof HCopyField> =
+  element(HCopyField);
+export const HearthConnectionStateElement: Constructor<
+  typeof HConnectionState
+> = element(HConnectionState);
+export const HearthSparklineElement: Constructor<typeof HSparkline> =
+  element(HSparkline);
+export const HearthSettingsPageElement: Constructor<typeof HSettingsPage> =
+  element(HSettingsPage);
+export const HearthProviderSetupElement: Constructor<typeof HProviderSetup> =
+  element(HProviderSetup);
+export const HearthResourceDetailElement: Constructor<typeof HResourceDetail> =
+  element(HResourceDetail);
+export const HearthStatusPageElement: Constructor<typeof HStatusPage> =
+  element(HStatusPage);
+export const HearthErrorPageElement: Constructor<typeof HErrorPage> =
+  element(HErrorPage);
+export const HearthFirstRunSetupElement: Constructor<typeof HFirstRunSetup> =
+  element(HFirstRunSetup);
 
 const elements: Record<string, VueElementConstructor<unknown>> = {
   theme: HearthThemeElement,
@@ -453,6 +566,32 @@ const elements: Record<string, VueElementConstructor<unknown>> = {
   skeleton: HearthSkeletonElement,
   accordion: HearthAccordionElement,
   pagination: HearthPaginationElement,
+  popover: HearthPopoverElement,
+  tooltip: HearthTooltipElement,
+  "dropdown-menu": HearthDropdownMenuElement,
+  toast: HearthToastElement,
+  toaster: HearthToasterElement,
+  sheet: HearthSheetElement,
+  "data-table": HearthDataTableElement,
+  "description-list": HearthDescriptionListElement,
+  list: HearthListElement,
+  "list-item": HearthListItemElement,
+  chip: HearthChipElement,
+  "chip-group": HearthChipGroupElement,
+  "segmented-control": HearthSegmentedControlElement,
+  "file-upload": HearthFileUploadElement,
+  "code-block": HearthCodeBlockElement,
+  "command-palette": HearthCommandPaletteElement,
+  "log-viewer": HearthLogViewerElement,
+  "copy-field": HearthCopyFieldElement,
+  "connection-state": HearthConnectionStateElement,
+  sparkline: HearthSparklineElement,
+  "settings-page": HearthSettingsPageElement,
+  "provider-setup": HearthProviderSetupElement,
+  "resource-detail": HearthResourceDetailElement,
+  "status-page": HearthStatusPageElement,
+  "error-page": HearthErrorPageElement,
+  "first-run-setup": HearthFirstRunSetupElement,
 };
 
 /** Register once, or use a different prefix to coexist with another design system. */

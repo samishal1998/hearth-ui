@@ -21,7 +21,7 @@ test("downloaded custom elements run in a raw browser without a bundler or Node 
           "Content-Type",
           path.endsWith(".css") ? "text/css" : "text/javascript",
         );
-        res.end(await readFile(resolve("." + path)));
+        res.end(await readFile(resolve("packages/elements" + path)));
       } else {
         res.writeHead(404);
         res.end();
