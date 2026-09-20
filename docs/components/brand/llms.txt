@@ -2,7 +2,7 @@
 
 > A text wordmark with the signature accent. Use your own name, optional logo, and tagline.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.4.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.0. Match documentation to your installed source/release.
 
 ## Identity
 

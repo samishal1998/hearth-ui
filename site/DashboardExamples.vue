@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import ControlExamples from "./ControlExamples.vue";
 import {
   HCard,
+  HTimeline,
+  type TimelineItem,
   HButton,
   HButtonBar,
   HPopover,
@@ -33,6 +36,30 @@ import {
   type CommandItem,
 } from "../src";
 const emit = defineEmits<{ notice: [message: string] }>();
+const activity = ref<TimelineItem[]>([
+  {
+    id: "healthy",
+    title: "Deployment healthy",
+    timestamp: "12:04 UTC",
+    dateTime: "2026-09-19T12:04:00Z",
+    tone: "success",
+  },
+  {
+    id: "started",
+    title: "Deployment started",
+    description: "Version 1.2.0 queued for rollout.",
+    timestamp: "12:00 UTC",
+    dateTime: "2026-09-19T12:00:00Z",
+  },
+]);
+function addActivity() {
+  activity.value.unshift({
+    id: `check-${activity.value.length}`,
+    title: "Health check passed",
+    description: "All instances are responding.",
+    tone: "success",
+  });
+}
 const sheet = ref(false);
 const command = ref(false);
 const selected = ref<string[]>([]);
@@ -311,6 +338,19 @@ async function retry() {
         >Append log entry</HButton
       >
     </div>
+    <HCard
+      title="A history worth keeping."
+      description="Deployment and audit events in the order your application provides. New in 0.5."
+    >
+      <HTimeline :items="activity" label="Deployment history">
+        <template #detail:healthy
+          ><p>All three instances passed their health checks.</p></template
+        >
+      </HTimeline>
+      <div class="spacer" />
+      <HButton @click="addActivity">Add activity event</HButton>
+    </HCard>
+    <ControlExamples id="new-controls" />
     <HSheet
       :open="sheet"
       title="Provider details"

@@ -40,6 +40,15 @@ import {
   HAccordion,
   HPagination,
   HPopover,
+  HTimeline,
+  HThemeSwitcher,
+  HNumberInput,
+  HTimePicker,
+  HCalendar,
+  HDatePicker,
+  HDateRangePicker,
+  HRangeSlider,
+  HStepper,
   HTooltip,
   HDropdownMenu,
   HToast,
@@ -219,10 +228,14 @@ function element(
           disabled ? null : data,
           JSON.stringify(fields.map((f) => f.value)),
         );
+        const invalid =
+          fields.find(
+            (field) => !field.matches(":disabled") && !field.validity.valid,
+          ) || c;
         this.internals.setValidity(
-          disabled ? {} : c.validity,
-          disabled ? "" : c.validationMessage,
-          c,
+          disabled ? {} : invalid.validity,
+          disabled ? "" : invalid.validationMessage,
+          invalid,
         );
         return;
       }
@@ -263,8 +276,7 @@ function element(
     }
     formDisabledCallback(disabled: boolean) {
       this.fieldsetDisabled = disabled;
-      if (formKind === "compound" || formKind === "file")
-        Object.assign(this, { formDisabled: disabled });
+      Object.assign(this, { formDisabled: disabled });
       this.sync();
     }
     formResetCallback() {
@@ -282,7 +294,9 @@ function element(
       if (formKind === "compound") {
         Object.assign(this, {
           modelValue: this.control()?.hasAttribute("data-h-multiple")
-            ? [...this.initially.values]
+            ? this.control()?.hasAttribute("data-h-number")
+              ? this.initially.values.map(Number)
+              : [...this.initially.values]
             : this.initially.values[0] || "",
         });
         queueMicrotask(() => this.sync());
@@ -294,7 +308,9 @@ function element(
         modelValue: isCheck
           ? this.initially.checked
           : c?.hasAttribute("data-h-number")
-            ? Number(this.initially.value)
+            ? c?.hasAttribute("data-h-nullable") && this.initially.value === ""
+              ? null
+              : Number(this.initially.value)
             : this.initially.value,
       });
       if (c) {
@@ -319,7 +335,9 @@ function element(
             return;
           Object.assign(this, {
             modelValue: this.control()?.hasAttribute("data-h-multiple")
-              ? values
+              ? this.control()?.hasAttribute("data-h-number")
+                ? values.map(Number)
+                : values
               : values[0] || "",
           });
           queueMicrotask(() => this.sync());
@@ -332,7 +350,9 @@ function element(
           c instanceof HTMLInputElement && c.type === "checkbox"
             ? state === "checked"
             : c?.hasAttribute("data-h-number")
-              ? Number(state)
+              ? c?.hasAttribute("data-h-nullable") && state === ""
+                ? null
+                : Number(state)
               : state,
       });
       queueMicrotask(() => this.sync());
@@ -471,6 +491,26 @@ export const HearthAccordionElement: Constructor<typeof HAccordion> =
   element(HAccordion);
 export const HearthPaginationElement: Constructor<typeof HPagination> =
   element(HPagination);
+export const HearthThemeSwitcherElement: FormConstructor<
+  typeof HThemeSwitcher
+> = element(HThemeSwitcher, false, "compound");
+export const HearthNumberInputElement: FormConstructor<typeof HNumberInput> =
+  element(HNumberInput, false, "field");
+export const HearthTimePickerElement: FormConstructor<typeof HTimePicker> =
+  element(HTimePicker, false, "field");
+export const HearthCalendarElement: Constructor<typeof HCalendar> =
+  element(HCalendar);
+export const HearthDatePickerElement: FormConstructor<typeof HDatePicker> =
+  element(HDatePicker, false, "field");
+export const HearthDateRangePickerElement: FormConstructor<
+  typeof HDateRangePicker
+> = element(HDateRangePicker, false, "compound");
+export const HearthRangeSliderElement: FormConstructor<typeof HRangeSlider> =
+  element(HRangeSlider, false, "compound");
+export const HearthStepperElement: Constructor<typeof HStepper> =
+  element(HStepper);
+export const HearthTimelineElement: Constructor<typeof HTimeline> =
+  element(HTimeline);
 export const HearthPopoverElement: Constructor<typeof HPopover> = element(
   HPopover,
   true,
@@ -567,6 +607,15 @@ const elements: Record<string, VueElementConstructor<unknown>> = {
   accordion: HearthAccordionElement,
   pagination: HearthPaginationElement,
   popover: HearthPopoverElement,
+  timeline: HearthTimelineElement,
+  "theme-switcher": HearthThemeSwitcherElement,
+  "number-input": HearthNumberInputElement,
+  "time-picker": HearthTimePickerElement,
+  calendar: HearthCalendarElement,
+  "date-picker": HearthDatePickerElement,
+  "date-range-picker": HearthDateRangePickerElement,
+  "range-slider": HearthRangeSliderElement,
+  stepper: HearthStepperElement,
   tooltip: HearthTooltipElement,
   "dropdown-menu": HearthDropdownMenuElement,
   toast: HearthToastElement,

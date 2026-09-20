@@ -1,6 +1,8 @@
 # @hearth-ui/vue
 
-Native Vue 3 components for self-hosted dashboards, public pages, and authentication. **61 components**, including six page recipes, five palettes, and one shared design language.
+Native Vue 3 components for self-hosted dashboards, public pages, and authentication. **70 components**, including six page recipes, five palettes, and one shared design language.
+
+New in v0.5.0: `HTimeline`, `HThemeSwitcher`, `HNumberInput`, `HTimePicker`, `HCalendar`, `HDatePicker`, `HDateRangePicker`, `HRangeSlider`, and `HStepper`.
 
 [Showcase](https://hearth-ui.samyx.net/) · [Component guide](https://hearth-ui.samyx.net/#components) · [Agent index](https://hearth-ui.samyx.net/llms.txt)
 

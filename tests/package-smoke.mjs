@@ -72,10 +72,13 @@ try {
       writeFileSync(
         join(consumer, "consumer.ts"),
         `import { h } from 'vue';
-import { HInput, HTheme, HMultiSelect, themeStyle } from '@hearth-ui/vue';
+import { HInput, HTheme, HMultiSelect, HCalendar, HDateRangePicker, HNumberInput, HRangeSlider, themeStyle } from '@hearth-ui/vue';
 h(HInput, { label: 'Name', modelValue: 'Home' });
 h(HMultiSelect, { label: 'Providers', modelValue: ['media'], options: [{value:'media',label:'Media'}] });
 h(HTheme, {tokens:themeStyle({'--h-accent':'#ff7a2f'})});
+h(HNumberInput,{label:'Count',modelValue:null});
+h(HDateRangePicker,{label:'Window',modelValue:['2024-02-28','2024-03-02']});
+h(HCalendar,{month:'2024-02'});h(HRangeSlider,{label:'Interval',modelValue:[20,80]});
 `,
       );
       execFileSync(
@@ -83,7 +86,7 @@ h(HTheme, {tokens:themeStyle({'--h-accent':'#ff7a2f'})});
         [
           "--input-type=module",
           "-e",
-          `import {h,createSSRApp} from 'vue';import {renderToString} from 'vue/server-renderer';import {HTheme,HInput} from '@hearth-ui/vue';const html=await renderToString(createSSRApp({render:()=>h(HTheme,{},()=>h(HInput,{label:'Installed Vue input'}))}));if(!html.includes('Installed Vue input'))throw new Error('SSR export failed');console.log('Installed Vue package renders on the server.');`,
+          `import {h,createSSRApp} from 'vue';import {renderToString} from 'vue/server-renderer';import {HTheme,HInput,HCalendar,HDateRangePicker,HNumberInput} from '@hearth-ui/vue';const html=await renderToString(createSSRApp({render:()=>h(HTheme,{},()=>[h(HInput,{label:'Installed Vue input'}),h(HCalendar,{month:'2024-02',today:'2024-02-29'}),h(HDateRangePicker,{label:'Report window',value:['2024-02-28','2024-03-02']}),h(HNumberInput,{label:'Count',modelValue:null})])}));if(!html.includes('Installed Vue input')||!html.includes('February 29, 2024')||!html.includes('Report window'))throw new Error('SSR export failed');console.log('Installed Vue package renders on the server.');`,
         ],
         { cwd: consumer, stdio: "inherit" },
       );
@@ -130,6 +133,20 @@ const rows:TableRow[]=[{id:'one',name:'Example'}];const table=new HearthDataTabl
 table.addEventListener('update:selected',event=>{const selected:string[]=event.detail[0]});
 const slot:string=tableCellSlot('one','name');
 const items:ToastItem[]=[{id:'saved',title:'Saved'}];new HearthToasterElement({items});
+import {HearthTimelineElement,type TimelineItem} from '@hearth-ui/elements';
+const activity:TimelineItem[]=[{id:'deployed',title:'Deployment healthy',tone:'success',dateTime:'2026-09-19T12:04:00Z'}];
+const timeline=new HearthTimelineElement({items:activity,label:'Deployment history'});timeline.loading=true;
+import {HearthNumberInputElement,HearthTimePickerElement,HearthThemeSwitcherElement,HearthCalendarElement,HearthDatePickerElement,HearthDateRangePickerElement,HearthRangeSliderElement,HearthStepperElement,type DateRange,type NumberRange} from '@hearth-ui/elements';
+new HearthNumberInputElement({label:'Workers',modelValue:null}).addEventListener('change',event=>{const value:number|null=event.detail[0]});
+new HearthTimePickerElement({label:'Time',step:900}).checkValidity();
+new HearthThemeSwitcherElement({value:'system'}).addEventListener('change',event=>{const mode:'light'|'dark'|'system'=event.detail[0]});
+new HearthCalendarElement({month:'2024-02',disabledDates:['2024-02-29']});
+new HearthDatePickerElement({label:'Date',value:'2024-02-28'}).checkValidity();
+new HearthDateRangePickerElement({label:'Dates',value:['2024-02-28','2024-03-02']}).addEventListener('change',event=>{const dates:DateRange=event.detail[0]});
+new HearthRangeSliderElement({label:'Range',value:[20,80]}).addEventListener('change',event=>{const range:NumberRange=event.detail[0]});
+new HearthStepperElement({items:[{id:'one',label:'First'}],interactive:true});
+// @ts-expect-error timeline items need stable IDs
+timeline.items=[{title:'Missing identity'}];
 customElements.define('sample-input',HearthInputElement);registerElements();
 `,
       );

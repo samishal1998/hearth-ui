@@ -1,5 +1,112 @@
 export const catalog = [
   {
+    name: "HThemeSwitcher",
+    tag: "hearth-theme-switcher",
+    category: "Controls",
+    description:
+      "A light, dark, and system preference selector. Bind its value to HTheme mode.",
+    props: "modelValue, value: Mode · label, name: string · disabled: boolean",
+    events: "update:modelValue(Mode), change(Mode)",
+    slots: "None",
+    parts: "base, label, option, control",
+  },
+  {
+    name: "HNumberInput",
+    tag: "hearth-number-input",
+    category: "Controls",
+    description:
+      "A numeric field and counter with native stepping, bounds, validation, and an explicit empty value.",
+    props:
+      "modelValue, value: number | null · label, name, hint, error: string · min, max, step: number · required, disabled, readonly: boolean",
+    events: "update:modelValue(number | null), change(number | null)",
+    slots: "None",
+    parts: "base, label, control, increment, decrement, hint",
+  },
+  {
+    name: "HTimePicker",
+    tag: "hearth-time-picker",
+    category: "Controls",
+    description:
+      "Native time entry with bounds and a configurable step in seconds.",
+    props:
+      "modelValue, value, label, name, min, max, hint, error: string · step: number · required, disabled, readonly: boolean",
+    events: "update:modelValue(string), change(string)",
+    slots: "None",
+    parts: "base, label, control, hint",
+  },
+  {
+    name: "HCalendar",
+    tag: "hearth-calendar",
+    category: "Controls",
+    description:
+      "A keyboard-navigable Gregorian month calendar with date-only values, bounds, and unavailable days.",
+    props:
+      "modelValue, value, month, label, locale, min, max, today: string · weekStartsOn: 0 | 1 · disabledDates: string[] · disabled: boolean",
+    events: "update:modelValue(string), change(string), update:month(string)",
+    slots: "None",
+    parts: "base, previous, month, next, grid, day",
+  },
+  {
+    name: "HDatePicker",
+    tag: "hearth-date-picker",
+    category: "Controls",
+    description:
+      "A native date field with a keyboard-operated calendar popover.",
+    props:
+      "modelValue, value, label, name, min, max, locale, hint, error: string · weekStartsOn: 0 | 1 · required, disabled, readonly: boolean",
+    events: "update:modelValue(string), change(string)",
+    slots: "None",
+    parts: "base, label, control, hint, panel, grid, day",
+  },
+  {
+    name: "HDateRangePicker",
+    tag: "hearth-date-range-picker",
+    category: "Controls",
+    description:
+      "Two date pickers with start/end constraints and native form validation.",
+    props:
+      "modelValue, value: DateRange · label, name, min, max, locale, startLabel, endLabel: string · weekStartsOn: 0 | 1 · required, disabled: boolean",
+    events: "update:modelValue(DateRange), change(DateRange)",
+    slots: "None",
+    parts: "base, label, control, panel, grid, day",
+  },
+  {
+    name: "HRangeSlider",
+    tag: "hearth-range-slider",
+    category: "Controls",
+    description:
+      "Two native range handles for choosing a bounded numeric interval.",
+    props:
+      "modelValue, value: NumberRange · label, name, unit, lowerLabel, upperLabel: string · min, max, step: number · disabled: boolean",
+    events: "update:modelValue(NumberRange), change(NumberRange)",
+    slots: "None",
+    parts: "base, label, value, track, lower, upper",
+  },
+  {
+    name: "HStepper",
+    tag: "hearth-stepper",
+    category: "Layouts",
+    description:
+      "An ordered workflow indicator with optional step selection and completed or unavailable states.",
+    props:
+      "items: StepItem[] · modelValue, label: string · interactive: boolean · orientation: horizontal | vertical",
+    events: "update:modelValue(string), change(string)",
+    slots: "None",
+    parts: "base, item, step, marker, title, description",
+  },
+  {
+    name: "HTimeline",
+    tag: "hearth-timeline",
+    category: "Surfaces",
+    description:
+      "An ordered activity history for deployments, audit events, and incident updates, with timestamps and per-event detail slots.",
+    props:
+      "items: TimelineItem[] · label, loadingText, emptyText: string · loading: boolean",
+    events: "None",
+    slots: "detail:<id>, empty",
+    parts: "base, list, item, marker, title, time, detail, loading, empty",
+  },
+  {
     name: "HPopover",
     tag: "hearth-popover",
     category: "Controls",

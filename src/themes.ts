@@ -2,6 +2,15 @@ export const themes = ["sunset", "ocean", "forest", "dusk", "rose"] as const;
 export type Theme = (typeof themes)[number];
 export type Mode = "dark" | "light" | "system";
 export type Density = "comfortable" | "compact";
+export type DateRange = [string, string];
+export type NumberRange = [number, number];
+export interface StepItem {
+  id: string;
+  label: string;
+  description?: string;
+  completed?: boolean;
+  disabled?: boolean;
+}
 export type ThemeTokens = Partial<Record<`--h-${string}`, string>>;
 export type Tone =
   "neutral" | "accent" | "success" | "warning" | "danger" | "info";
@@ -66,6 +75,16 @@ export interface AccordionItem {
 export interface AuthCredentials {
   username: string;
   password: string;
+}
+
+export interface TimelineItem {
+  id: string;
+  title: string;
+  description?: string;
+  timestamp?: string;
+  dateTime?: string;
+  href?: string;
+  tone?: Tone;
 }
 
 export interface MenuAction {

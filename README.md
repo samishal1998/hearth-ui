@@ -8,7 +8,7 @@ Hearth carries the visual direction of Apptrail into a standalone library. **Sun
 
 ## Agent references
 
-Start at **[llms.txt](llms.txt)**. It routes agents to focused references for all 61 components under **`docs/components/<slug>/llms.txt`**, for example:
+Start at **[llms.txt](llms.txt)**. It routes agents to focused references for all 70 source components under **`docs/components/<slug>/llms.txt`**, for example:
 
 - [Authentication page](docs/components/auth-page/llms.txt)
 - [Dashboard shell](docs/components/dashboard-shell/llms.txt)
@@ -35,7 +35,7 @@ The application owns its router, authentication, authorization, storage, and dat
 
 ## Install
 
-The current release is **0.4.0**. Install the distribution you need:
+The current release is **0.5.0**. Install the distribution you need:
 
 ```sh
 # Native Vue
@@ -132,7 +132,26 @@ Keep the files inside `dist/elements/` together: entry points import a shared ru
 | `HTextarea`       | `HPagination`       |                     |
 | `HRange`          | `HAccordion`        |                     |
 
-The [component catalog](https://samishal1998.github.io/hearth-ui/#components) includes interactive previews and documents props, events, slots, and CSS parts for all **61 components**. Vue declarations and web-component constructors are included for every component.
+The source component catalog includes interactive previews and documents props, events, slots, and CSS parts for all **70 components**. Vue declarations and web-component constructors are included for every component. The [hosted catalog](https://samishal1998.github.io/hearth-ui/#components) reflects the most recent deployed build.
+
+### New in 0.5.0
+
+`HTimeline` adds deployment history, audit events, and incident updates with ordered-list semantics, timestamps, safe title links, loading/empty states, and per-event detail slots.
+
+Eight additional controls are included in both distributions:
+
+| Component | Purpose |
+| --- | --- |
+| `HThemeSwitcher` | Light, dark, and system (auto) preference; bind its model to `HTheme` mode. |
+| `HNumberInput` | Counter and direct numeric entry with native min/max/step validation; empty values are `null`. |
+| `HTimePicker` | Native time entry with bounds and steps in seconds. |
+| `HCalendar` | Inline Gregorian calendar, keyboard navigation, unavailable dates, and date-only values. |
+| `HDatePicker` | Native date entry plus an accessible calendar popover. |
+| `HDateRangePicker` | Start/end date pickers with cross-field bounds and native validation. |
+| `HRangeSlider` | Two native range handles for a numeric interval. |
+| `HStepper` | Static or interactive workflow progress with current/completed/disabled steps. |
+
+Range controls submit two values under the same name in endpoint order; read them with `FormData.getAll(name)`. Applications own preference persistence, date/time zone conversion, workflow state, and form reset models in native Vue usage. The web-component form adapters handle native form resets and disabled fieldsets.
 
 ### New in 0.4.0
 

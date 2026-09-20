@@ -2,7 +2,7 @@
 
 > Themeable Vue and web components for self-hosted dashboards, public pages, and authentication. Start here, then read only the component references needed for the task.
 
-This index covers 61 public components in source version 0.4.0. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
+This index covers 70 public components in source version 0.5.0. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
 
 ## Agent workflow
 
@@ -60,31 +60,39 @@ This index covers 61 public components in source version 0.4.0. The working tree
 - [HSettingsPage](docs/components/settings-page/llms.txt): Grouped settings content with dirty-state feedback and save/reset requests.
 - [HSidebar](docs/components/sidebar/llms.txt): A standalone, collapsible sidebar with grouped navigation and optional custom header/footer.
 - [HStatusPage](docs/components/status-page/llms.txt): A public status-page recipe with service groups, derived summary, and incident updates.
+- [HStepper](docs/components/stepper/llms.txt): An ordered workflow indicator with optional step selection and completed or unavailable states.
 
 ## Controls
 
 - [HAccordion](docs/components/accordion/llms.txt): Native details/summary disclosures with single or multiple expansion.
 - [HButton](docs/components/button/llms.txt): Native button or link behavior, clear focus, icon-only labels, and restrained press feedback.
 - [HButtonBar](docs/components/button-bar/llms.txt): Group actions without changing native button focus or submission behavior.
+- [HCalendar](docs/components/calendar/llms.txt): A keyboard-navigable Gregorian month calendar with date-only values, bounds, and unavailable days.
 - [HCheckbox](docs/components/checkbox/llms.txt): A native checkbox with a mixed-state option and optional description.
 - [HChip](docs/components/chip/llms.txt): A compact selectable or removable label with distinct toggle and remove actions.
 - [HChipGroup](docs/components/chip-group/llms.txt): An array-valued filter group or removable set of selected tags.
 - [HCombobox](docs/components/combobox/llms.txt): Searchable single or multi-select with selected chips, disabled options, keyboard navigation, and repeated form values.
 - [HCommandPalette](docs/components/command-palette/llms.txt): A searchable keyboard command dialog with grouping, shortcuts, and disabled commands.
 - [HCopyField](docs/components/copy-field/llms.txt): A read-only endpoint, identifier, or secret field with explicit clipboard and reveal actions.
+- [HDatePicker](docs/components/date-picker/llms.txt): A native date field with a keyboard-operated calendar popover.
+- [HDateRangePicker](docs/components/date-range-picker/llms.txt): Two date pickers with start/end constraints and native form validation.
 - [HDropdownMenu](docs/components/dropdown-menu/llms.txt): A keyboard-operated command menu for edit, copy, refresh, and destructive actions.
 - [HFileUpload](docs/components/file-upload/llms.txt): Native file selection and drag/drop with configurable validation, file lists, and application-owned progress.
 - [HInput](docs/components/input/llms.txt): A labeled input with help/error text and native validation. Web components participate in their owning form.
 - [HMultiSelect](docs/components/multi-select/llms.txt): An array-typed multi-select combobox using the same searchable selection engine as HCombobox.
+- [HNumberInput](docs/components/number-input/llms.txt): A numeric field and counter with native stepping, bounds, validation, and an explicit empty value.
 - [HPagination](docs/components/pagination/llms.txt): Bounded page navigation with current-page semantics and ellipses for long lists.
 - [HPopover](docs/components/popover/llms.txt): A nonmodal top-layer panel anchored to its trigger, with viewport-aware positioning and focus handling.
 - [HRadioGroup](docs/components/radio-group/llms.txt): One native radio group per component, with descriptions, disabled choices, and arrow/Home/End keyboard control.
 - [HRange](docs/components/range/llms.txt): A native numeric slider with a visible value and optional unit.
+- [HRangeSlider](docs/components/range-slider/llms.txt): Two native range handles for choosing a bounded numeric interval.
 - [HSegmentedControl](docs/components/segmented-control/llms.txt): A compact exclusive-value selector backed by the shared native radio-group engine.
 - [HSelect](docs/components/select/llms.txt): A native select with labeled options, not a recreated browser picker.
 - [HSwitch](docs/components/switch/llms.txt): A keyboard-operable switch backed by a real checkbox, with form participation in custom-element mode.
 - [HTabs](docs/components/tabs/llms.txt): Tabs with roving focus, arrow/Home/End keys, and properly associated panels.
 - [HTextarea](docs/components/textarea/llms.txt): A labeled multiline field with native constraints and form reset support.
+- [HThemeSwitcher](docs/components/theme-switcher/llms.txt): A light, dark, and system preference selector. Bind its value to HTheme mode.
+- [HTimePicker](docs/components/time-picker/llms.txt): Native time entry with bounds and a configurable step in seconds.
 
 ## Surfaces
 
@@ -99,6 +107,7 @@ This index covers 61 public components in source version 0.4.0. The working tree
 - [HSeparator](docs/components/separator/llms.txt): A structural divider, optionally labeled or exposed as an accessible separator.
 - [HSparkline](docs/components/sparkline/llms.txt): A small SVG trend with a textual summary, finite-data handling, and semantic tones.
 - [HStatCard](docs/components/stat-card/llms.txt): A quiet overview metric with tabular numbers, an icon, and a supporting label.
+- [HTimeline](docs/components/timeline/llms.txt): An ordered activity history for deployments, audit events, and incident updates, with timestamps and per-event detail slots.
 
 ## Feedback
 

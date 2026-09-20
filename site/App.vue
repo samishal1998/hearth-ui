@@ -681,10 +681,10 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
               trailing-icon="arrow"
               @click="
                 document
-                  .getElementById('dashboard-components')
+                  .getElementById('new-controls')
                   ?.scrollIntoView()
               "
-              >Explore what's new in 0.4</HButton
+              >Explore what's new in 0.5</HButton
             ></HPageHeader
           >
         </section>

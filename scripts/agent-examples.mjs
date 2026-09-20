@@ -1,6 +1,148 @@
 // Component-specific recipes complement the API extracted from source and catalog.
 // `props` are assigned before connection, preserving custom-element form reset defaults.
 export const examples = {
+  HThemeSwitcher: {
+    vue: '<HTheme :mode="mode"><HThemeSwitcher v-model="mode" /></HTheme>',
+    imports: ["HTheme"],
+    script: "const mode = ref<'light'|'dark'|'system'>('system');",
+    props: { value: "system" },
+    notes: [
+      "Added in v0.5.0. Emits light, dark, or system; system is the auto mode. Bind the value to HTheme mode. Applications own persistence and global theme state.",
+    ],
+    related: ["HTheme", "HSegmentedControl"],
+  },
+  HNumberInput: {
+    vue: '<HNumberInput v-model="replicas" label="Replicas" name="replicas" :min="0" :max="10" />',
+    script: "const replicas = ref<number | null>(2);",
+    props: { label: "Replicas", name: "replicas", value: 2, min: 0, max: 10 },
+    event: "change",
+    notes: [
+      "Added in v0.5.0. Empty or incomplete numeric input emits null, never NaN. The native number input owns min/max/step validity. Step buttons use native stepUp/stepDown and emit a committed change. Invalid manually entered values remain visible for validation.",
+    ],
+    related: ["HInput", "HRange", "HRangeSlider"],
+  },
+  HTimePicker: {
+    vue: '<HTimePicker v-model="time" label="Backup time" name="time" :step="900" />',
+    script: "const time = ref('09:30');",
+    props: { label: "Backup time", name: "time", value: "09:30", step: 900 },
+    event: "change",
+    notes: [
+      "Added in v0.5.0. Uses input type=time; browser and OS determine picker appearance and 12/24-hour presentation. Values are HH:mm or HH:mm:ss, or an empty string. Step is in seconds. No date, time zone conversion, or custom clock face is supplied.",
+    ],
+    related: ["HDatePicker", "HInput"],
+  },
+  HCalendar: {
+    vue: '<HCalendar v-model="date" month="2026-09" label="Schedule" :disabled-dates="[\'2026-09-22\']" />',
+    script: "const date = ref('2026-09-20');",
+    props: {
+      value: "2026-09-20",
+      month: "2026-09",
+      label: "Schedule",
+      disabledDates: ["2026-09-22"],
+    },
+    event: "change",
+    notes: [
+      "Added in v0.5.0. Gregorian date-only values use YYYY-MM-DD, years 0001–9999. month uses YYYY-MM. Locale formats labels; weekStartsOn is 0 (Sunday) or 1 (Monday). Supply month/today for deterministic initial rendering across a UTC midnight boundary.",
+      "Arrow keys move by day/week; Home/End move within a week, PageUp/PageDown by month, Shift+PageUp/PageDown by year. Enter/Space selects. Navigation skips unavailable dates with a bounded ten-year search. min/max bound navigation.",
+      "This inline calendar is not a form control. Use HDatePicker for form association. Applications own date fetching and disabled-date lists.",
+    ],
+    related: ["HDatePicker", "HDateRangePicker"],
+  },
+  HDatePicker: {
+    vue: '<HDatePicker v-model="date" label="Maintenance date" name="date" required />',
+    script: "const date = ref('2026-09-20');",
+    props: {
+      label: "Maintenance date",
+      name: "date",
+      value: "2026-09-20",
+      required: true,
+    },
+    event: "change",
+    notes: [
+      "Added in v0.5.0. Combines a native date input with HCalendar in a native top-layer popover. Selection returns focus to the field; Escape returns to the popover trigger. Dates are YYYY-MM-DD or empty, without time zones.",
+      "min/max and required use native validity. readonly blocks both typing and the calendar trigger. Native browser date controls remain available.",
+    ],
+    related: ["HCalendar", "HTimePicker", "HDateRangePicker"],
+  },
+  HDateRangePicker: {
+    vue: '<HDateRangePicker v-model="dates" label="Report window" name="dates" required />',
+    script: "const dates = ref<[string,string]>(['2026-09-20','2026-09-25']);",
+    props: {
+      label: "Report window",
+      name: "dates",
+      value: ["2026-09-20", "2026-09-25"],
+      required: true,
+    },
+    event: "change",
+    notes: [
+      "Added in v0.5.0. Two date fields with calendar popovers, not a continuous multi-month selection surface. Model is [start,end]; empty values are empty strings.",
+      "Native form submission uses the same name twice, in start/end order; use FormData.getAll(name). Crossed dates fail validity rather than being silently swapped. min/max apply to both endpoints; required applies to each.",
+    ],
+    related: ["HDatePicker", "HCalendar"],
+  },
+  HRangeSlider: {
+    vue: '<HRangeSlider v-model="capacity" label="Capacity" name="capacity" unit="%" />',
+    script: "const capacity = ref<[number,number]>([20,80]);",
+    props: { label: "Capacity", name: "capacity", value: [20, 80], unit: "%" },
+    event: "change",
+    notes: [
+      "Added in v0.5.0. Two native range controls share a track and retain native keyboard stepping. Handles cannot cross; both remain separately keyboard-focusable at equal values.",
+      "Model is [lower,upper]. FormData.getAll(name) returns two values in that order. Supply finite bounds and a positive step. Applications own unit conversion.",
+    ],
+    related: ["HRange", "HNumberInput"],
+  },
+  HStepper: {
+    vue: '<HStepper v-model="step" :items="steps" interactive />',
+    script:
+      "const step = ref('configure'); const steps = [{id:'configure',label:'Configure'},{id:'review',label:'Review'},{id:'deploy',label:'Deploy',disabled:true}];",
+    props: {
+      modelValue: "configure",
+      items: [
+        { id: "configure", label: "Configure" },
+        { id: "review", label: "Review" },
+        { id: "deploy", label: "Deploy", disabled: true },
+      ],
+      interactive: true,
+    },
+    event: "change",
+    notes: [
+      "Added in v0.5.0. Ordered workflow indicator, not a form or tab panel controller. Applications own current step, completion, validation, and routing. Interactive mode uses native buttons; static mode adds no tab stops.",
+      "Completed steps include a text label as well as a check mark. The current list item has aria-current=step. Disabled buttons cannot request navigation.",
+    ],
+    related: ["HFirstRunSetup", "HTabs"],
+  },
+  HTimeline: {
+    vue: '<HTimeline :items="activity" label="Deployment history"><template #detail:deployed><p>All three instances passed their health checks.</p></template></HTimeline>',
+    script:
+      "const activity = [{id:'deployed',title:'Deployment healthy',timestamp:'19 September, 12:04 UTC',dateTime:'2026-09-19T12:04:00Z',tone:'success' as const},{id:'started',title:'Deployment started',description:'Version 1.2.0 queued for rollout.'}];",
+    props: {
+      label: "Deployment history",
+      items: [
+        {
+          id: "deployed",
+          title: "Deployment healthy",
+          timestamp: "19 September, 12:04 UTC",
+          dateTime: "2026-09-19T12:04:00Z",
+          tone: "success",
+        },
+        {
+          id: "started",
+          title: "Deployment started",
+          description: "Version 1.2.0 queued for rollout.",
+        },
+      ],
+    },
+    children:
+      '<p slot="detail:deployed">All three instances passed their health checks.</p>',
+    notes: [
+      "Added in v0.5.0. Earlier release archives do not contain HTimeline.",
+      "Items render in supplied order with stable, unique IDs. Your application owns sorting, pagination, and fetching. The list is not virtualized; supply a bounded page of activity for large histories.",
+      "timestamp is display text; dateTime is the machine-readable HTML time value. Format dates in the application for deterministic SSR and the intended locale/time zone.",
+      "Use descriptive titles and details for status; marker tone is supplementary. Optional safe href values turn titles into native links.",
+      "detail:<id> replaces one event's description and works in Vue and web components. The empty slot replaces emptyText. loading retains existing items and shows loadingText instead of the empty state; this history is not a live log announcer.",
+    ],
+    related: ["HLogViewer", "HStatusPage", "HResourceDetail"],
+  },
   HPopover: {
     vue: '<HPopover label="Filters" title="Filter applications"><HInput label="Name contains" /></HPopover>',
     imports: ["HInput"],
