@@ -1,6 +1,6 @@
 # @hearth-ui/elements
 
-Framework-independent web components for self-hosted dashboards, public pages, and authentication. **70 components**, including six page recipes, five palettes, and one shared design language.
+Framework-independent web components for self-hosted dashboards, public pages, and authentication. **70 components**, including seven page recipes, five palettes, and one shared design language.
 
 New in v0.5.0: timeline, theme switcher, number input, time picker, calendar, date picker, date-range picker, range slider, and stepper.
 

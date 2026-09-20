@@ -87,7 +87,7 @@ async function mountForm(page: Page) {
 test("Vue controls bind theme, counter, time, intervals, and workflow state", async ({
   page,
 }) => {
-  await page.goto("/#components");
+  await page.goto("/#examples");
   const root = page.getByRole("region", { name: "Upcoming controls" });
   await root.getByRole("radio", { name: "Light", exact: true }).check();
   await expect(root.locator(".h-theme")).toHaveAttribute(

@@ -1,8 +1,8 @@
 # HTimePicker
 
-> Native time entry with bounds and a configurable step in seconds.
+> Time entry with a Hearth hour/minute/second popover, bounds, and configurable steps.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -14,7 +14,7 @@
 
 ## Choose and use it correctly
 
-- Added in v0.5.0. Uses input type=time; browser and OS determine picker appearance and 12/24-hour presentation. Values are HH:mm or HH:mm:ss, or an empty string. Step is in seconds. No date, time zone conversion, or custom clock face is supplied.
+- Text entry with a Hearth popover for hour, minute, and optional second selection; no native browser time popup. Values are HH:mm or HH:mm:ss, or empty. Step is in seconds; min/max and step are checked through the form validity API. Bounds can cross midnight. No time zone conversion is performed.
 
 ## Public API
 
@@ -41,7 +41,9 @@ type Props = {
 
 ### Defaults
 
-No component defaults; optional props are undefined (absent boolean props cast to false unless explicitly defaulted).
+```ts
+{ value: "", step: 60 }
+```
 
 ### Events
 
@@ -121,7 +123,7 @@ mount.append(element);
 
 ## Related components
 
-- [HDatePicker](../date-picker/llms.txt): A native date field with a keyboard-operated calendar popover.
+- [HDatePicker](../date-picker/llms.txt): Date text entry with a Hearth calendar popover and form validation.
 - [HInput](../input/llms.txt): A labeled input with help/error text and native validation. Web components participate in their owning form.
 
 ---

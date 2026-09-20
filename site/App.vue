@@ -33,6 +33,7 @@ import { catalog } from "./catalog";
 import ExpandedExamples from "./ExpandedExamples.vue";
 import DashboardExamples from "./DashboardExamples.vue";
 import RecipeExamples from "./RecipeExamples.vue";
+import ComponentRegistry from "./ComponentRegistry.vue";
 const document = window.document;
 
 const route = ref(location.hash.slice(1) || "home");
@@ -498,7 +499,11 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
       brand="hearth"
       brand-href="#home"
       :items="publicNav"
-      :active="route"
+      :active="
+        route.startsWith('components') || route === 'examples'
+          ? 'components'
+          : route
+      "
       footer-text="A home for what you build."
     >
       <template #actions
@@ -515,7 +520,8 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
       <template
         v-if="
           route === 'home' ||
-          !['components', 'themes', 'guide', 'recipes'].includes(route)
+          (!route.startsWith('components') &&
+            !['examples', 'themes', 'guide', 'recipes'].includes(route))
         "
       >
         <section class="landing-hero">
@@ -670,21 +676,23 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
           >
         </section>
       </template>
-      <template v-else-if="route === 'components'">
+      <ComponentRegistry
+        v-else-if="route === 'components' || route.startsWith('components/')"
+        :selected="route.split('/')[1] || ''"
+      />
+      <template v-else-if="route === 'examples'">
         <section class="page-intro">
           <HPageHeader
             title="Small details. A complete system."
             description="From the button you press a hundred times to the page that welcomes you home."
-            eyebrow="The component collection"
+            eyebrow="Composed examples"
             ><HButton
               variant="primary"
               trailing-icon="arrow"
-              @click="
-                document
-                  .getElementById('new-controls')
-                  ?.scrollIntoView()
-              "
+              @click="document.getElementById('new-controls')?.scrollIntoView()"
               >Explore what's new in 0.5</HButton
+            ><HButton href="#components"
+              >Back to component registry</HButton
             ></HPageHeader
           >
         </section>
@@ -1038,13 +1046,19 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
         <section class="page-intro">
           <HPageHeader
             title="A good starting point, already assembled."
-            description="Six reusable page recipes built from the same component family. Supply your own data and application behavior."
+            description="Seven reusable page recipes built from the same component family. Supply your own data and application behavior."
             eyebrow="From pieces to pages"
           />
         </section>
         <div class="recipe-gallery">
           <HCard
             v-for="recipe in [
+              {
+                id: 'auth',
+                title: 'Auth page',
+                description:
+                  'A complete sign-in screen with validation, loading feedback, and space for your brand.',
+              },
               {
                 id: 'settings',
                 title: 'Settings page',

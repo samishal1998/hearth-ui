@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, watch, nextTick } from "vue";
-import HInput from "./HInput.vue";
+import { ref, watch, nextTick, onMounted, onUpdated } from "vue";
+import HInput from "./HTextInput.vue";
+import { parseDate } from "../dates";
 import HPopover from "./HPopover.vue";
 import HCalendar from "./HCalendar.vue";
 const props = withDefaults(
@@ -49,6 +50,23 @@ function update(value: string) {
   local.value = value;
   emit("update:modelValue", value);
 }
+function sync() {
+  const field = input.value?.$el.querySelector("input") as
+    HTMLInputElement | undefined;
+  if (field) {
+    const value = field.value;
+    field.setCustomValidity(
+      !props.readonly &&
+        value &&
+        (!parseDate(value) ||
+          (props.min && value < props.min) ||
+          (props.max && value > props.max))
+        ? "Enter a valid date within the allowed range (YYYY-MM-DD)."
+        : "",
+    );
+  }
+  emit("control-sync");
+}
 async function select(value: string) {
   update(value);
   emit("change", value);
@@ -57,13 +75,17 @@ async function select(value: string) {
   input.value?.$el.querySelector("input")?.focus();
   emit("control-sync");
 }
+onMounted(sync);
+onUpdated(sync);
 </script>
 <template>
   <div class="h-date-picker" part="base">
     <HInput
       ref="input"
       :model-value="local"
-      type="date"
+      type="text"
+      placeholder="YYYY-MM-DD"
+      autocomplete="off"
       :label="label"
       :name="name"
       :min="min"
@@ -75,7 +97,7 @@ async function select(value: string) {
       :error="error"
       @update:model-value="update"
       @change="emit('change', $event)"
-      @control-sync="emit('control-sync')"
+      @control-sync="sync"
     /><HPopover
       v-model:open="open"
       :label="`Open calendar for ${label}`"
@@ -102,5 +124,11 @@ async function select(value: string) {
 }
 .h-date-popover {
   --h-popover-width: 360px;
+  min-width: 0;
+  max-width: 100%;
+}
+.h-date-popover :deep(.h-button) {
+  max-width: 100%;
+  white-space: normal;
 }
 </style>

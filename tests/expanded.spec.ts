@@ -26,7 +26,7 @@ test("Vue comboboxes, selection controls, navigation, and disclosure primitives"
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/#components");
+  await page.goto("/#examples");
   const multi = page.getByRole("combobox", {
     name: "Discovery providers",
     exact: true,

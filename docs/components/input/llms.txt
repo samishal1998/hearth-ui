@@ -2,7 +2,7 @@
 
 > A labeled input with help/error text and native validation. Web components participate in their owning form.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -15,6 +15,7 @@
 ## Choose and use it correctly
 
 - Supply a visible label and a name for form submission. Use type=email/url/password/number/etc. for native input behavior.
+- type=date, time, and datetime-local use Hearth picker popovers with text entry instead of native browser dropdowns. Values retain their ISO date/time formats, form submission, and required/bounds validation.
 - The model is a string, including type="number". Use HRange for a numeric slider.
 - hint/error associate explanatory text with the input; native required, pattern, and length constraints control browser validation. Application error text does not replace backend validation.
 

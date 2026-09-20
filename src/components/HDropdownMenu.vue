@@ -100,6 +100,7 @@ onBeforeUnmount(() => close(false));
     ><HButton
       ref="trigger"
       :icon="icon"
+      trailing-icon="down"
       :disabled="disabled"
       aria-haspopup="menu"
       :aria-expanded="visible"
@@ -107,8 +108,8 @@ onBeforeUnmount(() => close(false));
       @click="visible ? close() : show()"
       @keydown.down.prevent="show()"
       @keydown.up.prevent="show(true)"
-      >{{ label }}<HIcon name="down" :size="14"
-    /></HButton>
+      >{{ label }}</HButton
+    >
     <div
       :id="id"
       ref="panel"

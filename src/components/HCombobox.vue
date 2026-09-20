@@ -370,7 +370,9 @@ label > span {
   display: flex;
   align-items: center;
   min-height: var(--h-control-height);
-  padding-left: 12px;
+  padding: 4px 6px;
+  padding-inline-start: 12px;
+  gap: 4px;
 }
 input[role="combobox"] {
   min-width: 0;
@@ -396,7 +398,7 @@ input::placeholder {
   height: 40px;
   flex-shrink: 0;
   border: 0;
-  border-radius: var(--h-radius-control);
+  border-radius: calc(var(--h-radius-control) - 4px);
   background: none;
   color: var(--h-muted);
 }

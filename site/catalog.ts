@@ -27,7 +27,7 @@ export const catalog = [
     tag: "hearth-time-picker",
     category: "Controls",
     description:
-      "Native time entry with bounds and a configurable step in seconds.",
+      "Time entry with a Hearth hour/minute/second popover, bounds, and configurable steps.",
     props:
       "modelValue, value, label, name, min, max, hint, error: string · step: number · required, disabled, readonly: boolean",
     events: "update:modelValue(string), change(string)",
@@ -51,7 +51,7 @@ export const catalog = [
     tag: "hearth-date-picker",
     category: "Controls",
     description:
-      "A native date field with a keyboard-operated calendar popover.",
+      "Date text entry with a Hearth calendar popover and form validation.",
     props:
       "modelValue, value, label, name, min, max, locale, hint, error: string · weekStartsOn: 0 | 1 · required, disabled, readonly: boolean",
     events: "update:modelValue(string), change(string)",

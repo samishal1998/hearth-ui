@@ -27,7 +27,7 @@ export const examples = {
     props: { label: "Backup time", name: "time", value: "09:30", step: 900 },
     event: "change",
     notes: [
-      "Added in v0.5.0. Uses input type=time; browser and OS determine picker appearance and 12/24-hour presentation. Values are HH:mm or HH:mm:ss, or an empty string. Step is in seconds. No date, time zone conversion, or custom clock face is supplied.",
+      "Text entry with a Hearth popover for hour, minute, and optional second selection; no native browser time popup. Values are HH:mm or HH:mm:ss, or empty. Step is in seconds; min/max and step are checked through the form validity API. Bounds can cross midnight. No time zone conversion is performed.",
     ],
     related: ["HDatePicker", "HInput"],
   },
@@ -59,8 +59,8 @@ export const examples = {
     },
     event: "change",
     notes: [
-      "Added in v0.5.0. Combines a native date input with HCalendar in a native top-layer popover. Selection returns focus to the field; Escape returns to the popover trigger. Dates are YYYY-MM-DD or empty, without time zones.",
-      "min/max and required use native validity. readonly blocks both typing and the calendar trigger. Native browser date controls remain available.",
+      "Text entry with HCalendar in a Hearth top-layer popover, without a native browser date dropdown. Selection returns focus to the field; Escape returns to the trigger. Dates are YYYY-MM-DD or empty, without time zones.",
+      "Date parsing and min/max use the form validity API; required uses the underlying text field. readonly blocks both typing and the calendar trigger. Invalid dates remain visible for correction.",
     ],
     related: ["HCalendar", "HTimePicker", "HDateRangePicker"],
   },
@@ -647,6 +647,7 @@ export const examples = {
     event: "change",
     notes: [
       "Supply a visible label and a name for form submission. Use type=email/url/password/number/etc. for native input behavior.",
+      "type=date, time, and datetime-local use Hearth picker popovers with text entry instead of native browser dropdowns. Values retain their ISO date/time formats, form submission, and required/bounds validation.",
       'The model is a string, including type="number". Use HRange for a numeric slider.',
       "hint/error associate explanatory text with the input; native required, pattern, and length constraints control browser validation. Application error text does not replace backend validation.",
     ],

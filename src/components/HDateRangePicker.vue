@@ -37,7 +37,7 @@ function update(index: number, value: string) {
 }
 function sync() {
   if (!root.value) return;
-  root.value.querySelectorAll("input[type=date]").forEach((input) => {
+  root.value.querySelectorAll(".h-date-picker input").forEach((input) => {
     input.setAttribute("data-h-form-value", "");
     input.setAttribute("data-h-multiple", "");
   });

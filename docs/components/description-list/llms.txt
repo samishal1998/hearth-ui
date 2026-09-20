@@ -2,7 +2,7 @@
 
 > Responsive native key/value metadata with links and per-value slots.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
 
 ## Identity
 

@@ -2,7 +2,7 @@
 
 > Two date pickers with start/end constraints and native form validation.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -136,7 +136,7 @@ mount.append(element);
 
 ## Related components
 
-- [HDatePicker](../date-picker/llms.txt): A native date field with a keyboard-operated calendar popover.
+- [HDatePicker](../date-picker/llms.txt): Date text entry with a Hearth calendar popover and form validation.
 - [HCalendar](../calendar/llms.txt): A keyboard-navigable Gregorian month calendar with date-only values, bounds, and unavailable days.
 
 ---

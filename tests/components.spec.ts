@@ -111,6 +111,7 @@ test("native Vue: themes, scoped islands, dialogs, login template, and dashboard
   );
   await page.getByRole("button", { name: "Reset to Sunset" }).click();
   await page.getByRole("link", { name: "Components", exact: true }).click();
+  await page.getByRole('link', {name:'Browse composed examples'}).click();
   await page.getByRole("button", { name: "Open a real dialog" }).click();
   await page
     .getByRole("dialog")

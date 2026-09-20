@@ -4,7 +4,7 @@ import type { HearthTimelineElement } from "../src/elements";
 test("Vue timeline preserves supplied order, timestamps, and detail slots when new activity arrives", async ({
   page,
 }) => {
-  await page.goto("/#components");
+  await page.goto("/#examples");
   const history = page.getByRole("list", {
     name: "Deployment history",
     exact: true,

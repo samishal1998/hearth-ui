@@ -2,7 +2,7 @@
 
 > A numeric field and counter with native stepping, bounds, validation, and an explicit empty value.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
 
 ## Identity
 

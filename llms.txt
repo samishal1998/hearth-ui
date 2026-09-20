@@ -2,7 +2,7 @@
 
 > Themeable Vue and web components for self-hosted dashboards, public pages, and authentication. Start here, then read only the component references needed for the task.
 
-This index covers 70 public components in source version 0.5.0. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
+This index covers 70 public components in source version 0.5.1. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
 
 ## Agent workflow
 
@@ -74,7 +74,7 @@ This index covers 70 public components in source version 0.5.0. The working tree
 - [HCombobox](docs/components/combobox/llms.txt): Searchable single or multi-select with selected chips, disabled options, keyboard navigation, and repeated form values.
 - [HCommandPalette](docs/components/command-palette/llms.txt): A searchable keyboard command dialog with grouping, shortcuts, and disabled commands.
 - [HCopyField](docs/components/copy-field/llms.txt): A read-only endpoint, identifier, or secret field with explicit clipboard and reveal actions.
-- [HDatePicker](docs/components/date-picker/llms.txt): A native date field with a keyboard-operated calendar popover.
+- [HDatePicker](docs/components/date-picker/llms.txt): Date text entry with a Hearth calendar popover and form validation.
 - [HDateRangePicker](docs/components/date-range-picker/llms.txt): Two date pickers with start/end constraints and native form validation.
 - [HDropdownMenu](docs/components/dropdown-menu/llms.txt): A keyboard-operated command menu for edit, copy, refresh, and destructive actions.
 - [HFileUpload](docs/components/file-upload/llms.txt): Native file selection and drag/drop with configurable validation, file lists, and application-owned progress.
@@ -92,7 +92,7 @@ This index covers 70 public components in source version 0.5.0. The working tree
 - [HTabs](docs/components/tabs/llms.txt): Tabs with roving focus, arrow/Home/End keys, and properly associated panels.
 - [HTextarea](docs/components/textarea/llms.txt): A labeled multiline field with native constraints and form reset support.
 - [HThemeSwitcher](docs/components/theme-switcher/llms.txt): A light, dark, and system preference selector. Bind its value to HTheme mode.
-- [HTimePicker](docs/components/time-picker/llms.txt): Native time entry with bounds and a configurable step in seconds.
+- [HTimePicker](docs/components/time-picker/llms.txt): Time entry with a Hearth hour/minute/second popover, bounds, and configurable steps.
 
 ## Surfaces
 

@@ -27,8 +27,8 @@ npm run publish:dry-run
 Artifacts are written to `release-dist/`:
 
 ```text
-hearth-ui-vue-0.5.0.tgz
-hearth-ui-elements-0.5.0.tgz
+hearth-ui-vue-0.5.1.tgz
+hearth-ui-elements-0.5.1.tgz
 SHA256SUMS
 ```
 
@@ -50,8 +50,8 @@ npm whoami
 After reviewing the dry run, publish the verified tarballs:
 
 ```sh
-npm publish ./release-dist/hearth-ui-vue-0.5.0.tgz --access public --tag latest
-npm publish ./release-dist/hearth-ui-elements-0.5.0.tgz --access public --tag latest
+npm publish ./release-dist/hearth-ui-vue-0.5.1.tgz --access public --tag latest
+npm publish ./release-dist/hearth-ui-elements-0.5.1.tgz --access public --tag latest
 ```
 
 Complete any npm two-factor authentication prompts interactively. Do not put credentials in the repository. First publication may need to be done locally before the npm package settings needed for trusted publishing exist.

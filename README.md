@@ -35,7 +35,7 @@ The application owns its router, authentication, authorization, storage, and dat
 
 ## Install
 
-The current release is **0.5.0**. Install the distribution you need:
+The current release is **0.5.1**. Install the distribution you need:
 
 ```sh
 # Native Vue
@@ -134,6 +134,17 @@ Keep the files inside `dist/elements/` together: entry points import a shared ru
 
 The source component catalog includes interactive previews and documents props, events, slots, and CSS parts for all **70 components**. Vue declarations and web-component constructors are included for every component. The [hosted catalog](https://samishal1998.github.io/hearth-ui/#components) reflects the most recent deployed build.
 
+The registry provides search, category filters, and 12 results per page. Each component has a shareable route such as `#components/HCalendar`, with a focused preview, usage example, and API reference. Full composed demos are at `#examples`; the seven page recipes, including the authentication page, are at `#recipes`.
+
+Date, time, and local date-time fields now use Hearth picker popovers and formatted text entry instead of native browser dropdowns. Their ISO string values and form submission contracts are preserved; invalid dates, bounds, and time steps participate in form validation.
+
+### New in 0.5.1
+
+- Searchable, paginated registry with dedicated component previews and API references.
+- Hearth date, time, and local date-time popovers replace native browser dropdowns while preserving form values and validation.
+- Inset select/combobox adornments and correctly aligned dropdown chevrons.
+- Authentication preview added to the seven-recipe gallery.
+
 ### New in 0.5.0
 
 `HTimeline` adds deployment history, audit events, and incident updates with ordered-list semantics, timestamps, safe title links, loading/empty states, and per-event detail slots.
@@ -144,9 +155,9 @@ Eight additional controls are included in both distributions:
 | --- | --- |
 | `HThemeSwitcher` | Light, dark, and system (auto) preference; bind its model to `HTheme` mode. |
 | `HNumberInput` | Counter and direct numeric entry with native min/max/step validation; empty values are `null`. |
-| `HTimePicker` | Native time entry with bounds and steps in seconds. |
+| `HTimePicker` | Time entry with a Hearth picker popover, bounds, and steps in seconds. |
 | `HCalendar` | Inline Gregorian calendar, keyboard navigation, unavailable dates, and date-only values. |
-| `HDatePicker` | Native date entry plus an accessible calendar popover. |
+| `HDatePicker` | Date text entry plus a Hearth calendar popover. |
 | `HDateRangePicker` | Start/end date pickers with cross-field bounds and native validation. |
 | `HRangeSlider` | Two native range handles for a numeric interval. |
 | `HStepper` | Static or interactive workflow progress with current/completed/disabled steps. |
@@ -159,7 +170,7 @@ Range controls submit two values under the same name in endpoint order; read the
 - Data and selection: `HDataTable`, `HDescriptionList`, `HList`, `HListItem`, `HChip`, `HChipGroup`, and `HSegmentedControl`.
 - Dashboard utilities: `HFileUpload`, `HCodeBlock`, `HCommandPalette`, `HLogViewer`, `HCopyField`, `HConnectionState`, and `HSparkline`.
 - Six [page recipes](https://samishal1998.github.io/hearth-ui/#recipes): `HSettingsPage`, `HProviderSetup`, `HResourceDetail`, `HStatusPage`, `HErrorPage`, and `HFirstRunSetup`.
-- Native date, time, and local date-time inputs through `HInput`.
+- Date, time, and local date-time input modes through `HInput`.
 
 Applications own persistence, requests, notification queues, and file uploads. The recipes demonstrate those boundaries with in-memory state. Tables support client-side sorting, selection, pagination, and per-cell slots using `tableCellSlot(rowId, columnKey)`; logs keep a bounded rendered window. See each component's agent reference for supported limits and event contracts.
 

@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import {
   HSettingsPage,
+  HAuthPage,
   HProviderSetup,
   HResourceDetail,
   HStatusPage,
@@ -51,6 +52,12 @@ async function account(_credentials: AuthCredentials) {
   busy.value = false;
   step.value = 1;
 }
+async function signIn(_credentials: AuthCredentials) {
+  busy.value = true;
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  busy.value = false;
+  notice.value = "Sign-in demo complete. No credentials were sent or stored.";
+}
 async function provider(_draft: ConnectionDraft) {
   busy.value = true;
   await new Promise((r) => setTimeout(r, 200));
@@ -63,8 +70,17 @@ async function provider(_draft: ConnectionDraft) {
     <HButton href="#recipes" variant="ghost">← All page recipes</HButton
     ><HBadge label="UI example · no backend requests" tone="accent" />
   </div>
+  <HAuthPage
+    v-if="kind === 'auth'"
+    brand="homestead"
+    :loading="busy"
+    note="Interactive preview. Use demo credentials only."
+    @submit="signIn"
+    ><template #footer
+      ><HAlert v-if="notice" tone="success" :description="notice" /></template
+  ></HAuthPage>
   <HDashboardShell
-    v-if="kind === 'settings' || kind === 'resource'"
+    v-else-if="kind === 'settings' || kind === 'resource'"
     brand="homestead"
     :items="[
       {
