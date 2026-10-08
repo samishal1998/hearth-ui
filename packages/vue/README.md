@@ -2,7 +2,7 @@
 
 **A home for what you build.** Native Vue components for dashboards, public pages, and authentication.
 
-Hearth UI includes **94 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. Version **0.7.0** adds a composable foundation of layout, typography, workspace, collection, and behavior primitives.
+Hearth UI includes **94 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. Version **0.7.1** includes the 0.7 foundation release and a mobile dashboard toolbar layout fix.
 
 [Component registry](https://hearth-ui.samyx.net/#components) · [Page recipes](https://hearth-ui.samyx.net/#recipes) · [Theme studio](https://hearth-ui.samyx.net/#themes) · [GitHub](https://github.com/samishal1998/hearth-ui)
 

@@ -63,7 +63,7 @@ The registry preview exposes a **Mobile breakpoint (px)** control for applicable
 
 ## Install
 
-The current release is **0.7.0**. Install the distribution you need:
+The current release is **0.7.1**. Install the distribution you need:
 
 ```sh
 # Native Vue
@@ -165,6 +165,10 @@ The source component catalog includes interactive previews and documents props, 
 The registry provides search, category filters, and 12 results per page. Each component has a shareable route such as `#components/HCalendar`, with a focused preview, usage example, and API reference. Full composed demos are at `#examples`; the seven page recipes, including the authentication page, are at `#recipes`.
 
 Date, time, and local date-time fields now use Hearth picker popovers and formatted text entry instead of native browser dropdowns. Their ISO string values and form submission contracts are preserved; invalid dates, bounds, and time steps participate in form validation.
+
+### Fixed in 0.7.1
+
+Mobile dashboard headers grow to fit wrapped actions, preventing the scrollable content from overlapping toolbar buttons. The 0.7 foundation APIs and distribution contents are unchanged.
 
 ### New in 0.7.0
 

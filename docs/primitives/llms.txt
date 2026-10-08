@@ -1,6 +1,6 @@
 # Hearth UI behavior and native markup primitives
 
-[Start at the agent index](../../llms.txt). Version 0.7.0. Match this reference to your installed package or release.
+[Start at the agent index](../../llms.txt). Version 0.7.1. Match this reference to your installed package or release.
 
 ## Public API
 

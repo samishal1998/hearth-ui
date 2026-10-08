@@ -2,7 +2,7 @@
 
 **A home for what you build.** Framework-independent web components for dashboards, public pages, and authentication.
 
-Hearth UI includes **94 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. Version **0.7.0** adds composable layout, typography, workspace, collection, and DOM behavior primitives.
+Hearth UI includes **94 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. Version **0.7.1** includes the 0.7 foundation release and a mobile dashboard toolbar layout fix.
 
 [Component registry](https://hearth-ui.samyx.net/#components) · [HTML example](https://hearth-ui.samyx.net/elements.html) · [React example](https://hearth-ui.samyx.net/react.html) · [GitHub](https://github.com/samishal1998/hearth-ui)
 
@@ -64,11 +64,11 @@ Use a pinned CDN version:
     <title>Hearth UI</title>
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.7.0/dist/themes.css"
+      href="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.7.1/dist/themes.css"
     />
     <script
       type="module"
-      src="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.7.0/dist/elements/auto.js"
+      src="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.7.1/dist/elements/auto.js"
     ></script>
   </head>
   <body>

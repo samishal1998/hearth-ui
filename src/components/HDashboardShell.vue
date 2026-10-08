@@ -479,8 +479,10 @@ function navigate(id: string) {
   display: inline-flex;
 }
 .h-dashboard.h-mobile .h-topbar {
-  height: 66px;
-  padding: 0 16px;
+  height: auto;
+  min-height: 66px;
+  padding: 12px 16px;
+  flex-wrap: wrap;
 }
 .h-dashboard.h-mobile .h-shell-footer {
   flex-wrap: wrap;

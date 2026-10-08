@@ -2,7 +2,7 @@
 
 > Persistent desktop inspector that moves into a full-screen mobile dialog without remounting content.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.1. Match documentation to your installed source/release.
 
 ## Identity
 

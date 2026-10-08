@@ -1,12 +1,35 @@
 import { test, expect } from "@playwright/test";
 
+test("mobile wrapped toolbar actions stay outside the scrolling content and remain clickable", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#foundation");
+  const root = page.getByRole("region", {
+      name: "Composable workspace examples",
+    }),
+    open = root.getByRole("button", { name: "Open session inspector" });
+  await open.click();
+  await expect(
+    page.getByRole("dialog", { name: "Session inspector" }),
+  ).toBeVisible();
+  await page
+    .getByRole("dialog", { name: "Session inspector" })
+    .getByRole("button", { name: "Close Session inspector" })
+    .click();
+  const button = (await open.boundingBox())!,
+    content = (await root
+      .getByRole("region", { name: "Resource workspace" })
+      .boundingBox())!;
+  expect(button.y + button.height).toBeLessThanOrEqual(content.y + 1);
+});
+
 test("nonmodal controller light-dismiss does not steal focus from an outside control", async ({
   page,
 }) => {
   await page.goto("/elements.html");
   await page.evaluate(async () => {
-    const { createOverlayController } =
-      await import("/primitives-demo.ts");
+    const { createOverlayController } = await import("/primitives-demo.ts");
     const section = document.createElement("section");
     section.id = "consumer-popup-section";
     section.innerHTML =
@@ -42,8 +65,7 @@ test("consumer-defined form controls use public internals bindings for reset, di
 }) => {
   await page.goto("/elements.html");
   await page.evaluate(async () => {
-    const { createFormControlController } =
-      await import("/primitives-demo.ts");
+    const { createFormControlController } = await import("/primitives-demo.ts");
     class CustomField extends HTMLElement {
       static formAssociated = true;
       field: HTMLInputElement;

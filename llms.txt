@@ -2,7 +2,7 @@
 
 > Themeable Vue and web components for self-hosted dashboards, public pages, and authentication. Start here, then read only the component references needed for the task.
 
-This index covers 94 public components in source version 0.7.0. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
+This index covers 94 public components in source version 0.7.1. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
 
 ## Agent workflow
 

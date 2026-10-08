@@ -7,7 +7,7 @@ Two public npm packages share the source and a synchronized version:
 | `packages/vue`      | `@hearth-ui/vue`      | Vue 3.5+ peer                                   |
 | `packages/elements` | `@hearth-ui/elements` | None; runtime bundled and DOM-only declarations |
 
-The version prepared in this workspace is **0.7.0**, including the complete foundation release. Both packages are MIT-licensed and ESM-only. The repository root is private.
+The version prepared in this workspace is **0.7.1**, including the complete foundation release and mobile toolbar fix. Both packages are MIT-licensed and ESM-only. The repository root is private.
 
 ## Prepare and preview
 
@@ -23,8 +23,8 @@ npm run publish:dry-run
 `publish:prepare` regenerates the agent references, checks/types/builds both packages, runs browser and publishing tests, tests isolated package installation and SSR, then creates:
 
 ```text
-release-dist/hearth-ui-vue-0.7.0.tgz
-release-dist/hearth-ui-elements-0.7.0.tgz
+release-dist/hearth-ui-vue-0.7.1.tgz
+release-dist/hearth-ui-elements-0.7.1.tgz
 release-dist/SHA256SUMS
 release-dist/packages.json
 ```
@@ -100,7 +100,7 @@ For each package on npmjs.com, configure a GitHub Actions trusted publisher:
 
 The workflow uses GitHub-hosted runners, Node 24, OIDC, and provenance. It does not need an `NPM_TOKEN` secret. The npm CLI must support trusted publishing (11.5.1+).
 
-Commit and push the release source and its matching tag, then run **Actions → Publish npm packages**, choosing the version and **both**, **vue**, or **elements**. For `0.7.0`, it checks out `refs/tags/v0.7.0`, builds and tests the packages, packs the archives, and invokes the same script with `--provenance`.
+Commit and push the release source and its matching tag, then run **Actions → Publish npm packages**, choosing the version and **both**, **vue**, or **elements**. For `0.7.1`, it checks out `refs/tags/v0.7.1`, builds and tests the packages, packs the archives, and invokes the same script with `--provenance`.
 
 The existing **Release** workflow attaches package archives and manifests to GitHub Releases. Pushing a tag does not itself publish to npm or rebuild the local docs container.
 
