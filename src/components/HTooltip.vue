@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onBeforeUnmount, useId, watch } from "vue";
+import { ref, onMounted, onBeforeUnmount, useId, watch } from "vue";
 import HIcon from "./HIcon.vue";
 import { useFloating } from "../floating";
+import { useMobileLayout } from "../mobile";
 const props = withDefaults(
   defineProps<{
     text: string;
@@ -10,11 +11,13 @@ const props = withDefaults(
     placement?: "top" | "bottom" | "left" | "right";
     delay?: number;
     disabled?: boolean;
+    mobileBreakpoint?: number;
   }>(),
   { icon: "info", placement: "top", delay: 350 },
 );
 const anchor = ref<HTMLElement>();
 const panel = ref<HTMLElement>();
+const mobile = useMobileLayout(panel, () => props.mobileBreakpoint);
 const visible = ref(false);
 const id = useId();
 const hovering = ref(false);
@@ -89,17 +92,43 @@ watch(
   },
 );
 onBeforeUnmount(hide);
+function tap(event: PointerEvent) {
+  if (event.pointerType === "mouse") return;
+  clearTimeout(timer);
+  if (visible.value) hide();
+  else
+    show(
+      event
+        .composedPath()
+        .find(
+          (node) =>
+            node instanceof HTMLElement && node.matches("button,a,[tabindex]"),
+        ) as HTMLElement | undefined,
+    );
+}
+function outside(event: PointerEvent) {
+  if (
+    visible.value &&
+    !event.composedPath().includes(anchor.value!) &&
+    !event.composedPath().includes(panel.value!)
+  )
+    hide();
+}
+onMounted(() => document.addEventListener("pointerdown", outside));
+onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
 </script>
 <template>
   <span
     ref="anchor"
     class="h-tooltip"
+    :class="{ 'h-mobile': mobile }"
     part="base"
     @pointerenter="enter"
     @pointerleave="leave"
     @focusin="focus"
     @focusout="blur"
     @keydown="escape"
+    @pointerdown="tap"
     ><slot
       ><button
         type="button"
@@ -114,6 +143,7 @@ onBeforeUnmount(hide);
       :id="id"
       ref="panel"
       class="h-tooltip-content"
+      :class="{ 'h-mobile': mobile }"
       role="tooltip"
       popover="manual"
       part="content"
@@ -143,7 +173,7 @@ onBeforeUnmount(hide);
   position: fixed;
   inset: auto;
   margin: 0;
-  max-width: min(280px, calc(100vw - 24px));
+  max-width: min(280px, calc(var(--h-overlay-width, 100vw) - 24px));
   padding: 8px 11px;
   border: 1px solid var(--h-border);
   border-radius: 7px;
@@ -151,5 +181,16 @@ onBeforeUnmount(hide);
   color: var(--h-text);
   font: 12px/1.6 var(--h-font);
   box-shadow: var(--h-shadow-soft);
+  max-height: calc(var(--h-overlay-height, 100dvh) - 24px);
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+.h-tooltip.h-mobile .h-tooltip-trigger {
+  width: 44px;
+  height: 44px;
+}
+.h-tooltip-content.h-mobile {
+  font-size: 14px;
+  padding: 12px;
 }
 </style>

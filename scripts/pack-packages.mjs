@@ -7,7 +7,7 @@ import { root } from "./component-api.mjs";
 import { assertPrepared, packageDirectories } from "./prepare-npm.mjs";
 
 export function packPackages(destination = resolve(root, "release-dist")) {
-  assertPrepared();
+  const version = assertPrepared();
   mkdirSync(destination, { recursive: true });
   const packages = [];
   for (const directory of packageDirectories) {
@@ -24,16 +24,36 @@ export function packPackages(destination = resolve(root, "release-dist")) {
         { cwd: resolve(root, directory), encoding: "utf8" },
       ),
     );
-    packages.push({ ...packed, path: join(destination, packed.filename) });
+    const path = join(destination, packed.filename);
+    packages.push({
+      ...packed,
+      path,
+      sha256: createHash("sha256").update(readFileSync(path)).digest("hex"),
+    });
   }
   writeFileSync(
     join(destination, "SHA256SUMS"),
-    packages
-      .map(
-        (pkg) =>
-          `${createHash("sha256").update(readFileSync(pkg.path)).digest("hex")}  ${pkg.filename}`,
-      )
-      .join("\n") + "\n",
+    packages.map((pkg) => `${pkg.sha256}  ${pkg.filename}`).join("\n") + "\n",
+  );
+  writeFileSync(
+    join(destination, "packages.json"),
+    JSON.stringify(
+      {
+        format: 1,
+        version,
+        packages: packages.map(
+          ({ name, version, filename, integrity, sha256 }) => ({
+            name,
+            version,
+            filename,
+            integrity,
+            sha256,
+          }),
+        ),
+      },
+      null,
+      2,
+    ) + "\n",
   );
   return packages;
 }

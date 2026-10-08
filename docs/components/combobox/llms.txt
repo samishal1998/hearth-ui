@@ -2,7 +2,7 @@
 
 > Searchable single or multi-select with selected chips, disabled options, keyboard navigation, and repeated form values.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -18,11 +18,12 @@
 - Filtering matches labels, descriptions, and keywords. This is selection from options, not free-form tag creation.
 - Arrow keys navigate enabled results, Enter selects an active result, Escape closes, and Tab leaves. Enter while choosing must not submit the surrounding form.
 - Handle search(query) in application code for remote fetching and bind loading. Existing selected IDs are retained while option data changes.
-- The popup is local, not portaled; overflow-clipping ancestors can clip it. Large option lists are not virtualized.
+- On mobile the search field and choices move together into a native top-layer bottom panel with a close control; selected values and form ownership remain intact. Desktop popups remain local and can be clipped by overflow ancestors. Large option lists are not virtualized.
+- mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
 
 ## Public API
 
-label, name, placeholder, hint, error, emptyText: string · options: {value, label, description?, keywords?, disabled?}[] · modelValue, value: string | string[] · multiple, required, disabled, loading, clearable: boolean
+label, name, placeholder, hint, error, emptyText: string · options: {value, label, description?, keywords?, disabled?}[] · modelValue, value: string | string[] · multiple, required, disabled, loading, clearable: boolean · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -69,7 +70,7 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 
 ### CSS parts
 
-base, label, control, selection, popup, option, hint
+base, label, control, selection, popup, option, hint, header
 
 Use `hearth-combobox::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
 
@@ -77,6 +78,7 @@ Use `hearth-combobox::part(part-name)` for an exposed part or inherited `--h-*` 
 
 ```ts
 export interface ComboboxProps {
+    mobileBreakpoint?: number;
     modelValue?: string | string[];
     value?: string | string[];
     label: string;

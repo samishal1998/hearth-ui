@@ -56,29 +56,35 @@ controlSync(emit);
   <div class="h-field" part="base">
     <label :for="id" part="label"
       >{{ label }}<span v-if="required" aria-hidden="true"> *</span></label
-    ><input
-      v-bind="$attrs"
-      :id="id"
-      part="control"
-      :value="local"
-      :type="type"
-      :name="name"
-      :placeholder="placeholder"
-      :required="required"
-      :disabled="disabled"
-      :readonly="readonly"
-      :autocomplete="autocomplete"
-      :minlength="minlength"
-      :maxlength="maxlength"
-      :min="min"
-      :max="max"
-      :step="step"
-      :pattern="pattern"
-      :aria-invalid="!!error"
-      :aria-describedby="error || hint ? `${id}-help` : undefined"
-      @input="input"
-      @change="emit('change', local)"
-    />
+    >
+    <div class="h-field-control" :class="{ 'has-trailing': !!$slots.trailing }">
+      <input
+        v-bind="$attrs"
+        :id="id"
+        part="control"
+        :value="local"
+        :type="type"
+        :name="name"
+        :placeholder="placeholder"
+        :required="required"
+        :disabled="disabled"
+        :readonly="readonly"
+        :autocomplete="autocomplete"
+        :minlength="minlength"
+        :maxlength="maxlength"
+        :min="min"
+        :max="max"
+        :step="step"
+        :pattern="pattern"
+        :aria-invalid="!!error"
+        :aria-describedby="error || hint ? `${id}-help` : undefined"
+        @input="input"
+        @change="emit('change', local)"
+      />
+      <div v-if="$slots.trailing" class="h-field-adornment" part="adornment">
+        <slot name="trailing" />
+      </div>
+    </div>
     <p
       v-if="error || hint"
       :id="`${id}-help`"
@@ -115,7 +121,7 @@ input {
   color: var(--h-text);
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-control);
-  font-size: 13px;
+  font-size: var(--h-field-font-size, 13px);
   transition: border-color var(--h-motion);
 }
 input:hover {
@@ -139,5 +145,28 @@ p {
 }
 .error {
   color: var(--h-danger);
+}
+.h-field-control {
+  position: relative;
+  min-width: 0;
+}
+.has-trailing input {
+  min-height: 52px;
+  padding-inline-end: 56px;
+}
+.h-field-adornment {
+  position: absolute;
+  inset-inline-end: 4px;
+  top: 4px;
+  display: flex;
+  align-items: center;
+}
+.h-field-adornment :deep(.h-popover > .h-button) {
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px;
+  border-radius: max(4px, calc(var(--h-radius-control) - 4px));
 }
 </style>

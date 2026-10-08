@@ -8,8 +8,9 @@ import {
   HPagination,
   HEmptyState,
   HCodeBlock,
+  HNumberInput,
 } from "../src";
-import { catalog } from "./catalog";
+import { catalog, mobileOverlayComponents } from "./catalog";
 import { examples } from "../scripts/agent-examples.mjs";
 const props = defineProps<{ selected: string }>();
 const query = ref(""),
@@ -17,6 +18,13 @@ const query = ref(""),
   page = ref(1);
 const host = ref<HTMLElement>();
 const root = ref<HTMLElement>();
+const mobileBreakpoint = ref<number | null>(640);
+const configurableOverlay = computed(
+  () =>
+    !!selected.value &&
+    mobileOverlayComponents.has(selected.value.name) &&
+    !["HTheme", "HInput"].includes(selected.value.name),
+);
 const feedback = ref(""),
   previewError = ref("");
 const categories = ["All", ...new Set(catalog.map((c) => c.category))];
@@ -78,15 +86,33 @@ async function preview() {
       "dismiss",
       "close",
       "update:modelValue",
+      "update:open",
     ])
       element.addEventListener(event, (e) => {
         const detail = (e as CustomEvent).detail;
         feedback.value = `${event}: ${JSON.stringify(detail ?? [])}`;
         if (event === "update:modelValue")
           Object.assign(element, { modelValue: detail?.[0] });
+        if (event === "update:open")
+          Object.assign(element, { open: detail?.[0] });
+        if (event === "close" && "open" in element)
+          Object.assign(element, { open: false });
         if (event === "submit") e.preventDefault();
       });
     host.value.append(element);
+    const opener: Record<string, string> = {
+      HDialog: "Open dialog",
+      HSheet: "Open sheet",
+      HCommandPalette: "Open command palette",
+    };
+    if (opener[selected.value.name]) {
+      const trigger = document.createElement("hearth-button");
+      trigger.textContent = opener[selected.value.name];
+      trigger.addEventListener("click", () =>
+        Object.assign(element, { open: true }),
+      );
+      host.value.prepend(trigger);
+    }
   } catch {
     previewError.value = "The preview could not load. Try resetting it.";
   }
@@ -140,7 +166,21 @@ const vueCode = computed(() =>
             variant="primary"
             >Open page preview</HButton
           >
-          <div v-else ref="host" class="registry-preview" />
+          <template v-else
+            ><HNumberInput
+              v-if="configurableOverlay"
+              v-model="mobileBreakpoint"
+              class="registry-breakpoint"
+              label="Mobile breakpoint (px)"
+              :min="0"
+              hint="Resize the window, or increase this value to preview mobile behavior. Set 0 for desktop." />
+            <div
+              ref="host"
+              class="registry-preview"
+              :style="{
+                '--h-mobile-breakpoint': `${mobileBreakpoint ?? 640}px`,
+              }"
+          /></template>
           <p v-if="previewError" role="alert">{{ previewError }}</p>
           <output class="registry-event" aria-live="polite">{{
             feedback
@@ -391,6 +431,7 @@ const vueCode = computed(() =>
 .registry-detail,
 .registry-usage {
   display: grid;
+  align-items: start;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 24px;
   margin-top: 24px;
@@ -417,9 +458,13 @@ const vueCode = computed(() =>
   margin: 0;
 }
 .registry-preview {
-  min-height: 140px;
+  min-height: 100px;
   min-width: 0;
   isolation: isolate;
+}
+.registry-breakpoint {
+  max-width: 360px;
+  margin-bottom: 24px;
 }
 .registry-event {
   display: block;

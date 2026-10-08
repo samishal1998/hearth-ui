@@ -19,6 +19,7 @@ const props = withDefaults(
     label?: string;
     placeholder?: string;
     shortcut?: boolean;
+    mobileBreakpoint?: number;
   }>(),
   {
     items: () => [],
@@ -112,6 +113,7 @@ onBeforeUnmount(() => document.removeEventListener("keydown", shortcut));
   <HDialog
     :open="visible"
     :title="label"
+    :mobile-breakpoint="mobileBreakpoint"
     class="h-command"
     @close="setOpen(false)"
     ><HInput
@@ -222,5 +224,16 @@ kbd {
   padding: 25px 12px;
   font-size: 13px;
   color: var(--h-muted);
+}
+.h-command.h-mobile .h-command-list {
+  max-height: none;
+  overflow: visible;
+}
+.h-command.h-mobile :deep(.h-field) {
+  position: sticky;
+  top: -20px;
+  z-index: 1;
+  background: var(--h-raised);
+  padding-block: 12px;
 }
 </style>

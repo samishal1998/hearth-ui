@@ -18,6 +18,7 @@ export const examples = {
     event: "change",
     notes: [
       "Added in v0.5.0. Empty or incomplete numeric input emits null, never NaN. The native number input owns min/max/step validity. Step buttons use native stepUp/stepDown and emit a committed change. Invalid manually entered values remain visible for validation.",
+      "The unified stepper hides browser spinner arrows. Hold a step button to repeat; release, leave, blur, or reaching a bound stops repetition. Stepping does not focus the text field or summon a mobile keyboard. --h-number-width controls the default 280px maximum width.",
     ],
     related: ["HInput", "HRange", "HRangeSlider"],
   },
@@ -28,6 +29,7 @@ export const examples = {
     event: "change",
     notes: [
       "Text entry with a Hearth popover for hour, minute, and optional second selection; no native browser time popup. Values are HH:mm or HH:mm:ss, or empty. Step is in seconds; min/max and step are checked through the form validity API. Bounds can cross midnight. No time zone conversion is performed.",
+      "Hour, minute, and second columns offer valid combinations for the configured bounds and step. Arrow keys, Home/End, PageUp/PageDown, and numeric typeahead change the draft. Left/Right moves between columns; Enter applies. Cancel leaves the committed value unchanged. Apply and Cancel return focus to the clock button, avoiding a mobile keyboard reopening.",
     ],
     related: ["HDatePicker", "HInput"],
   },
@@ -44,6 +46,7 @@ export const examples = {
     notes: [
       "Added in v0.5.0. Gregorian date-only values use YYYY-MM-DD, years 0001–9999. month uses YYYY-MM. Locale formats labels; weekStartsOn is 0 (Sunday) or 1 (Monday). Supply month/today for deterministic initial rendering across a UTC midnight boundary.",
       "Arrow keys move by day/week; Home/End move within a week, PageUp/PageDown by month, Shift+PageUp/PageDown by year. Enter/Space selects. Navigation skips unavailable dates with a bounded ten-year search. min/max bound navigation.",
+      "A fixed six-week grid includes adjacent-month dates and keeps its height stable. The month heading opens a month/year chooser; its draft year field does not participate in an enclosing form. Escape leaves the chooser before dismissing a containing popover. Today selects the allowed current date; Clear emits an empty string.",
       "This inline calendar is not a form control. Use HDatePicker for form association. Applications own date fetching and disabled-date lists.",
     ],
     related: ["HDatePicker", "HDateRangePicker"],
@@ -59,7 +62,7 @@ export const examples = {
     },
     event: "change",
     notes: [
-      "Text entry with HCalendar in a Hearth top-layer popover, without a native browser date dropdown. Selection returns focus to the field; Escape returns to the trigger. Dates are YYYY-MM-DD or empty, without time zones.",
+      "Text entry with an inset calendar button and HCalendar in a Hearth top-layer popover. Selection, Clear, and Escape return focus to the calendar button so a mobile keyboard does not reopen. Dates are YYYY-MM-DD or empty, without time zones.",
       "Date parsing and min/max use the form validity API; required uses the underlying text field. readonly blocks both typing and the calendar trigger. Invalid dates remain visible for correction.",
     ],
     related: ["HCalendar", "HTimePicker", "HDateRangePicker"],
@@ -87,6 +90,7 @@ export const examples = {
     event: "change",
     notes: [
       "Added in v0.5.0. Two native range controls share a track and retain native keyboard stepping. Handles cannot cross; both remain separately keyboard-focusable at equal values.",
+      "The highlighted track represents the selected interval. Visual handles have 44px pointer hit areas; dragging the track is continuous. Overlapping handles can be dragged apart in either direction. update:modelValue previews the drag and change commits on release. A cancelled gesture restores the original interval so scrolling the page does not accidentally commit a selection.",
       "Model is [lower,upper]. FormData.getAll(name) returns two values in that order. Supply finite bounds and a positive step. Applications own unit conversion.",
     ],
     related: ["HRange", "HNumberInput"],
@@ -151,6 +155,7 @@ export const examples = {
     notes: [
       "A nonmodal native popover stays in the top layer, so clipped ancestors do not hide it and theme inheritance remains intact. Current browsers need the Popover API.",
       "Use its built-in trigger, or control open and respond to update:open. Keep interactive content in the default slot. Escape closes and returns focus.",
+      "iconOnly with icon provides a compact, labeled trigger. panelLabel can name the dialog independently of its visible title. The footer slot holds persistent actions outside the scrolling mobile body, in Vue and web components.",
     ],
     related: ["HDropdownMenu", "HTooltip", "HDialog"],
   },
@@ -598,6 +603,7 @@ export const examples = {
     notes: [
       "Use one theme island around an application or a deliberately different section. Do not wrap every component in another theme: a new island establishes its own preset values.",
       "Modes are dark, light, or system; system follows CSS media preferences. Comfortable and compact densities use 44px and 40px main controls.",
+      "Set mobileBreakpoint on the theme island to configure descendant overlays, including custom elements. Dialogs, sheets, command palettes, and dashboard navigation become bottom sheets; popovers and action menus dock at the bottom. Native dialog focus trapping and modal scroll locking remain intact. Popovers remain nonmodal, with native light dismissal. Navigation menus expand inline, and tooltips stay anchored and support touch dismissal.",
       "CSS custom properties inherit across shadow roots and native slots. Override --h-* tokens through the tokens property, an ancestor, or a host style. Use themeStyle() to filter a token object and themeCSS() to serialize trusted CSS values.",
     ],
     related: ["HAuthPage", "HDashboardShell", "HPublicShell"],
@@ -710,7 +716,7 @@ export const examples = {
       "Filtering matches labels, descriptions, and keywords. This is selection from options, not free-form tag creation.",
       "Arrow keys navigate enabled results, Enter selects an active result, Escape closes, and Tab leaves. Enter while choosing must not submit the surrounding form.",
       "Handle search(query) in application code for remote fetching and bind loading. Existing selected IDs are retained while option data changes.",
-      "The popup is local, not portaled; overflow-clipping ancestors can clip it. Large option lists are not virtualized.",
+      "On mobile the search field and choices move together into a native top-layer bottom panel with a close control; selected values and form ownership remain intact. Desktop popups remain local and can be clipped by overflow ancestors. Large option lists are not virtualized.",
     ],
     related: ["HMultiSelect", "HSelect", "HInput"],
   },
@@ -731,7 +737,7 @@ export const examples = {
     event: "change",
     notes: [
       "Always uses string[] and multiple selection. Do not pass a multiple flag; this is the typed wrapper around HCombobox.",
-      "Inherits the combobox search, disabled-option, loading, keyboard, and local-popup behavior. Backspace removes the last selected item when the query is empty.",
+      "Inherits combobox search, disabled-option, loading, keyboard, and responsive popup behavior. Mobile keeps search and options together in a top-layer bottom panel. Backspace removes the last selected item when the query is empty.",
       'One form entry is submitted per selected value under the same name. Read FormData.getAll("providers"), not Object.fromEntries() for this field.',
       "Set initial array properties before connecting the element if they should become its form-reset baseline.",
     ],

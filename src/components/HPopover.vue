@@ -1,16 +1,28 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onBeforeUnmount, nextTick, useId } from "vue";
+import {
+  ref,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+  nextTick,
+  useId,
+  useSlots,
+} from "vue";
 import HButton from "./HButton.vue";
 import { useFloating, focusFirst } from "../floating";
+import { useMobileLayout } from "../mobile";
 const props = withDefaults(
   defineProps<{
     open?: boolean;
     label?: string;
     title?: string;
     icon?: string;
+    iconOnly?: boolean;
+    panelLabel?: string;
     placement?: "top" | "bottom" | "left" | "right";
     disabled?: boolean;
     variant?: "primary" | "secondary" | "ghost";
+    mobileBreakpoint?: number;
   }>(),
   { label: "Options", placement: "bottom", variant: "secondary" },
 );
@@ -18,15 +30,46 @@ const emit = defineEmits<{ "update:open": [open: boolean]; close: [] }>();
 const trigger = ref<InstanceType<typeof HButton>>();
 const anchor = ref<HTMLElement>();
 const panel = ref<HTMLElement>();
+const body = ref<HTMLElement>();
+const mobile = useMobileLayout(panel, () => props.mobileBreakpoint);
 const visible = ref(false);
 const id = useId();
-useFloating(anchor, panel, visible, () => props.placement);
+const slots = useSlots();
+const webFooter = ref(false);
+let footerObserver: MutationObserver | undefined;
+onMounted(() => {
+  if (slots.footer) return;
+  const tree = panel.value?.getRootNode();
+  if (!(tree instanceof ShadowRoot)) return;
+  const host = tree.host;
+  const syncFooter = () => {
+    webFooter.value = [...host.children].some(
+      (child) => child.getAttribute("slot") === "footer",
+    );
+  };
+  footerObserver = new MutationObserver(syncFooter);
+  footerObserver.observe(host, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["slot"],
+  });
+  syncFooter();
+});
+onBeforeUnmount(() => footerObserver?.disconnect());
+useFloating(
+  anchor,
+  panel,
+  visible,
+  () => props.placement,
+  () => mobile.value,
+);
 async function show() {
   if (props.disabled || !panel.value) return;
   panel.value.showPopover();
   visible.value = true;
   await nextTick();
-  if (panel.value) focusFirst(panel.value);
+  if (body.value) focusFirst(body.value);
 }
 function hide(focus = false) {
   panel.value?.hidePopover();
@@ -61,6 +104,8 @@ function toggle() {
       ref="trigger"
       :variant="variant"
       :icon="icon"
+      :icon-only="iconOnly"
+      :label="label"
       :disabled="disabled"
       :aria-expanded="visible"
       :aria-controls="id"
@@ -72,20 +117,41 @@ function toggle() {
       :id="id"
       ref="panel"
       popover="auto"
-      class="h-popover-panel"
+      class="h-popover-panel h-mobile-overlay"
+      :class="{ 'h-mobile': mobile }"
       role="dialog"
-      :aria-label="title || label"
+      :aria-label="panelLabel || title || label"
       tabindex="-1"
       part="panel"
       @toggle="toggle"
       @keydown.esc.stop.prevent="hide(true)"
     >
-      <h2 v-if="title" part="title">{{ title }}</h2>
-      <slot /></div
+      <div v-if="title || mobile" class="h-overlay-header" part="header">
+        <h2 part="title">{{ title || label }}</h2>
+        <HButton
+          v-if="mobile"
+          icon="close"
+          icon-only
+          variant="ghost"
+          :label="`Close ${title || label}`"
+          @click="hide(true)"
+        />
+      </div>
+      <div ref="body" class="h-overlay-body" tabindex="-1" part="body">
+        <slot />
+      </div>
+      <div
+        v-if="$slots.footer || webFooter"
+        class="h-overlay-footer"
+        part="footer"
+      >
+        <slot name="footer" />
+      </div></div
   ></span>
 </template>
 <style scoped>
 @import "../styles/base.css";
+@import "../styles/mobile-overlay.css";
 .h-popover {
   display: inline-block;
 }
@@ -94,7 +160,7 @@ function toggle() {
   inset: auto;
   margin: 0;
   width: var(--h-popover-width, 320px);
-  max-width: calc(100vw - 24px);
+  max-width: calc(var(--h-overlay-width, 100vw) - 24px);
   max-height: calc(100dvh - 24px);
   overflow: auto;
   padding: 20px;
@@ -109,5 +175,13 @@ function toggle() {
   font-size: 15px;
   font-weight: 550;
   margin-bottom: 14px;
+}
+.h-popover-panel:not(.h-mobile) .h-overlay-footer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--h-border);
+}
+.h-overlay-footer:empty {
+  display: none;
 }
 </style>

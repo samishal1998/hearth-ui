@@ -55,9 +55,18 @@ const step = ref("configure");
         />
         <p class="muted">Selected date: {{ date }}</p></HCard
       ><HCard title="Plan the next maintenance window"
-        ><HDatePicker v-model="date" label="Maintenance date" />
-        <div class="spacer" />
-        <HDateRangePicker v-model="range" label="Report window" /></HCard
+        ><form aria-label="Maintenance scheduling" @submit.prevent>
+          <HDatePicker
+            v-model="date"
+            label="Maintenance date"
+            name="maintenance"
+          />
+          <div class="spacer" />
+          <HDateRangePicker
+            v-model="range"
+            label="Report window"
+            name="period"
+          /></form></HCard
       ><HCard title="Keep capacity in range"
         ><HRangeSlider v-model="capacity" label="Capacity" unit="%" />
         <p class="muted">Target: {{ capacity[0] }}–{{ capacity[1] }}%</p></HCard

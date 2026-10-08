@@ -21,6 +21,7 @@ const props = withDefaults(
     readonly?: boolean;
     hint?: string;
     error?: string;
+    mobileBreakpoint?: number;
   }>(),
   { value: "" },
 );
@@ -34,6 +35,7 @@ const local = ref(props.modelValue ?? props.value),
   date = ref(""),
   time = ref("00:00");
 const input = ref<InstanceType<typeof HTextInput>>();
+const popover = ref<InstanceType<typeof HPopover>>();
 watch(
   () => [props.modelValue, props.value],
   () => (local.value = props.modelValue ?? props.value),
@@ -92,7 +94,7 @@ async function apply() {
   emit("change", draft.value);
   open.value = false;
   await nextTick();
-  input.value?.$el.querySelector("input")?.focus();
+  popover.value?.$el.querySelector("button")?.focus({ preventScroll: true });
   sync();
 }
 function commitOnEnter(event: KeyboardEvent) {
@@ -122,24 +124,38 @@ onUpdated(sync);
       @update:model-value="update"
       @change="emit('change', $event)"
       @control-sync="sync"
-    /><HPopover
-      v-model:open="open"
-      :label="`Choose date and time for ${label}`"
-      :disabled="disabled || formDisabled || readonly"
-      ><HCalendar
-        v-model="date"
-        :min="min?.slice(0, 10)"
-        :max="max?.slice(0, 10)"
-      /><HTimePicker
-        v-model="time"
-        label="Time"
-        :step="Number(step) || 60"
-        @keydown.enter="commitOnEnter"
-      />
-      <p role="status">{{ invalid(draft) }}</p>
-      <HButton variant="primary" :disabled="!!invalid(draft)" @click="apply"
-        >Apply date and time</HButton
-      ></HPopover
+      ><template #trailing
+        ><HPopover
+          ref="popover"
+          v-model:open="open"
+          :mobile-breakpoint="mobileBreakpoint"
+          :label="`Choose date and time for ${label}`"
+          icon="calendar"
+          icon-only
+          variant="ghost"
+          :disabled="disabled || formDisabled || readonly"
+          ><HCalendar
+            v-model="date"
+            :min="min?.slice(0, 10)"
+            :max="max?.slice(0, 10)"
+          /><HTimePicker
+            v-model="time"
+            :mobile-breakpoint="mobileBreakpoint"
+            label="Time"
+            :step="Number(step) || 60"
+            @keydown.enter="commitOnEnter"
+          />
+          <p role="status">{{ invalid(draft) }}</p>
+          <template #footer
+            ><HButton
+              variant="primary"
+              :disabled="!!invalid(draft)"
+              @click="apply"
+              >Apply date and time</HButton
+            ></template
+          ></HPopover
+        ></template
+      ></HTextInput
     >
   </div>
 </template>

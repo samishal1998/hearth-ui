@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, useId } from "vue";
+import { ref, useId, watch, nextTick } from "vue";
+import { useMobileLayout } from "../mobile";
 import HBrand from "./HBrand.vue";
 import HIcon from "./HIcon.vue";
 import HButton from "./HButton.vue";
 import HNavList from "./HNavList.vue";
 import type { NavItem } from "../themes";
-withDefaults(
+const props = withDefaults(
   defineProps<{
     brand?: string;
     logo?: string;
@@ -17,6 +18,7 @@ withDefaults(
     username?: string;
     userRole?: string;
     footerNote?: string;
+    mobileBreakpoint?: number;
   }>(),
   {
     brand: "hearth",
@@ -30,15 +32,23 @@ withDefaults(
 );
 const emit = defineEmits<{ navigate: [id: string]; logout: [] }>();
 const drawer = ref<HTMLDialogElement>();
+const mobile = useMobileLayout(drawer, () => props.mobileBreakpoint);
 const main = ref<HTMLElement>();
 const id = useId();
+watch(mobile, async (value) => {
+  if (!value && drawer.value?.open) {
+    drawer.value.close();
+    await nextTick();
+    main.value?.focus({ preventScroll: true });
+  }
+});
 function navigate(id: string) {
   emit("navigate", id);
   drawer.value?.close();
 }
 </script>
 <template>
-  <div class="h-dashboard" part="base">
+  <div class="h-dashboard" :class="{ 'h-mobile': mobile }" part="base">
     <a class="h-skip" :href="`#${id}-main`" @click.prevent="main?.focus()"
       >Skip to content</a
     >
@@ -112,11 +122,12 @@ function navigate(id: string) {
     </div>
     <dialog
       ref="drawer"
-      class="h-drawer"
+      class="h-drawer h-mobile-overlay"
+      :class="{ 'h-mobile': mobile }"
       aria-label="Main navigation"
       part="mobile-navigation"
     >
-      <div class="h-drawer-head">
+      <div class="h-drawer-head h-overlay-header">
         <HBrand :name="brand" :logo="logo" /><HButton
           variant="ghost"
           icon="close"
@@ -125,23 +136,26 @@ function navigate(id: string) {
           @click="drawer?.close()"
         />
       </div>
-      <HNavList :items="items" :active="active" @navigate="navigate" />
-      <div v-if="username" class="h-mobile-user">
-        <span>{{ username }} · {{ userRole }}</span
-        ><HButton
-          icon="logout"
-          label="Sign out"
-          @click="
-            emit('logout');
-            drawer?.close();
-          "
-        />
+      <div class="h-overlay-body">
+        <HNavList :items="items" :active="active" @navigate="navigate" />
+        <div v-if="username" class="h-mobile-user">
+          <span>{{ username }} · {{ userRole }}</span
+          ><HButton
+            icon="logout"
+            label="Sign out"
+            @click="
+              emit('logout');
+              drawer?.close();
+            "
+          />
+        </div>
       </div>
     </dialog>
   </div>
 </template>
 <style scoped>
 @import "../styles/base.css";
+@import "../styles/mobile-overlay.css";
 .h-dashboard {
   min-height: 100dvh;
   background: var(--h-bg);
@@ -362,28 +376,26 @@ function navigate(id: string) {
   font-size: 12px;
   color: var(--h-muted);
 }
-@media (max-width: 800px) {
-  .h-sidebar {
-    display: none;
-  }
-  .h-mobile-toggle {
-    display: inline-flex;
-  }
-  .h-topbar {
-    height: 66px;
-    padding: 0 16px;
-  }
-  .h-shell-footer {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .h-breadcrumb .h-icon,
-  .h-breadcrumb > span {
-    display: none;
-  }
-  .h-top-actions {
-    gap: 6px;
-  }
+.h-dashboard.h-mobile .h-sidebar {
+  display: none;
+}
+.h-dashboard.h-mobile .h-mobile-toggle {
+  display: inline-flex;
+}
+.h-dashboard.h-mobile .h-topbar {
+  height: 66px;
+  padding: 0 16px;
+}
+.h-dashboard.h-mobile .h-shell-footer {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.h-dashboard.h-mobile .h-breadcrumb .h-icon,
+.h-dashboard.h-mobile .h-breadcrumb > span {
+  display: none;
+}
+.h-dashboard.h-mobile .h-top-actions {
+  gap: 6px;
 }
 @media (max-width: 500px) {
   .h-topbar {

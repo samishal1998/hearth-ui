@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, useId } from "vue";
 import HButton from "./HButton.vue";
+import { useMobileLayout } from "../mobile";
 const props = withDefaults(
   defineProps<{
     open?: boolean;
@@ -8,11 +9,13 @@ const props = withDefaults(
     description?: string;
     side?: "left" | "right";
     width?: string;
+    mobileBreakpoint?: number;
   }>(),
   { side: "right", width: "440px" },
 );
 const emit = defineEmits<{ close: [] }>();
 const panel = ref<HTMLDialogElement>();
+const mobile = useMobileLayout(panel, () => props.mobileBreakpoint);
 const id = useId();
 function sync() {
   if (!panel.value) return;
@@ -36,8 +39,8 @@ function backdrop(e: MouseEvent) {
 <template>
   <dialog
     ref="panel"
-    class="h-sheet"
-    :class="side"
+    class="h-sheet h-mobile-overlay"
+    :class="[side, { 'h-mobile': mobile }]"
     :style="{ '--h-sheet-width': width }"
     :aria-labelledby="`${id}-title`"
     :aria-describedby="description ? `${id}-description` : undefined"
@@ -45,7 +48,7 @@ function backdrop(e: MouseEvent) {
     @close="emit('close')"
     @click="backdrop"
   >
-    <div class="h-sheet-head" part="header">
+    <div class="h-sheet-head h-overlay-header" part="header">
       <div>
         <h2 :id="`${id}-title`">{{ title }}</h2>
         <p v-if="description" :id="`${id}-description`">{{ description }}</p>
@@ -58,12 +61,15 @@ function backdrop(e: MouseEvent) {
         @click="panel?.close()"
       />
     </div>
-    <div class="h-sheet-body" part="body"><slot /></div>
-    <div class="h-sheet-footer" part="footer"><slot name="footer" /></div>
+    <div class="h-sheet-body h-overlay-body" part="body"><slot /></div>
+    <div class="h-sheet-footer h-overlay-footer" part="footer">
+      <slot name="footer" />
+    </div>
   </dialog>
 </template>
 <style scoped>
 @import "../styles/base.css";
+@import "../styles/mobile-overlay.css";
 .h-sheet {
   position: fixed;
   inset: 0 0 0 auto;

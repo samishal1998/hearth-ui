@@ -35,6 +35,7 @@ const props = withDefaults(
     max?: string | number;
     step?: string | number;
     pattern?: string;
+    mobileBreakpoint?: number;
   }>(),
   { type: "text", value: "" },
 );

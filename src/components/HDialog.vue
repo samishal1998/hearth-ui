@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, useId } from "vue";
 import HButton from "./HButton.vue";
+import { useMobileLayout } from "../mobile";
 const props = defineProps<{
   open?: boolean;
   title: string;
   description?: string;
+  mobileBreakpoint?: number;
 }>();
 const emit = defineEmits<{ close: [] }>();
 const dialog = ref<HTMLDialogElement>();
+const mobile = useMobileLayout(dialog, () => props.mobileBreakpoint);
 const id = useId();
 function sync() {
   if (!dialog.value) return;
@@ -31,14 +34,15 @@ function backdrop(e: MouseEvent) {
 <template>
   <dialog
     ref="dialog"
-    class="h-dialog"
+    class="h-dialog h-mobile-overlay"
+    :class="{ 'h-mobile': mobile }"
     part="dialog"
     :aria-labelledby="`${id}-title`"
     :aria-describedby="description ? `${id}-description` : undefined"
     @close="emit('close')"
     @click="backdrop"
   >
-    <div class="h-dialog-head" part="header">
+    <div class="h-dialog-head h-overlay-header" part="header">
       <div>
         <h2 :id="`${id}-title`">{{ title }}</h2>
         <p v-if="description" :id="`${id}-description`">{{ description }}</p>
@@ -51,12 +55,13 @@ function backdrop(e: MouseEvent) {
         @click="dialog?.close()"
       />
     </div>
-    <div part="body"><slot /></div>
-    <slot name="footer" />
+    <div class="h-overlay-body" part="body"><slot /></div>
+    <div class="h-overlay-footer" part="footer"><slot name="footer" /></div>
   </dialog>
 </template>
 <style scoped>
 @import "../styles/base.css";
+@import "../styles/mobile-overlay.css";
 .h-dialog {
   width: 560px;
   max-width: calc(100% - 28px);

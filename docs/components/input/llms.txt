@@ -2,7 +2,7 @@
 
 > A labeled input with help/error text and native validation. Web components participate in their owning form.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -18,10 +18,11 @@
 - type=date, time, and datetime-local use Hearth picker popovers with text entry instead of native browser dropdowns. Values retain their ISO date/time formats, form submission, and required/bounds validation.
 - The model is a string, including type="number". Use HRange for a numeric slider.
 - hint/error associate explanatory text with the input; native required, pattern, and length constraints control browser validation. Application error text does not replace backend validation.
+- mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
 
 ## Public API
 
-modelValue, value, label, name, placeholder, hint, error, autocomplete, pattern: string · type: text | email | password | url | search | number | tel | date | time | datetime-local · required, disabled, readonly: boolean · minlength, maxlength: number · min, max, step: string | number
+modelValue, value, label, name, placeholder, hint, error, autocomplete, pattern: string · type: text | email | password | url | search | number | tel | date | time | datetime-local · required, disabled, readonly: boolean · minlength, maxlength: number · min, max, step: string | number · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -45,6 +46,7 @@ type Props = {
     max?: string | number;
     step?: string | number;
     pattern?: string;
+    mobileBreakpoint?: number;
 };
 ```
 

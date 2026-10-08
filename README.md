@@ -33,9 +33,37 @@ The Vite development server and static showcase expose the same files as plain t
 
 The application owns its router, authentication, authorization, storage, and data fetching. Hearth supplies the presentation and interaction primitives.
 
+## Responsive overlays
+
+Overlays adapt at **640 CSS pixels and below** by default. Configure a theme island, or override an individual component:
+
+```vue
+<HTheme :mobile-breakpoint="768">
+  <HDialog :open="open" title="Edit application" @close="open = false">
+    <HInput label="Application name" />
+  </HDialog>
+  <HDatePicker label="Maintenance date" :mobile-breakpoint="900" />
+</HTheme>
+```
+
+```html
+<hearth-theme mobile-breakpoint="768">
+  <hearth-date-picker label="Maintenance date"></hearth-date-picker>
+</hearth-theme>
+```
+
+- `mobileBreakpoint` / `mobile-breakpoint` is a viewport width in CSS pixels. **0 keeps the desktop presentation**. Changes take effect live, including while an overlay is open.
+- Per-component values override the inherited `--h-mobile-breakpoint` CSS variable. `HTheme` supplies that variable, so the setting works across Vue components, shadow roots, slots, and nested theme islands.
+- Dialogs, side sheets, command palettes, and dashboard navigation become bottom sheets with independently scrollable bodies, visible close controls, safe-area spacing, and modal focus containment. Mobile modal dialogs lock background scrolling until the last modal closes.
+- Popovers, date/time pickers, and action menus dock at the bottom with close controls; they retain native nonmodal/light-dismiss behavior. Comboboxes and multi-selects move their search and choices together into a top-layer bottom panel.
+- Navigation flyouts expand inline. Tooltips remain anchored, stay within the visible viewport, and support touch dismissal.
+- Visual viewport changes adjust overlay height and positioning when the on-screen keyboard appears. Desktop popover placement returns when the viewport grows beyond the configured breakpoint.
+
+The registry preview exposes a **Mobile breakpoint (px)** control for applicable components. This setting concerns overlay/navigation behavior; unrelated grid and typography breakpoints remain component-specific.
+
 ## Install
 
-The current release is **0.5.1**. Install the distribution you need:
+The current source prepares **0.6.0**. Install the distribution you need:
 
 ```sh
 # Native Vue
@@ -45,7 +73,7 @@ npm install @hearth-ui/vue vue
 npm install @hearth-ui/elements
 ```
 
-Before publication, use `npm run build && npm run pack:packages` and install the relevant tarball from `release-dist/`. See [PUBLISHING.md](PUBLISHING.md) for first-publication and trusted-publisher setup. Existing `@samishal1998/hearth-ui` releases were a combined distribution; their immutable archives remain available for older consumers.
+To prepare a publication, run `npm run publish:prepare`, then `npm run publish:dry-run`. Publish both verified archives with `npm run publish:packages`. See [PUBLISHING.md](PUBLISHING.md) for authentication, partial-publication recovery, and trusted publishing. Existing `@samishal1998/hearth-ui` releases were a combined distribution; their immutable archives remain available for older consumers.
 
 ### Vue
 
@@ -138,6 +166,20 @@ The registry provides search, category filters, and 12 results per page. Each co
 
 Date, time, and local date-time fields now use Hearth picker popovers and formatted text entry instead of native browser dropdowns. Their ISO string values and form submission contracts are preserved; invalid dates, bounds, and time steps participate in form validation.
 
+### Source refinements (unreleased)
+
+- Sliders use a highlighted value/interval track, clear readouts, focus halos, and 44px handle targets. The interval slider supports continuous track dragging and separating coincident handles.
+- Number inputs use one compact stepper surface, hide duplicate native spinner arrows, and support press-and-hold without opening a mobile keyboard.
+- Time pickers use step-aware hour/minute/second columns and persistent mobile actions. Date/time picker buttons are inset into their fields.
+- Calendars use a stable six-week grid, stronger selected/today states, direct month/year navigation, and Today/Clear actions.
+
+### New in 0.6.0
+
+- Configurable mobile breakpoints through `HTheme` or per-overlay props, with inheritance across shadow roots.
+- Bottom-sheet dialogs, sheets, command palettes, picker panels, and selection popups; mobile-safe scrolling, focus, and viewport sizing.
+- Registry breakpoint controls for trying responsive component behavior.
+- Consumer-focused npm READMEs and a verified, resumable two-package publication script.
+
 ### New in 0.5.1
 
 - Searchable, paginated registry with dedicated component previews and API references.
@@ -205,7 +247,7 @@ const options = [
 
 Search matches labels, descriptions, and optional keywords. Arrow keys move the active option, Enter selects, Escape closes, and Backspace removes the last multi-selection when the query is empty. The `search(query)` event and `loading` prop allow application-owned remote search. Unknown selected IDs keep their values while option data loads; no free-form options are invented.
 
-Popup content stays local to the component, so overflow-clipping ancestors can clip it. The current option list is not virtualized; a future anchored/virtualized popup can extend that ceiling without changing the selection API.
+Desktop combobox popups stay local to the component, so overflow-clipping ancestors can clip them. Mobile search and selection panels use the native top layer to avoid that clipping. Option lists are not virtualized; paginate large result sets in your application.
 
 ### Radio groups, tabs, and navigation
 

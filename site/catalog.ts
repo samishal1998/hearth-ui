@@ -1,4 +1,22 @@
-export const catalog = [
+export const mobileOverlayComponents = new Set([
+  "HTheme",
+  "HDialog",
+  "HSheet",
+  "HPopover",
+  "HDropdownMenu",
+  "HCommandPalette",
+  "HCombobox",
+  "HMultiSelect",
+  "HNavigationMenu",
+  "HTooltip",
+  "HDashboardShell",
+  "HInput",
+  "HDatePicker",
+  "HTimePicker",
+  "HDateRangePicker",
+  "HDataTable",
+]);
+const components = [
   {
     name: "HThemeSwitcher",
     tag: "hearth-theme-switcher",
@@ -15,7 +33,7 @@ export const catalog = [
     tag: "hearth-number-input",
     category: "Controls",
     description:
-      "A numeric field and counter with native stepping, bounds, validation, and an explicit empty value.",
+      "A compact numeric stepper with direct entry, press-and-hold buttons, bounds, and form validation.",
     props:
       "modelValue, value: number | null · label, name, hint, error: string · min, max, step: number · required, disabled, readonly: boolean",
     events: "update:modelValue(number | null), change(number | null)",
@@ -27,24 +45,25 @@ export const catalog = [
     tag: "hearth-time-picker",
     category: "Controls",
     description:
-      "Time entry with a Hearth hour/minute/second popover, bounds, and configurable steps.",
+      "Time entry with an inset clock button and step-aware hour, minute, and second columns.",
     props:
       "modelValue, value, label, name, min, max, hint, error: string · step: number · required, disabled, readonly: boolean",
     events: "update:modelValue(string), change(string)",
     slots: "None",
-    parts: "base, label, control, hint",
+    parts:
+      "base, label, control, hint, adornment, preview, column, option, footer",
   },
   {
     name: "HCalendar",
     tag: "hearth-calendar",
     category: "Controls",
     description:
-      "A keyboard-navigable Gregorian month calendar with date-only values, bounds, and unavailable days.",
+      "A stable six-week calendar with direct month/year navigation, Today/Clear actions, and unavailable dates.",
     props:
       "modelValue, value, month, label, locale, min, max, today: string · weekStartsOn: 0 | 1 · disabledDates: string[] · disabled: boolean",
     events: "update:modelValue(string), change(string), update:month(string)",
     slots: "None",
-    parts: "base, previous, month, next, grid, day",
+    parts: "base, previous, month, next, grid, day, year, months, footer",
   },
   {
     name: "HDatePicker",
@@ -56,7 +75,7 @@ export const catalog = [
       "modelValue, value, label, name, min, max, locale, hint, error: string · weekStartsOn: 0 | 1 · required, disabled, readonly: boolean",
     events: "update:modelValue(string), change(string)",
     slots: "None",
-    parts: "base, label, control, hint, panel, grid, day",
+    parts: "base, label, control, hint, adornment, panel, grid, day, footer",
   },
   {
     name: "HDateRangePicker",
@@ -75,12 +94,12 @@ export const catalog = [
     tag: "hearth-range-slider",
     category: "Controls",
     description:
-      "Two native range handles for choosing a bounded numeric interval.",
+      "A dual-handle interval slider with a highlighted range, readable values, and large pointer targets.",
     props:
       "modelValue, value: NumberRange · label, name, unit, lowerLabel, upperLabel: string · min, max, step: number · disabled: boolean",
     events: "update:modelValue(NumberRange), change(NumberRange)",
     slots: "None",
-    parts: "base, label, value, track, lower, upper",
+    parts: "base, label, value, track, rail, fill, lower, upper",
   },
   {
     name: "HStepper",
@@ -111,12 +130,12 @@ export const catalog = [
     tag: "hearth-popover",
     category: "Controls",
     description:
-      "A nonmodal top-layer panel anchored to its trigger, with viewport-aware positioning and focus handling.",
+      "A nonmodal top-layer panel, anchored on desktop and docked at the bottom on mobile, with viewport-aware positioning and focus handling.",
     props:
-      "open, disabled: boolean · label, title, icon: string · placement: top | bottom | left | right · variant: primary | secondary | ghost",
+      "open, disabled, iconOnly: boolean · label, title, panelLabel, icon: string · placement: top | bottom | left | right · variant: primary | secondary | ghost",
     events: "update:open(boolean), close()",
-    slots: "default",
-    parts: "base, panel, title",
+    slots: "default, footer",
+    parts: "base, panel, title, header, body, footer",
   },
   {
     name: "HTooltip",
@@ -135,12 +154,12 @@ export const catalog = [
     tag: "hearth-dropdown-menu",
     category: "Controls",
     description:
-      "A keyboard-operated command menu for edit, copy, refresh, and destructive actions.",
+      "A keyboard-operated command menu with a touch-friendly bottom panel on mobile.",
     props:
       "items: MenuAction[] · label, icon: string · open, disabled: boolean · placement: top | bottom | left | right",
     events: "select(id), update:open(boolean)",
     slots: "None",
-    parts: "base, menu, item",
+    parts: "base, menu, item, header",
   },
   {
     name: "HToast",
@@ -290,7 +309,7 @@ export const catalog = [
     tag: "hearth-command-palette",
     category: "Controls",
     description:
-      "A searchable keyboard command dialog with grouping, shortcuts, and disabled commands.",
+      "A searchable command dialog that becomes a bottom sheet on mobile, with grouping, shortcuts, and disabled commands.",
     props:
       "items: CommandItem[] · open, shortcut: boolean · label, placeholder: string",
     events: "update:open(boolean), close(), select(id), search(query)",
@@ -428,7 +447,7 @@ export const catalog = [
       "Same selection props as HCombobox; modelValue and value are string[]. Multiple selection is always enabled.",
     events: "update:modelValue(values), change(values), search(query)",
     slots: "None",
-    parts: "base, label, control, selection, popup, option, hint",
+    parts: "base, label, control, selection, popup, option, hint, header",
   },
   {
     name: "HCombobox",
@@ -440,7 +459,7 @@ export const catalog = [
       "label, name, placeholder, hint, error, emptyText: string · options: {value, label, description?, keywords?, disabled?}[] · modelValue, value: string | string[] · multiple, required, disabled, loading, clearable: boolean",
     events: "update:modelValue(value), change(value), search(query)",
     slots: "None",
-    parts: "base, label, control, selection, popup, option, hint",
+    parts: "base, label, control, selection, popup, option, hint, header",
   },
   {
     name: "HCheckbox",
@@ -729,11 +748,11 @@ export const catalog = [
     tag: "hearth-dialog",
     category: "Feedback",
     description:
-      "A native modal dialog with focus containment, Escape dismissal, and focus return. Keep it inside your theme island.",
+      "A native modal dialog that becomes a bottom sheet on mobile, preserving focus containment, Escape dismissal, and focus return.",
     props: "open: boolean · title: string · description: string",
     events: "close() — set open=false in your handler",
     slots: "default, footer",
-    parts: "dialog, header, body",
+    parts: "dialog, header, body, footer",
   },
   {
     name: "HTabs",
@@ -811,7 +830,7 @@ export const catalog = [
     tag: "hearth-dashboard-shell",
     category: "Layouts",
     description:
-      "A complete dashboard frame with desktop sidebar, native mobile navigation dialog, account controls, and content area.",
+      "A dashboard frame with desktop sidebar, configurable mobile navigation bottom sheet, account controls, and content area.",
     props:
       "brand, logo, workspace, workspaceDescription, active, pageTitle, username, userRole, footerNote: string · items: NavItem[]",
     events: "navigate(id), logout()",
@@ -833,3 +852,11 @@ export const catalog = [
     parts: "base, story, panel, title",
   },
 ];
+export const catalog = components.map((component) =>
+  mobileOverlayComponents.has(component.name)
+    ? {
+        ...component,
+        props: `${component.props} · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)`,
+      }
+    : component,
+);

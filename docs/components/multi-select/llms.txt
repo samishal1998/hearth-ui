@@ -2,7 +2,7 @@
 
 > An array-typed multi-select combobox using the same searchable selection engine as HCombobox.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -15,13 +15,14 @@
 ## Choose and use it correctly
 
 - Always uses string[] and multiple selection. Do not pass a multiple flag; this is the typed wrapper around HCombobox.
-- Inherits the combobox search, disabled-option, loading, keyboard, and local-popup behavior. Backspace removes the last selected item when the query is empty.
+- Inherits combobox search, disabled-option, loading, keyboard, and responsive popup behavior. Mobile keeps search and options together in a top-layer bottom panel. Backspace removes the last selected item when the query is empty.
 - One form entry is submitted per selected value under the same name. Read FormData.getAll("providers"), not Object.fromEntries() for this field.
 - Set initial array properties before connecting the element if they should become its form-reset baseline.
+- mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
 
 ## Public API
 
-Same selection props as HCombobox; modelValue and value are string[]. Multiple selection is always enabled.
+Same selection props as HCombobox; modelValue and value are string[]. Multiple selection is always enabled. · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -66,7 +67,7 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 
 ### CSS parts
 
-base, label, control, selection, popup, option, hint
+base, label, control, selection, popup, option, hint, header
 
 Use `hearth-multi-select::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
 
@@ -79,6 +80,7 @@ export type MultiSelectProps = Omit<ComboboxProps, "modelValue" | "value" | "mul
 };
 
 export interface ComboboxProps {
+    mobileBreakpoint?: number;
     modelValue?: string | string[];
     value?: string | string[];
     label: string;

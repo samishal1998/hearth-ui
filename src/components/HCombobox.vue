@@ -10,6 +10,8 @@ import {
   nextTick,
 } from "vue";
 import HIcon from "./HIcon.vue";
+import HButton from "./HButton.vue";
+import { useMobileLayout } from "../mobile";
 import type { ComboboxOption, ComboboxProps } from "../themes";
 const props = withDefaults(defineProps<ComboboxProps>(), {
   options: () => [],
@@ -25,6 +27,10 @@ const emit = defineEmits<{
 }>();
 const id = useId();
 const root = ref<HTMLElement>();
+const anchor = ref<HTMLElement>();
+const mobile = useMobileLayout(anchor, () => props.mobileBreakpoint);
+const anchorHeight = ref(44);
+let suppressFocus = false;
 const input = ref<HTMLInputElement>();
 const list = ref<HTMLElement>();
 const open = ref(false);
@@ -86,13 +92,23 @@ onMounted(() =>
 onBeforeUnmount(() =>
   root.value?.ownerDocument.removeEventListener("pointerdown", outside),
 );
-function close() {
+function close(restore = false) {
+  suppressFocus = true;
   open.value = false;
   query.value = "";
   active.value = -1;
+  nextTick(() => {
+    if (restore)
+      anchor.value
+        ?.querySelector<HTMLButtonElement>(".h-combo-toggle")
+        ?.focus();
+    suppressFocus = false;
+  });
 }
 function show() {
   if (blocked.value || input.value?.matches(":disabled")) return;
+  if (!open.value)
+    anchorHeight.value = anchor.value?.getBoundingClientRect().height || 44;
   open.value = true;
   active.value = filtered.value.findIndex((o) => !o.disabled);
 }
@@ -104,7 +120,7 @@ function search(e: Event) {
 async function commit(values: string[]) {
   local.value = normalize(values);
   query.value = "";
-  if (!props.multiple) open.value = false;
+  if (!props.multiple) close();
   await nextTick();
   emit(
     "update:modelValue",
@@ -175,6 +191,41 @@ function key(e: KeyboardEvent) {
     commit(selected.value.slice(0, -1));
   } else if (e.key === "Tab") close();
 }
+watch(mobile, () => {
+  if (open.value)
+    anchorHeight.value = anchor.value?.getBoundingClientRect().height || 44;
+});
+watch(
+  [mobile, open, blocked],
+  async () => {
+    await nextTick();
+    const element = anchor.value;
+    if (!element) return;
+    if (
+      mobile.value &&
+      open.value &&
+      !blocked.value &&
+      element.hasAttribute("popover") &&
+      !element.matches(":popover-open")
+    )
+      element.showPopover();
+    else if (
+      (!mobile.value || !open.value || blocked.value) &&
+      element.matches(":popover-open")
+    )
+      element.hidePopover();
+  },
+  { flush: "post" },
+);
+function toggled() {
+  if (
+    mobile.value &&
+    open.value &&
+    anchor.value?.hasAttribute("popover") &&
+    !anchor.value.matches(":popover-open")
+  )
+    close();
+}
 </script>
 <template>
   <fieldset
@@ -191,7 +242,32 @@ function key(e: KeyboardEvent) {
     <label :for="id" part="label"
       >{{ label }}<span v-if="required" aria-hidden="true"> *</span></label
     >
-    <div class="h-combo-anchor">
+    <div
+      v-if="mobile && open"
+      :style="{ height: `${anchorHeight}px` }"
+      aria-hidden="true"
+    />
+    <div
+      ref="anchor"
+      class="h-combo-anchor h-mobile-overlay"
+      :class="{ 'h-mobile': mobile }"
+      :popover="mobile && open && !blocked ? 'auto' : undefined"
+      @toggle="toggled"
+    >
+      <div v-if="mobile && open" class="h-overlay-header" part="header">
+        <span
+          >{{ label
+          }}<small v-if="multiple">
+            · {{ selected.length }} selected</small
+          ></span
+        ><HButton
+          variant="ghost"
+          icon="close"
+          icon-only
+          :label="`Close ${label} options`"
+          @click="close(true)"
+        />
+      </div>
       <div
         class="h-combo-control"
         part="control"
@@ -234,7 +310,7 @@ function key(e: KeyboardEvent) {
             :placeholder="placeholder"
             :required="required && !selected.length"
             autocomplete="off"
-            @focus="show"
+            @focus="!suppressFocus && show()"
             @input="search"
             @keydown="key"
           /><button
@@ -248,7 +324,7 @@ function key(e: KeyboardEvent) {
             <HIcon name="close" :size="15" /></button
           ><button
             type="button"
-            class="h-combo-action"
+            class="h-combo-action h-combo-toggle"
             tabindex="-1"
             :aria-label="`Toggle ${label} options`"
             @mousedown.prevent
@@ -266,7 +342,11 @@ function key(e: KeyboardEvent) {
           </button>
         </div>
       </div>
-      <div v-if="open && !blocked" class="h-combo-popup" part="popup">
+      <div
+        v-if="open && !blocked"
+        class="h-combo-popup h-overlay-body"
+        part="popup"
+      >
         <div
           ref="list"
           :id="`${id}-list`"
@@ -331,6 +411,7 @@ function key(e: KeyboardEvent) {
 </template>
 <style scoped>
 @import "../styles/base.css";
+@import "../styles/mobile-overlay.css";
 .h-combobox {
   position: relative;
   margin: 0;
@@ -383,7 +464,7 @@ input[role="combobox"] {
   background: none;
   color: var(--h-text);
   padding: 8px 0;
-  font-size: 13px;
+  font-size: var(--h-field-font-size, 13px);
 }
 input[role="combobox"]:focus-visible {
   outline: none;
@@ -508,5 +589,24 @@ input::placeholder {
 }
 .h-combobox:has(input[role="combobox"]:disabled) .h-combo-popup {
   display: none;
+}
+.h-combo-anchor.h-mobile:popover-open .h-combo-control {
+  flex-shrink: 0;
+  margin: 8px 20px;
+}
+.h-combo-anchor.h-mobile:popover-open .h-chips {
+  display: none;
+}
+.h-combo-anchor.h-mobile:popover-open .h-combo-popup {
+  position: static;
+  flex: 1;
+  margin: 0;
+  max-height: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.h-combo-anchor.h-mobile:popover-open .h-combo-popup [role="option"] {
+  min-height: 44px;
 }
 </style>

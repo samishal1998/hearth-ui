@@ -1,8 +1,8 @@
 # HDropdownMenu
 
-> A keyboard-operated command menu for edit, copy, refresh, and destructive actions.
+> A keyboard-operated command menu with a touch-friendly bottom panel on mobile.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -16,10 +16,11 @@
 
 - This is a command menu with menuitem roles; use HNavigationMenu for route navigation.
 - Arrow keys, Home/End, typeahead, Escape, and Tab work with disabled commands excluded from focus navigation. select(id) requests an application action.
+- mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
 
 ## Public API
 
-items: MenuAction[] · label, icon: string · open, disabled: boolean · placement: top | bottom | left | right
+items: MenuAction[] · label, icon: string · open, disabled: boolean · placement: top | bottom | left | right · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -31,6 +32,7 @@ type Props = {
     open?: boolean;
     disabled?: boolean;
     placement?: "top" | "bottom" | "left" | "right";
+    mobileBreakpoint?: number;
 };
 ```
 
@@ -65,7 +67,7 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 
 ### CSS parts
 
-base, menu, item
+base, menu, item, header
 
 Use `hearth-dropdown-menu::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
 
@@ -143,7 +145,7 @@ mount.append(element);
 ## Related components
 
 - [HNavigationMenu](../navigation-menu/llms.txt): A navigation disclosure menu with native links, nested groups, outside-click dismissal, and Escape support.
-- [HPopover](../popover/llms.txt): A nonmodal top-layer panel anchored to its trigger, with viewport-aware positioning and focus handling.
+- [HPopover](../popover/llms.txt): A nonmodal top-layer panel, anchored on desktop and docked at the bottom on mobile, with viewport-aware positioning and focus handling.
 - [HDataTable](../data-table/llms.txt): Semantic data tables with sorting, selection, paging, loading/empty states, and row actions.
 
 ---

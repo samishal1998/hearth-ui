@@ -1,6 +1,6 @@
 {
   "name": "hearth-ui-workspace",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "private": true,
   "license": "MIT",
   "workspaces": [
@@ -15,12 +15,15 @@
     "build": "npm run check && node scripts/build.mjs",
     "build:site": "npm run docs:check && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "node --test tests/theme.test.mjs && playwright test",
+    "test": "node --test tests/theme.test.mjs tests/publish-packages.test.mjs && playwright test",
     "test:package": "node tests/package-smoke.mjs",
     "docs:generate": "node scripts/agent-docs.mjs",
     "docs:check": "node scripts/agent-docs.mjs --check && node --test tests/agent-docs.test.mjs",
     "pack:packages": "node scripts/pack-packages.mjs",
-    "publish:dry-run": "npm run build && npm publish --workspaces --access public --dry-run --ignore-scripts"
+    "publish:prepare": "npm run docs:generate && npm run build && npm test -- --workers=1 && npm run test:package && npm run pack:packages",
+    "publish:dry-run": "node scripts/publish-packages.mjs --dry-run",
+    "publish:packages": "node scripts/publish-packages.mjs",
+    "publish:verify": "node scripts/publish-packages.mjs --verify-only"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.0",

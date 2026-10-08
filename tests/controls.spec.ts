@@ -81,7 +81,9 @@ async function mountForm(page: Page) {
     form.append(reset);
     document.querySelector("hearth-theme")!.append(form);
   });
-  await expect(page.getByLabel("Workers", { exact: true })).toHaveValue("2");
+  await expect(
+    page.getByRole("spinbutton", { name: "Workers", exact: true }),
+  ).toHaveValue("2");
 }
 
 test("Vue controls bind theme, counter, time, intervals, and workflow state", async ({
@@ -169,12 +171,16 @@ test("new custom-element fields submit, validate both endpoints, disable, and re
     ["budget", "80"],
   ]);
   await page.getByRole("button", { name: "Increase Workers" }).click();
-  await expect(page.getByLabel("Workers", { exact: true })).toHaveValue("2.5");
-  await page.getByLabel("Workers", { exact: true }).fill("");
+  await expect(
+    page.getByRole("spinbutton", { name: "Workers", exact: true }),
+  ).toHaveValue("2.5");
+  await page.getByRole("spinbutton", { name: "Workers", exact: true }).fill("");
   expect(
     await form.evaluate((el) => (el as HTMLFormElement).checkValidity()),
   ).toBe(false);
-  await page.getByLabel("Workers", { exact: true }).fill("3");
+  await page
+    .getByRole("spinbutton", { name: "Workers", exact: true })
+    .fill("3");
   await page
     .getByRole("textbox", { name: "End date", exact: true })
     .fill("2024-02-01");
@@ -215,7 +221,9 @@ test("new custom-element fields submit, validate both endpoints, disable, and re
     .locator("#new-controls-fields")
     .evaluate((el) => ((el as HTMLFieldSetElement).disabled = false));
   await page.getByRole("button", { name: "Reset new controls" }).click();
-  await expect(page.getByLabel("Workers", { exact: true })).toHaveValue("2");
+  await expect(
+    page.getByRole("spinbutton", { name: "Workers", exact: true }),
+  ).toHaveValue("2");
   await expect(
     page.getByRole("textbox", { name: "End date", exact: true }),
   ).toHaveValue("2024-03-02");
@@ -285,7 +293,9 @@ test("calendar navigates leap days, unavailable dates, month boundaries, and ext
   await expect(
     calendar.getByRole("button", { name: "Next month", exact: true }),
   ).toBeDisabled();
-  await expect(calendar.locator("[part=day]")).toHaveCount(31);
+  await expect(
+    calendar.locator('[part=day][data-outside="false"]'),
+  ).toHaveCount(31);
   await calendar.evaluate((el) => Object.assign(el, { month: "0001-01" }));
   await expect(
     calendar.getByRole("button", { name: "Previous month", exact: true }),
@@ -314,7 +324,7 @@ test("date-picker popover selects a leap day, returns focus, and respects readon
     page.getByRole("textbox", { name: "Release date", exact: true }),
   ).toHaveValue("2024-02-29");
   await expect(
-    page.getByRole("textbox", { name: "Release date", exact: true }),
+    picker.getByRole("button", { name: "Open calendar for Release date" }),
   ).toBeFocused();
   await expect(dialog).not.toBeVisible();
   await picker.evaluate((el) => Object.assign(el, { readonly: true }));

@@ -103,7 +103,7 @@ select {
   border-radius: var(--h-radius-control);
   background: var(--h-bg);
   color: var(--h-text);
-  font-size: 13px;
+  font-size: var(--h-field-font-size, 13px);
 }
 select:disabled {
   opacity: 0.55;

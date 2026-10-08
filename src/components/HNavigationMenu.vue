@@ -2,13 +2,20 @@
 import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
 import HIcon from "./HIcon.vue";
 import { safeHref } from "../internal";
+import { useMobileLayout } from "../mobile";
 import type { NavigationItem, NavItem } from "../themes";
-withDefaults(
-  defineProps<{ items: NavigationItem[]; active?: string; label?: string }>(),
+const props = withDefaults(
+  defineProps<{
+    items: NavigationItem[];
+    active?: string;
+    label?: string;
+    mobileBreakpoint?: number;
+  }>(),
   { items: () => [], label: "Main navigation" },
 );
 const emit = defineEmits<{ navigate: [id: string] }>();
 const root = ref<HTMLElement>();
+const mobile = useMobileLayout(root, () => props.mobileBreakpoint);
 const alignEnd = ref(false);
 function close(focus = false) {
   root.value
@@ -72,6 +79,7 @@ async function down(e: KeyboardEvent, disabled?: boolean) {
   <nav
     ref="root"
     class="h-menu"
+    :class="{ 'h-mobile': mobile }"
     part="base"
     :aria-label="label"
     @keydown="escape"
@@ -208,5 +216,26 @@ details[open] > summary {
   width: 100%;
   text-align: left;
   white-space: normal;
+}
+.h-menu.h-mobile {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.h-menu.h-mobile details {
+  min-width: 0;
+}
+.h-menu.h-mobile summary {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.h-menu.h-mobile .h-menu-popup {
+  position: static;
+  width: 100%;
+  min-width: 0;
+  max-height: min(50dvh, calc(var(--h-overlay-height, 100dvh) - 80px));
+  overflow: auto;
+  overscroll-behavior: contain;
+  margin-block: 6px;
+  box-shadow: none;
 }
 </style>

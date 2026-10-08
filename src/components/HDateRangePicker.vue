@@ -17,6 +17,7 @@ const props = withDefaults(
     weekStartsOn?: 0 | 1;
     startLabel?: string;
     endLabel?: string;
+    mobileBreakpoint?: number;
   }>(),
   { value: () => ["", ""], startLabel: "Start date", endLabel: "End date" },
 );
@@ -37,7 +38,7 @@ function update(index: number, value: string) {
 }
 function sync() {
   if (!root.value) return;
-  root.value.querySelectorAll(".h-date-picker input").forEach((input) => {
+  root.value.querySelectorAll("input[data-h-date-field]").forEach((input) => {
     input.setAttribute("data-h-form-value", "");
     input.setAttribute("data-h-multiple", "");
   });
@@ -56,6 +57,7 @@ onMounted(sync);
     <div class="h-date-range-fields">
       <HDatePicker
         :model-value="local[0]"
+        :mobile-breakpoint="mobileBreakpoint"
         :label="startLabel"
         :name="name"
         :min="min"
@@ -69,6 +71,7 @@ onMounted(sync);
         @control-sync="sync"
       /><HDatePicker
         :model-value="local[1]"
+        :mobile-breakpoint="mobileBreakpoint"
         :label="endLabel"
         :name="name"
         :min="local[0] && (!min || local[0] > min) ? local[0] : min"
@@ -99,7 +102,7 @@ legend {
 }
 .h-date-range-fields {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 16px;
 }
 @media (max-width: 550px) {

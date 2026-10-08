@@ -20,6 +20,7 @@ const props = withDefaults(
     error?: string;
     locale?: string;
     weekStartsOn?: 0 | 1;
+    mobileBreakpoint?: number;
   }>(),
   { value: "" },
 );
@@ -32,6 +33,7 @@ const local = ref(props.modelValue ?? props.value);
 const open = ref(false);
 const input = ref<InstanceType<typeof HInput>>();
 const calendar = ref<InstanceType<typeof HCalendar>>();
+const popover = ref<InstanceType<typeof HPopover>>();
 watch(
   open,
   async (shown) => {
@@ -72,7 +74,7 @@ async function select(value: string) {
   emit("change", value);
   open.value = false;
   await nextTick();
-  input.value?.$el.querySelector("input")?.focus();
+  popover.value?.$el.querySelector("button")?.focus({ preventScroll: true });
   emit("control-sync");
 }
 onMounted(sync);
@@ -84,6 +86,7 @@ onUpdated(sync);
       ref="input"
       :model-value="local"
       type="text"
+      data-h-date-field
       placeholder="YYYY-MM-DD"
       autocomplete="off"
       :label="label"
@@ -98,22 +101,30 @@ onUpdated(sync);
       @update:model-value="update"
       @change="emit('change', $event)"
       @control-sync="sync"
-    /><HPopover
-      v-model:open="open"
-      :label="`Open calendar for ${label}`"
-      :disabled="disabled || formDisabled || readonly"
-      class="h-date-popover"
-      ><HCalendar
-        ref="calendar"
-        :model-value="local"
-        :label="`${label} calendar`"
-        :min="min"
-        :max="max"
-        :locale="locale"
-        :week-starts-on="weekStartsOn"
-        :disabled="disabled || formDisabled || readonly"
-        @change="select"
-    /></HPopover>
+      ><template #trailing
+        ><HPopover
+          ref="popover"
+          v-model:open="open"
+          :mobile-breakpoint="mobileBreakpoint"
+          :label="`Open calendar for ${label}`"
+          :panel-label="`Open calendar for ${label}`"
+          :title="label"
+          icon="calendar"
+          icon-only
+          variant="ghost"
+          :disabled="disabled || formDisabled || readonly"
+          class="h-date-popover"
+          ><HCalendar
+            ref="calendar"
+            :model-value="local"
+            :label="`${label} calendar`"
+            :min="min"
+            :max="max"
+            :locale="locale"
+            :week-starts-on="weekStartsOn"
+            :disabled="disabled || formDisabled || readonly"
+            @change="select" /></HPopover></template
+    ></HInput>
   </div>
 </template>
 <style scoped>
@@ -123,7 +134,7 @@ onUpdated(sync);
   min-width: 0;
 }
 .h-date-popover {
-  --h-popover-width: 360px;
+  --h-popover-width: 400px;
   min-width: 0;
   max-width: 100%;
 }

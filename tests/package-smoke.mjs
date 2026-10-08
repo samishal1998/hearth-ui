@@ -123,6 +123,9 @@ multi.modelValue='media';
 multi.addEventListener('change',event=>{const values:string[]=event.detail[0]});
 const button=new HearthButtonElement();button.addEventListener('click',event=>{const x:number=event.clientX;const detail:number=event.detail});
 const theme=new HearthThemeElement();theme.tokens=themeStyle({'--h-accent':'#ff7a2f'});
+theme.mobileBreakpoint=768;
+// @ts-expect-error breakpoint properties use numbers, not CSS length strings
+theme.mobileBreakpoint='768px';
 const credentials:AuthCredentials={username:'owner',password:'test-only'};
 import {HearthFileUploadElement,HearthDataTableElement,HearthToasterElement,tableCellSlot,type TableRow,type ToastItem} from '@hearth-ui/elements';
 const upload=new HearthFileUploadElement({multiple:true});upload.checkValidity();upload.modelValue=[new File(['{}'],'config.json')];
@@ -141,7 +144,7 @@ new HearthNumberInputElement({label:'Workers',modelValue:null}).addEventListener
 new HearthTimePickerElement({label:'Time',step:900}).checkValidity();
 new HearthThemeSwitcherElement({value:'system'}).addEventListener('change',event=>{const mode:'light'|'dark'|'system'=event.detail[0]});
 new HearthCalendarElement({month:'2024-02',disabledDates:['2024-02-29']});
-new HearthDatePickerElement({label:'Date',value:'2024-02-28'}).checkValidity();
+new HearthDatePickerElement({label:'Date',value:'2024-02-28',mobileBreakpoint:0}).checkValidity();
 new HearthDateRangePickerElement({label:'Dates',value:['2024-02-28','2024-03-02']}).addEventListener('change',event=>{const dates:DateRange=event.detail[0]});
 new HearthRangeSliderElement({label:'Range',value:[20,80]}).addEventListener('change',event=>{const range:NumberRange=event.detail[0]});
 new HearthStepperElement({items:[{id:'one',label:'First'}],interactive:true});

@@ -60,6 +60,33 @@ test("registry pages, filters, deep links, focused previews, and mobile layout",
   expect(errors).toEqual([]);
 });
 
+test("modal registry previews have working open controls and can be reopened on mobile", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const [name, button] of [
+    ["HDialog", "Open dialog"],
+    ["HSheet", "Open sheet"],
+    ["HCommandPalette", "Open command palette"],
+  ]) {
+    await page.goto(`/#components/${name}`);
+    const trigger = page.getByRole("button", { name: button, exact: true });
+    await trigger.click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toHaveClass(/h-mobile(?: |$)/);
+    const box = (await dialog.boundingBox())!;
+    expect(Math.round(box.width)).toBe(390);
+    expect(Math.round(box.y + box.height)).toBe(844);
+    await page.keyboard.press("Escape");
+    await expect(dialog).not.toBeVisible();
+    await trigger.click();
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).not.toBeVisible();
+  }
+});
+
 test("auth page is available as the seventh recipe and submits an in-memory preview", async ({
   page,
 }) => {
@@ -148,21 +175,26 @@ test("Hearth pickers replace native date/time popups and retain validity, form v
     .getByRole("button", { name: "Thursday, February 29, 2024" })
     .click();
   await expect(date).toHaveValue("2024-02-29");
-  await expect(date).toBeFocused();
+  await expect(
+    form.getByRole("button", { name: "Open calendar for Planned date" }),
+  ).toBeFocused();
   await form
     .getByRole("button", { name: "Choose time for Planned time" })
     .click();
   const popup = form.getByRole("dialog", { name: "Time picker: Planned time" });
-  await popup.getByRole("spinbutton", { name: "Hour", exact: true }).fill("10");
   await popup
-    .getByRole("spinbutton", { name: "Minute", exact: true })
-    .fill("45");
-  await popup
-    .getByRole("spinbutton", { name: "Minute", exact: true })
-    .press("Enter");
+    .getByRole("listbox", { name: "Hour", exact: true })
+    .getByRole("option", { name: "10", exact: true })
+    .click();
+  const minutes = popup.getByRole("listbox", { name: "Minute", exact: true });
+  await minutes.getByRole("option", { name: "45", exact: true }).click();
+  await minutes.focus();
+  await minutes.press("Enter");
   await expect(form).not.toHaveAttribute("data-submitted", "true");
   await expect(time).toHaveValue("10:45");
-  await expect(time).toBeFocused();
+  await expect(
+    form.getByRole("button", { name: "Choose time for Planned time" }),
+  ).toBeFocused();
   await form
     .getByRole("button", { name: "Choose time for Planned time" })
     .click();

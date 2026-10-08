@@ -3,6 +3,7 @@ import { ref, watch, onMounted, onBeforeUnmount, nextTick, useId } from "vue";
 import HButton from "./HButton.vue";
 import HIcon from "./HIcon.vue";
 import { useFloating } from "../floating";
+import { useMobileLayout } from "../mobile";
 import type { MenuAction } from "../themes";
 const props = withDefaults(
   defineProps<{
@@ -12,6 +13,7 @@ const props = withDefaults(
     open?: boolean;
     disabled?: boolean;
     placement?: "top" | "bottom" | "left" | "right";
+    mobileBreakpoint?: number;
   }>(),
   { items: () => [], label: "Actions", placement: "bottom" },
 );
@@ -22,9 +24,16 @@ const emit = defineEmits<{
 const trigger = ref<InstanceType<typeof HButton>>();
 const anchor = ref<HTMLElement>();
 const panel = ref<HTMLElement>();
+const mobile = useMobileLayout(panel, () => props.mobileBreakpoint);
 const visible = ref(false);
 const id = useId();
-useFloating(anchor, panel, visible, () => props.placement);
+useFloating(
+  anchor,
+  panel,
+  visible,
+  () => props.placement,
+  () => mobile.value,
+);
 const choices = () => [
   ...(panel.value?.querySelectorAll<HTMLButtonElement>(
     "[role=menuitem]:not(:disabled)",
@@ -111,39 +120,50 @@ onBeforeUnmount(() => close(false));
       >{{ label }}</HButton
     >
     <div
-      :id="id"
       ref="panel"
       popover="auto"
-      class="h-dropdown-panel"
-      role="menu"
-      :aria-label="label"
+      class="h-dropdown-panel h-mobile-overlay"
+      :class="{ 'h-mobile': mobile }"
       part="menu"
       @toggle="toggle"
       @keydown="key"
     >
-      <template v-for="action in items" :key="action.id"
-        ><hr v-if="action.separatorBefore" role="separator" />
-        <button
-          type="button"
-          role="menuitem"
-          tabindex="-1"
-          :disabled="action.disabled"
-          :class="{ danger: action.danger }"
-          part="item"
-          @click="pick(action)"
+      <div v-if="mobile" class="h-overlay-header" part="header">
+        <strong>{{ label }}</strong
+        ><HButton
+          variant="ghost"
+          icon="close"
+          icon-only
+          :label="`Close ${label}`"
+          @click="close()"
+        />
+      </div>
+      <div :id="id" role="menu" :aria-label="label" class="h-overlay-body">
+        <template v-for="action in items" :key="action.id"
+          ><hr v-if="action.separatorBefore" role="separator" />
+          <button
+            type="button"
+            role="menuitem"
+            tabindex="-1"
+            :disabled="action.disabled"
+            :class="{ danger: action.danger }"
+            part="item"
+            @click="pick(action)"
+          >
+            <HIcon v-if="action.icon" :name="action.icon" :size="16" /><span>{{
+              action.label
+            }}</span
+            ><kbd v-if="action.shortcut">{{ action.shortcut }}</kbd>
+          </button></template
         >
-          <HIcon v-if="action.icon" :name="action.icon" :size="16" /><span>{{
-            action.label
-          }}</span
-          ><kbd v-if="action.shortcut">{{ action.shortcut }}</kbd>
-        </button></template
-      >
-      <p v-if="!items.length" class="h-menu-empty">No actions available.</p>
+        <p v-if="!items.length" class="h-menu-empty">No actions available.</p>
+      </div>
     </div></span
   >
 </template>
 <style scoped>
 @import "../styles/base.css";
+@import "../styles/mobile-overlay.css";
 .h-dropdown {
   display: inline-block;
 }
@@ -152,7 +172,7 @@ onBeforeUnmount(() => close(false));
   inset: auto;
   margin: 0;
   min-width: 200px;
-  max-width: calc(100vw - 24px);
+  max-width: calc(var(--h-overlay-width, 100vw) - 24px);
   max-height: calc(100dvh - 24px);
   overflow: auto;
   padding: 5px;

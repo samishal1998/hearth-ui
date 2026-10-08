@@ -1,8 +1,8 @@
 # HTimePicker
 
-> Time entry with a Hearth hour/minute/second popover, bounds, and configurable steps.
+> Time entry with an inset clock button and step-aware hour, minute, and second columns.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -15,10 +15,12 @@
 ## Choose and use it correctly
 
 - Text entry with a Hearth popover for hour, minute, and optional second selection; no native browser time popup. Values are HH:mm or HH:mm:ss, or empty. Step is in seconds; min/max and step are checked through the form validity API. Bounds can cross midnight. No time zone conversion is performed.
+- Hour, minute, and second columns offer valid combinations for the configured bounds and step. Arrow keys, Home/End, PageUp/PageDown, and numeric typeahead change the draft. Left/Right moves between columns; Enter applies. Cancel leaves the committed value unchanged. Apply and Cancel return focus to the clock button, avoiding a mobile keyboard reopening.
+- mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
 
 ## Public API
 
-modelValue, value, label, name, min, max, hint, error: string · step: number · required, disabled, readonly: boolean
+modelValue, value, label, name, min, max, hint, error: string · step: number · required, disabled, readonly: boolean · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -36,6 +38,7 @@ type Props = {
     readonly?: boolean;
     hint?: string;
     error?: string;
+    mobileBreakpoint?: number;
 };
 ```
 
@@ -70,7 +73,7 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 
 ### CSS parts
 
-base, label, control, hint
+base, label, control, hint, adornment, preview, column, option, footer
 
 Use `hearth-time-picker::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
 

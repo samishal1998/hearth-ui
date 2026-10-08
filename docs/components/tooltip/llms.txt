@@ -2,7 +2,7 @@
 
 > Hoverable, keyboard-accessible help text with a configurable delay and Escape dismissal.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -17,10 +17,11 @@
 - Provide short supplementary help, not essential instructions available only on hover.
 - The default trigger is focusable. A slotted custom trigger must also be focusable and have its own accessible name.
 - Hover delay, focus access, hover persistence, and Escape dismissal are supported; interactive content belongs in HPopover.
+- mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
 
 ## Public API
 
-text, label, icon: string · placement: top | bottom | left | right · delay: number · disabled: boolean
+text, label, icon: string · placement: top | bottom | left | right · delay: number · disabled: boolean · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -32,6 +33,7 @@ type Props = {
     placement?: "top" | "bottom" | "left" | "right";
     delay?: number;
     disabled?: boolean;
+    mobileBreakpoint?: number;
 };
 ```
 
@@ -100,7 +102,7 @@ mount.append(element);
 
 ## Related components
 
-- [HPopover](../popover/llms.txt): A nonmodal top-layer panel anchored to its trigger, with viewport-aware positioning and focus handling.
+- [HPopover](../popover/llms.txt): A nonmodal top-layer panel, anchored on desktop and docked at the bottom on mobile, with viewport-aware positioning and focus handling.
 - [HButton](../button/llms.txt): Native button or link behavior, clear focus, icon-only labels, and restrained press feedback.
 
 ---

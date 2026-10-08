@@ -8,6 +8,12 @@ const paths: Record<string, string> = {
   home: "m3 10 9-7 9 7v10H15v-6H9v6H3z",
   search: "M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0",
   plus: "M12 5v14M5 12h14",
+  minus: "M5 12h14",
+  left: "m15 6-6 6 6 6",
+  right: "m9 6 6 6-6 6",
+  clock: "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0M12 7v5l3 2",
+  calendar:
+    "M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2ZM7 3v4M17 3v4M3 11h18M7 15h2M13 15h2",
   close: "m6 6 12 12M18 6 6 18",
   arrow: "M4 12h16m-6-6 6 6-6 6",
   launch: "M14 3h7v7m0-7L10 14M10 3H3v18h18v-7",

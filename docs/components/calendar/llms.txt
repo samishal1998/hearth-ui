@@ -1,8 +1,8 @@
 # HCalendar
 
-> A keyboard-navigable Gregorian month calendar with date-only values, bounds, and unavailable days.
+> A stable six-week calendar with direct month/year navigation, Today/Clear actions, and unavailable dates.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -16,6 +16,7 @@
 
 - Added in v0.5.0. Gregorian date-only values use YYYY-MM-DD, years 0001–9999. month uses YYYY-MM. Locale formats labels; weekStartsOn is 0 (Sunday) or 1 (Monday). Supply month/today for deterministic initial rendering across a UTC midnight boundary.
 - Arrow keys move by day/week; Home/End move within a week, PageUp/PageDown by month, Shift+PageUp/PageDown by year. Enter/Space selects. Navigation skips unavailable dates with a bounded ten-year search. min/max bound navigation.
+- A fixed six-week grid includes adjacent-month dates and keeps its height stable. The month heading opens a month/year chooser; its draft year field does not participate in an enclosing form. Escape leaves the chooser before dismissing a containing popover. Today selects the allowed current date; Clear emits an empty string.
 - This inline calendar is not a form control. Use HDatePicker for form association. Applications own date fetching and disabled-date lists.
 
 ## Public API
@@ -80,7 +81,7 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 
 ### CSS parts
 
-base, previous, month, next, grid, day
+base, previous, month, next, grid, day, year, months, footer
 
 Use `hearth-calendar::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
 

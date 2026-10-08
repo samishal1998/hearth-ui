@@ -2,7 +2,7 @@
 
 > A scoped theme island. CSS variables flow through Vue trees, native slots, and shadow roots.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -16,11 +16,13 @@
 
 - Use one theme island around an application or a deliberately different section. Do not wrap every component in another theme: a new island establishes its own preset values.
 - Modes are dark, light, or system; system follows CSS media preferences. Comfortable and compact densities use 44px and 40px main controls.
+- Set mobileBreakpoint on the theme island to configure descendant overlays, including custom elements. Dialogs, sheets, command palettes, and dashboard navigation become bottom sheets; popovers and action menus dock at the bottom. Native dialog focus trapping and modal scroll locking remain intact. Popovers remain nonmodal, with native light dismissal. Navigation menus expand inline, and tooltips stay anchored and support touch dismissal.
 - CSS custom properties inherit across shadow roots and native slots. Override --h-* tokens through the tokens property, an ancestor, or a host style. Use themeStyle() to filter a token object and themeCSS() to serialize trusted CSS values.
+- mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
 
 ## Public API
 
-theme: string = sunset · mode: dark | light | system · density: comfortable | compact · tokens: ThemeTokens
+theme: string = sunset · mode: dark | light | system · density: comfortable | compact · tokens: ThemeTokens · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -30,6 +32,7 @@ type Props = {
     mode?: Mode;
     density?: Density;
     tokens?: ThemeTokens;
+    mobileBreakpoint?: number;
 };
 ```
 
@@ -315,7 +318,7 @@ mount.append(element);
 ## Related components
 
 - [HAuthPage](../auth-page/llms.txt): The full split-screen welcome/login page. It emits credentials; your application owns authentication.
-- [HDashboardShell](../dashboard-shell/llms.txt): A complete dashboard frame with desktop sidebar, native mobile navigation dialog, account controls, and content area.
+- [HDashboardShell](../dashboard-shell/llms.txt): A dashboard frame with desktop sidebar, configurable mobile navigation bottom sheet, account controls, and content area.
 - [HPublicShell](../public-shell/llms.txt): A public landing-page frame: brand, a few links, an account action, and a quiet footer.
 
 ---

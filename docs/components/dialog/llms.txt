@@ -1,8 +1,8 @@
 # HDialog
 
-> A native modal dialog with focus containment, Escape dismissal, and focus return. Keep it inside your theme island.
+> A native modal dialog that becomes a bottom sheet on mobile, preserving focus containment, Escape dismissal, and focus return.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.5.1. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -17,10 +17,11 @@
 - Use the open prop/property; do not set a native open attribute on an inner dialog or call showModal() yourself.
 - Handle close() by setting open=false. Native dialog supplies modal focus behavior, Escape dismissal, and focus return.
 - Keep the component inside its theme island. The native top layer removes the need to teleport the component away from inherited tokens.
+- mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
 
 ## Public API
 
-open: boolean · title: string · description: string
+open: boolean · title: string · description: string · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -29,6 +30,7 @@ type Props = {
     open?: boolean;
     title: string;
     description?: string;
+    mobileBreakpoint?: number;
 };
 ```
 
@@ -57,7 +59,7 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 
 ### CSS parts
 
-dialog, header, body
+dialog, header, body, footer
 
 Use `hearth-dialog::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
 

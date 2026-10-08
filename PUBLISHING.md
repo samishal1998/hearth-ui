@@ -1,88 +1,118 @@
 # Publishing Hearth UI
 
-Two npm workspaces share the component source and a synchronized version:
+Two public npm packages share the source and a synchronized version:
 
-| Directory           | npm name              | Host dependency                                  |
-| ------------------- | --------------------- | ------------------------------------------------ |
-| `packages/vue`      | `@hearth-ui/vue`      | Vue 3.5+ peer                                    |
-| `packages/elements` | `@hearth-ui/elements` | None; Vue runtime bundled, DOM-only declarations |
+| Directory           | npm package           | Host dependency                                 |
+| ------------------- | --------------------- | ----------------------------------------------- |
+| `packages/vue`      | `@hearth-ui/vue`      | Vue 3.5+ peer                                   |
+| `packages/elements` | `@hearth-ui/elements` | None; runtime bundled and DOM-only declarations |
 
-Both packages are MIT-licensed, public, ESM-only, and include styles, TypeScript declarations, and agent references. The repository root is private. The initial split-package version is **0.3.0**.
+The version prepared in this workspace is **0.6.0**, including configurable mobile overlays. Both packages are MIT-licensed and ESM-only. The repository root is private.
 
-## Prepare the publishable artifacts
+## Prepare and preview
 
-From the repository root:
+Run from the repository root with Node 24 (recommended):
 
 ```sh
 npm ci
-npm run docs:generate
-npm run build
 npx playwright install chromium
-npm test
-npm run test:package
-npm run pack:packages
+npm run publish:prepare
 npm run publish:dry-run
 ```
 
-Artifacts are written to `release-dist/`:
+`publish:prepare` regenerates the agent references, checks/types/builds both packages, runs browser and publishing tests, tests isolated package installation and SSR, then creates:
 
 ```text
-hearth-ui-vue-0.5.1.tgz
-hearth-ui-elements-0.5.1.tgz
-SHA256SUMS
+release-dist/hearth-ui-vue-0.6.0.tgz
+release-dist/hearth-ui-elements-0.6.0.tgz
+release-dist/SHA256SUMS
+release-dist/packages.json
 ```
 
-`pack:packages` requires a completed build. The build checks version alignment and prepares each workspace's ignored `dist/`, `docs/`, `llms.txt`, and `LICENSE` from source. `publish:dry-run` builds and inspects both public workspaces without uploading a package.
+`packages.json` records each archive's name, version, filename, SHA-512 integrity, and SHA-256 checksum. `publish:dry-run` validates these exact artifacts, checks the npm registry for version conflicts, and invokes `npm publish --dry-run` for each missing package. It uploads nothing and does not require npm login.
 
-Package smoke checks install the tarballs into separate temporary consumers. The Vue consumer tests SSR and native component types. The elements consumer has no Vue dependency and validates DOM-based constructor/prop/event types, raw module imports, and asset availability.
+Neither the dry-run nor publication rebuilds an archive. If you change source, versions, or package READMEs, rerun `publish:prepare` and the dry-run before publication.
 
-## First publication
+## Publish both packages
 
-You must own or have publishing access to the **hearth-ui npm organization**. GitHub ownership does not establish npm organization ownership.
-
-Authenticate in your own terminal:
+Authenticate with an npm account that can publish to the `hearth-ui` organization:
 
 ```sh
-npm login --registry=https://registry.npmjs.org/
-npm whoami
+npm login --auth-type=web --registry=https://registry.npmjs.org/
+npm whoami --registry=https://registry.npmjs.org/
 ```
 
-After reviewing the dry run, publish the verified tarballs:
+Publish the prepared archives:
 
 ```sh
-npm publish ./release-dist/hearth-ui-vue-0.5.1.tgz --access public --tag latest
-npm publish ./release-dist/hearth-ui-elements-0.5.1.tgz --access public --tag latest
+npm run publish:packages
 ```
 
-Complete any npm two-factor authentication prompts interactively. Do not put credentials in the repository. First publication may need to be done locally before the npm package settings needed for trusted publishing exist.
+The script publishes **both packages** to `https://registry.npmjs.org/` with public access. Stable versions use `latest`; prereleases such as `0.6.0-rc.1` use `next`. npm handles authentication and any interactive two-factor prompts through the terminal.
 
-## Configure GitHub trusted publishing
+Before the first upload, the script checks every selected version:
 
-For **each** package on npmjs.com, configure a GitHub Actions trusted publisher:
+- A matching published archive is verified and skipped.
+- An existing version with different contents stops the command before any uploads. Change the version to publish different contents.
+- A registry/network error stops the command rather than being treated as a missing package.
 
-- Organization/user: `samishal1998`
+After npm accepts each upload, the script saves a receipt in `release-dist/.publish-state.json`, waits briefly for registry propagation, and compares downloaded SHA-512 and SHA-256 hashes with the local archive. If processing takes longer, it continues to the next package and explicitly reports verification as pending.
+
+npm may return **202 Accepted** and take several minutes to make a version public. Re-uploading during that interval can return **409: Cannot publish over previously staged version**. Check status without uploading:
+
+```sh
+npm run publish:verify
+```
+
+The script preserves accepted-upload receipts across invocations and skips those uploads even if npm still returns 404 for their public metadata. Keep `.publish-state.json` alongside the original archives.
+
+## Resume a partial publication
+
+npm publishes packages individually. If the first succeeds and the second fails, fix the reported error and rerun:
+
+```sh
+npm run publish:packages
+```
+
+Keep the original archives. The matching first package is skipped and the missing second package is published. Rebuilding changed source under an already-published version produces a conflict.
+
+You can also select one package:
+
+```sh
+npm run publish:packages -- --package vue
+npm run publish:packages -- --package elements
+npm run publish:dry-run -- --package elements
+```
+
+Skipping an identical published archive does not change its dist-tags. `publish:verify` never uploads a package and can also be scoped with `-- --package vue` or `-- --package elements`. A 409 for Vue does not block an elements-only publication.
+
+Use `npm run publish:packages -- --help` for available flags.
+
+## GitHub trusted publishing
+
+For each package on npmjs.com, configure a GitHub Actions trusted publisher:
+
+- Owner: `samishal1998`
 - Repository: `hearth-ui`
-- Workflow filename: `publish-npm.yml`
-- Environment: leave blank (the workflow does not use a protected environment)
-- Allowed action: enable direct **`npm publish`** for this workflow
+- Workflow: `publish-npm.yml`
+- Environment: leave blank
+- Allowed action: direct `npm publish`
 
-The workflow uses GitHub-hosted runners, Node 24, OIDC (`id-token: write`), and provenance. It does not require an `NPM_TOKEN` secret. npm CLI 11.5.1+ and Node 22.14+ are required for trusted publishing; the workflow's Node 24 setup meets those requirements.
+The workflow uses GitHub-hosted runners, Node 24, OIDC, and provenance. It does not need an `NPM_TOKEN` secret. The npm CLI must support trusted publishing (11.5.1+).
 
-Once configured, run **Actions → Publish npm packages** with an existing tag's version, such as `0.3.1`. The workflow checks out `refs/tags/v0.3.1`, rebuilds and verifies the packages, then publishes the selected tarballs.
+Commit and push the release source and its matching tag, then run **Actions → Publish npm packages**, choosing the version and **both**, **vue**, or **elements**. For `0.6.0`, it checks out `refs/tags/v0.6.0`, builds and tests the packages, packs the archives, and invokes the same script with `--provenance`.
 
-Choose **both**, **vue**, or **elements**. If one package succeeds and another fails, rerun with only the missing package; npm versions are immutable. Prereleases use the `next` dist-tag, while stable versions use `latest`.
+The existing **Release** workflow attaches package archives and manifests to GitHub Releases. Pushing a tag does not itself publish to npm or rebuild the local docs container.
 
 ## Future versions
 
-1. Update the version in the root `package.json`, `packages/vue/package.json`, and `packages/elements/package.json`.
-2. Run `npm install --package-lock-only --ignore-scripts` and `npm run docs:generate`.
-3. Build, test, inspect the two tarballs, then commit and push a matching version tag.
-4. The existing Release workflow attaches both tarballs to GitHub Releases.
-5. Run Publish npm packages after npm trusted publishing has been configured.
+1. Update `package.json`, `packages/vue/package.json`, and `packages/elements/package.json` to the same version.
+2. Run `npm install --package-lock-only --ignore-scripts`.
+3. Update package READMEs and any pinned CDN versions.
+4. Run `npm run publish:prepare` and `npm run publish:dry-run`.
+5. Publish locally with `npm run publish:packages`, or from a committed tag using the trusted-publishing workflow.
 
-Tag creation publishes GitHub artifacts, not npm packages. npm publication is a separate explicit workflow action.
-
-## Migrating from the combined package
+## Migration from the combined package
 
 ```text
 @samishal1998/hearth-ui               → @hearth-ui/vue
@@ -92,4 +122,4 @@ Tag creation publishes GitHub artifacts, not npm packages. npm publication is a 
 @samishal1998/hearth-ui/themes.css    → either package's themes.css export
 ```
 
-Component names, custom-element tags, tokens, and event payloads are retained. The elements package now exposes framework-independent TypeScript types and does not install Vue in the consuming project.
+Component names, element tags, and event payloads are retained. The elements package exposes framework-independent TypeScript declarations and does not install Vue in the consuming application.

@@ -11,6 +11,7 @@ withDefaults(
     mode?: Mode;
     density?: Density;
     tokens?: ThemeTokens;
+    mobileBreakpoint?: number;
   }>(),
   { theme: "sunset", mode: "dark", density: "comfortable" },
 );
@@ -22,7 +23,14 @@ withDefaults(
     :data-hearth-theme="theme"
     :data-hearth-mode="mode"
     :data-hearth-density="density"
-    :style="themeStyle(tokens)"
+    :style="{
+      ...themeStyle(tokens),
+      ...(mobileBreakpoint !== undefined &&
+      Number.isFinite(mobileBreakpoint) &&
+      mobileBreakpoint >= 0
+        ? { '--h-mobile-breakpoint': `${mobileBreakpoint}px` }
+        : {}),
+    }"
   >
     <slot />
   </div>

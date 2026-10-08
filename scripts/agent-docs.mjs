@@ -53,6 +53,11 @@ export async function renderAgentDocs() {
     const recipe = examples[component.name];
     if (!recipe) throw new Error(`Add an agent recipe for ${component.name}`);
     const source = apiSource(component.name, shared);
+    const mobileNote = `${source.props} ${source.types}`.includes(
+      "mobileBreakpoint",
+    )
+      ? "mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots."
+      : "";
     const imports = [...new Set([component.name, ...(recipe.imports || [])])];
     for (const name of [...imports, ...recipe.related])
       if (!names.has(name))
@@ -86,7 +91,10 @@ export async function renderAgentDocs() {
         `# ${component.name}\n\n> ${component.description}`,
         `[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version ${version}. Match documentation to your installed source/release.`,
         `## Identity\n\n- Vue export: \`${component.name}\` from \`${vuePackage}\`.\n- Custom element: \`<${component.tag}>\`.\n- Constructor: \`Hearth${component.name.slice(1)}Element\` from \`${elementsPackage}\`.\n- Category: ${component.category}.\n- [Implementation](${sourceURL}${source.path}).`,
-        `## Choose and use it correctly\n\n${recipe.notes.map((n) => "- " + n).join("\n")}`,
+        `## Choose and use it correctly\n\n${[...recipe.notes, mobileNote]
+          .filter(Boolean)
+          .map((n) => "- " + n)
+          .join("\n")}`,
         `## Public API\n\n${component.props}\n\nA \`?\` marks optional source props. Props with defaults may be omitted. Internal \`formDisabled\` and \`control-sync\` plumbing is excluded below; do not use it in application code.`,
         fence("ts", `type Props = ${source.props};`),
         "### Defaults",
@@ -107,7 +115,10 @@ export async function renderAgentDocs() {
         fence("vue", vue),
         "## Web-component example",
         "Provide a mount point. For field submission, use an owning native form; the auth page already contains its own form.",
-      fence("html", `<${recipe.mountTag||'div'} id="example"></${recipe.mountTag||'div'}>`),
+        fence(
+          "html",
+          `<${recipe.mountTag || "div"} id="example"></${recipe.mountTag || "div"}>`,
+        ),
         "This is bundler-based ESM. For raw HTML, load `dist/themes.css` with a link and import `registerElements` from `./dist/elements/index.js` instead. Initial array/object properties are assigned before connection to establish reset defaults.",
         fence("js", js),
         source.icons

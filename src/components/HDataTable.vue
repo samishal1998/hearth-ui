@@ -14,6 +14,7 @@ import {
 const props = withDefaults(
   defineProps<{
     rows: TableRow[];
+    mobileBreakpoint?: number;
     columns: TableColumn[];
     label?: string;
     caption?: string;
@@ -280,6 +281,7 @@ watch(
             </td>
             <td v-if="actions.length">
               <HDropdownMenu
+                :mobile-breakpoint="mobileBreakpoint"
                 :items="actions"
                 :label="`Actions for ${row.id}`"
                 @select="emit('row-action', { id: row.id, action: $event })"

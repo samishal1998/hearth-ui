@@ -6,35 +6,46 @@ export function useFloating(
   panel: Ref<HTMLElement | undefined>,
   open: Ref<boolean>,
   placement: () => "top" | "bottom" | "left" | "right",
+  docked: () => boolean = () => false,
 ) {
   let observer: ResizeObserver | undefined;
   let frame = 0;
+  let disposed = false;
   function position() {
     const a = anchor.value,
       p = panel.value;
     if (!a || !p || !open.value) return;
+    if (docked()) {
+      p.style.removeProperty("left");
+      p.style.removeProperty("top");
+      return;
+    }
     const r = a.getBoundingClientRect(),
       box = p.getBoundingClientRect(),
       gap = 8,
       pad = 12;
-    const vw = document.documentElement.clientWidth,
-      vh = window.innerHeight;
+    const viewport = window.visualViewport;
+    const left = viewport?.offsetLeft ?? 0,
+      top = viewport?.offsetTop ?? 0;
+    const vw = left + (viewport?.width ?? document.documentElement.clientWidth),
+      vh = top + (viewport?.height ?? window.innerHeight);
     let side = placement();
     if (
       side === "bottom" &&
       r.bottom + gap + box.height > vh - pad &&
-      r.top > box.height + gap
+      r.top - top > box.height + gap
     )
       side = "top";
     else if (
       side === "top" &&
-      r.top - gap - box.height < pad &&
+      r.top - gap - box.height < top + pad &&
       vh - r.bottom > box.height + gap
     )
       side = "bottom";
     else if (side === "right" && r.right + gap + box.width > vw - pad)
       side = "left";
-    else if (side === "left" && r.left - gap - box.width < pad) side = "right";
+    else if (side === "left" && r.left - gap - box.width < left + pad)
+      side = "right";
     let x =
       side === "left"
         ? r.left - box.width - gap
@@ -47,8 +58,8 @@ export function useFloating(
         : side === "bottom"
           ? r.bottom + gap
           : r.top;
-    x = Math.max(pad, Math.min(x, vw - box.width - pad));
-    y = Math.max(pad, Math.min(y, vh - box.height - pad));
+    x = Math.max(left + pad, Math.min(x, vw - box.width - pad));
+    y = Math.max(top + pad, Math.min(y, vh - box.height - pad));
     p.style.left = `${Math.round(x)}px`;
     p.style.top = `${Math.round(y)}px`;
   }
@@ -61,6 +72,8 @@ export function useFloating(
     observer = undefined;
     window.removeEventListener("resize", schedule);
     window.removeEventListener("scroll", schedule, true);
+    window.visualViewport?.removeEventListener("resize", schedule);
+    window.visualViewport?.removeEventListener("scroll", schedule);
     cancelAnimationFrame(frame);
   }
   watch(
@@ -71,16 +84,30 @@ export function useFloating(
         return;
       }
       await nextTick();
+      if (disposed || !open.value) return;
+      stop();
       position();
       observer = new ResizeObserver(schedule);
       if (anchor.value) observer.observe(anchor.value);
       if (panel.value) observer.observe(panel.value);
       window.addEventListener("resize", schedule);
       window.addEventListener("scroll", schedule, true);
+      window.visualViewport?.addEventListener("resize", schedule);
+      window.visualViewport?.addEventListener("scroll", schedule);
     },
     { flush: "post" },
   );
-  onBeforeUnmount(stop);
+  watch(
+    docked,
+    () => {
+      if (open.value) position();
+    },
+    { flush: "post" },
+  );
+  onBeforeUnmount(() => {
+    disposed = true;
+    stop();
+  });
   return { position };
 }
 

@@ -39,6 +39,7 @@ export interface ComboboxOption extends ChoiceOption {
   keywords?: string[];
 }
 export interface ComboboxProps {
+  mobileBreakpoint?: number;
   modelValue?: string | string[];
   value?: string | string[];
   label: string;

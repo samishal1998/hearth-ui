@@ -2,7 +2,7 @@
 
 > Themeable Vue and web components for self-hosted dashboards, public pages, and authentication. Start here, then read only the component references needed for the task.
 
-This index covers 70 public components in source version 0.5.1. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
+This index covers 70 public components in source version 0.6.0. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
 
 ## Agent workflow
 
@@ -49,7 +49,7 @@ This index covers 70 public components in source version 0.5.1. The working tree
 
 - [HAuthPage](docs/components/auth-page/llms.txt): The full split-screen welcome/login page. It emits credentials; your application owns authentication.
 - [HBreadcrumbs](docs/components/breadcrumbs/llms.txt): A wrapping breadcrumb trail with an accessible current page.
-- [HDashboardShell](docs/components/dashboard-shell/llms.txt): A complete dashboard frame with desktop sidebar, native mobile navigation dialog, account controls, and content area.
+- [HDashboardShell](docs/components/dashboard-shell/llms.txt): A dashboard frame with desktop sidebar, configurable mobile navigation bottom sheet, account controls, and content area.
 - [HErrorPage](docs/components/error-page/llms.txt): Not-found, access-denied, and unavailable page treatments with clear recovery actions.
 - [HFirstRunSetup](docs/components/first-run-setup/llms.txt): An application-controlled owner-account, provider, and completion setup recipe.
 - [HNavigationMenu](docs/components/navigation-menu/llms.txt): A navigation disclosure menu with native links, nested groups, outside-click dismissal, and Escape support.
@@ -67,32 +67,32 @@ This index covers 70 public components in source version 0.5.1. The working tree
 - [HAccordion](docs/components/accordion/llms.txt): Native details/summary disclosures with single or multiple expansion.
 - [HButton](docs/components/button/llms.txt): Native button or link behavior, clear focus, icon-only labels, and restrained press feedback.
 - [HButtonBar](docs/components/button-bar/llms.txt): Group actions without changing native button focus or submission behavior.
-- [HCalendar](docs/components/calendar/llms.txt): A keyboard-navigable Gregorian month calendar with date-only values, bounds, and unavailable days.
+- [HCalendar](docs/components/calendar/llms.txt): A stable six-week calendar with direct month/year navigation, Today/Clear actions, and unavailable dates.
 - [HCheckbox](docs/components/checkbox/llms.txt): A native checkbox with a mixed-state option and optional description.
 - [HChip](docs/components/chip/llms.txt): A compact selectable or removable label with distinct toggle and remove actions.
 - [HChipGroup](docs/components/chip-group/llms.txt): An array-valued filter group or removable set of selected tags.
 - [HCombobox](docs/components/combobox/llms.txt): Searchable single or multi-select with selected chips, disabled options, keyboard navigation, and repeated form values.
-- [HCommandPalette](docs/components/command-palette/llms.txt): A searchable keyboard command dialog with grouping, shortcuts, and disabled commands.
+- [HCommandPalette](docs/components/command-palette/llms.txt): A searchable command dialog that becomes a bottom sheet on mobile, with grouping, shortcuts, and disabled commands.
 - [HCopyField](docs/components/copy-field/llms.txt): A read-only endpoint, identifier, or secret field with explicit clipboard and reveal actions.
 - [HDatePicker](docs/components/date-picker/llms.txt): Date text entry with a Hearth calendar popover and form validation.
 - [HDateRangePicker](docs/components/date-range-picker/llms.txt): Two date pickers with start/end constraints and native form validation.
-- [HDropdownMenu](docs/components/dropdown-menu/llms.txt): A keyboard-operated command menu for edit, copy, refresh, and destructive actions.
+- [HDropdownMenu](docs/components/dropdown-menu/llms.txt): A keyboard-operated command menu with a touch-friendly bottom panel on mobile.
 - [HFileUpload](docs/components/file-upload/llms.txt): Native file selection and drag/drop with configurable validation, file lists, and application-owned progress.
 - [HInput](docs/components/input/llms.txt): A labeled input with help/error text and native validation. Web components participate in their owning form.
 - [HMultiSelect](docs/components/multi-select/llms.txt): An array-typed multi-select combobox using the same searchable selection engine as HCombobox.
-- [HNumberInput](docs/components/number-input/llms.txt): A numeric field and counter with native stepping, bounds, validation, and an explicit empty value.
+- [HNumberInput](docs/components/number-input/llms.txt): A compact numeric stepper with direct entry, press-and-hold buttons, bounds, and form validation.
 - [HPagination](docs/components/pagination/llms.txt): Bounded page navigation with current-page semantics and ellipses for long lists.
-- [HPopover](docs/components/popover/llms.txt): A nonmodal top-layer panel anchored to its trigger, with viewport-aware positioning and focus handling.
+- [HPopover](docs/components/popover/llms.txt): A nonmodal top-layer panel, anchored on desktop and docked at the bottom on mobile, with viewport-aware positioning and focus handling.
 - [HRadioGroup](docs/components/radio-group/llms.txt): One native radio group per component, with descriptions, disabled choices, and arrow/Home/End keyboard control.
 - [HRange](docs/components/range/llms.txt): A native numeric slider with a visible value and optional unit.
-- [HRangeSlider](docs/components/range-slider/llms.txt): Two native range handles for choosing a bounded numeric interval.
+- [HRangeSlider](docs/components/range-slider/llms.txt): A dual-handle interval slider with a highlighted range, readable values, and large pointer targets.
 - [HSegmentedControl](docs/components/segmented-control/llms.txt): A compact exclusive-value selector backed by the shared native radio-group engine.
 - [HSelect](docs/components/select/llms.txt): A native select with labeled options, not a recreated browser picker.
 - [HSwitch](docs/components/switch/llms.txt): A keyboard-operable switch backed by a real checkbox, with form participation in custom-element mode.
 - [HTabs](docs/components/tabs/llms.txt): Tabs with roving focus, arrow/Home/End keys, and properly associated panels.
 - [HTextarea](docs/components/textarea/llms.txt): A labeled multiline field with native constraints and form reset support.
 - [HThemeSwitcher](docs/components/theme-switcher/llms.txt): A light, dark, and system preference selector. Bind its value to HTheme mode.
-- [HTimePicker](docs/components/time-picker/llms.txt): Time entry with a Hearth hour/minute/second popover, bounds, and configurable steps.
+- [HTimePicker](docs/components/time-picker/llms.txt): Time entry with an inset clock button and step-aware hour, minute, and second columns.
 
 ## Surfaces
 
@@ -114,7 +114,7 @@ This index covers 70 public components in source version 0.5.1. The working tree
 - [HAlert](docs/components/alert/llms.txt): Inline feedback for success, information, and problems. Errors announce as alerts; other tones use status.
 - [HBadge](docs/components/badge/llms.txt): A compact label with optional status dot. Color always accompanies text.
 - [HConnectionState](docs/components/connection-state/llms.txt): Connection lifecycle feedback with an optional application-owned retry action.
-- [HDialog](docs/components/dialog/llms.txt): A native modal dialog with focus containment, Escape dismissal, and focus return. Keep it inside your theme island.
+- [HDialog](docs/components/dialog/llms.txt): A native modal dialog that becomes a bottom sheet on mobile, preserving focus containment, Escape dismissal, and focus return.
 - [HEmptyState](docs/components/empty-state/llms.txt): An inviting first-run or no-results state, with room for a useful next action.
 - [HProgress](docs/components/progress/llms.txt): Native determinate or indeterminate progress, with percentage text and semantic colors.
 - [HSheet](docs/components/sheet/llms.txt): A native modal side panel for inspection and editing without leaving the current page.
