@@ -27,6 +27,15 @@
     "Segoe UI", sans-serif;
   --h-font-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
   --h-font-size: 14px;
+  --h-font-min-size: 12px;
+  --h-text-sm: 12px;
+  --h-text-md: 14px;
+  --h-text-lg: 16px;
+  --h-heading-sm: 18px;
+  --h-heading-md: 24px;
+  --h-heading-lg: 32px;
+  --h-heading-xl: 40px;
+  --h-choice-height: 44px;
   --h-radius-control: 10px;
   --h-radius-card: 16px;
   --h-radius-panel: 20px;
@@ -191,4 +200,13 @@
   --h-control-padding: 12px;
   --h-card-padding: 18px;
   --h-font-size: 13px;
+  --h-choice-height: 32px;
+  --h-adornment-size: 32px;
+}
+@media (pointer: coarse) {
+  [data-hearth-density="compact"] {
+    --h-control-height: 44px;
+    --h-choice-height: 44px;
+    --h-adornment-size: 44px;
+  }
 }

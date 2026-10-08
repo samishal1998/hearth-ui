@@ -2,7 +2,7 @@
 
 > Semantic data tables with sorting, selection, paging, loading/empty states, and row actions.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -16,13 +16,16 @@
 
 - Supply unique string row IDs and column keys. Default rendering escapes cell text and handles flat primitive values.
 - tableCellSlot(rowId, columnKey) returns a stable per-cell slot name usable in Vue and native slots. Scoped slots are not required.
+- Vue can use a generic cell slot with {row,column,value}; a per-cell named slot takes precedence. Generic scoped rendering is not a native-slot capability. Rows can carry arbitrary metadata; format complex cell values explicitly.
+- rowActions maps row IDs to commands, while getRowActions(row) is an optional callback. Command disabled flags are per row. rowActivatable adds a named first-cell action and row-activate(row); nested links/controls are excluded from row-background activation.
+- Column hideBelow measures container width, independently of the viewport breakpoint. minWidth, width, and truncate control dense desktop display. Actions are sticky and icon-only by default to preserve room for data; actionDisplay=label shows their text triggers. mobileLayout=cards keeps native row/cell content while presenting the first field as the card title and other fields as labeled values. Set scroll to retain desktop overflow presentation.
 - Client mode sorts and paginates supplied rows. manual mode leaves data processing to the app; total controls the page count. Handle sort-change/page-change for server queries.
 - Selection on the header applies to enabled rows on the current page. selected/disabledRows are ID arrays. The table uses semantic table markup, not spreadsheet-grid keyboard behavior.
 - mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
 
 ## Public API
 
-rows: TableRow[] · columns: TableColumn[] · label, caption, emptyText: string · selected, disabledRows: string[] · sort: TableSort · page, pageSize, total: number · selectable, loading, manual, stickyHeader: boolean · actions: MenuAction[] · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
+rows: TableRow[] · columns: TableColumn[] · label, caption, emptyText: string · selected, disabledRows: string[] · sort: TableSort · page, pageSize, total: number · selectable, loading, manual, stickyHeader: boolean · actions: MenuAction[] · rowActions: Record<string, MenuAction[]> · getRowActions(row): MenuAction[] · rowActivatable, stickyActions: boolean · actionDisplay: icon | label · mobileLayout: cards | scroll · column minWidth/truncate/hideBelow (container CSS px) · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -45,6 +48,12 @@ type Props = {
     total?: number;
     actions?: MenuAction[];
     stickyHeader?: boolean;
+    stickyActions?: boolean;
+    mobileLayout?: "cards" | "scroll";
+    rowActions?: Record<string, MenuAction[]>;
+    getRowActions?: (row: TableRow) => MenuAction[];
+    rowActivatable?: boolean;
+    actionDisplay?: "icon" | "label";
 };
 ```
 
@@ -61,12 +70,15 @@ type Props = {
     page: 1,
     pageSize: 10,
     actions: () => [],
+    stickyActions: true,
+    mobileLayout: "cards",
+    actionDisplay: "icon",
   }
 ```
 
 ### Events
 
-update:selected(ids), selection-change(ids), sort-change(sort), update:page(page), page-change(page), row-action({id, action})
+update:selected(ids), selection-change(ids), sort-change(sort), update:page(page), page-change(page), row-action({id, action}), row-activate(row)
 
 ```ts
 type Emits = {
@@ -91,6 +103,9 @@ type Emits = {
             action: string;
         }
     ];
+    "row-activate": [
+        row: TableRow
+    ];
 };
 ```
 
@@ -98,7 +113,7 @@ Vue-emitted custom-element events expose argument arrays in `event.detail`. List
 
 ### Slots
 
-Per-cell names from tableCellSlot(rowId, columnKey)
+cell (Vue scoped: row/column/value), cell:<encoded-row>:<encoded-column> (portable)
 
 Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 
@@ -113,10 +128,8 @@ Use `hearth-data-table::part(part-name)` for an exposed part or inherited `--h-*
 ```ts
 export interface TableRow {
     id: string;
-    [key: string]: TableCell;
+    [key: string]: unknown;
 }
-
-export type TableCell = string | number | boolean | null | undefined;
 
 export interface TableColumn {
     key: string;
@@ -124,6 +137,9 @@ export interface TableColumn {
     sortable?: boolean;
     align?: "start" | "end";
     width?: string;
+    minWidth?: string;
+    truncate?: boolean;
+    hideBelow?: number;
 }
 
 export interface TableSort {
@@ -134,11 +150,21 @@ export interface TableSort {
 export interface MenuAction {
     id: string;
     label: string;
-    icon?: string;
+    icon?: IconValue;
     shortcut?: string;
     disabled?: boolean;
     danger?: boolean;
     separatorBefore?: boolean;
+}
+
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
 }
 ```
 

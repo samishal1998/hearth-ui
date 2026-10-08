@@ -1,0 +1,53 @@
+# Hearth UI behavior and native markup primitives
+
+[Start at the agent index](../../llms.txt). Version 0.7.0. Match this reference to your installed package or release.
+
+## Public API
+
+Both package roots export nextCollectionId, toggleSelection, createTypeahead, focusComposed, positionPopup, observePopup, createOverlayController, bindField, and createFormControlController. Their types use DOM/data types, not Vue. Imports are SSR-safe; call DOM controllers only after mounting.
+
+## Composition contracts
+
+- nextCollectionId(items,current,key,{orientation,direction,wrap}) handles enabled IDs and Home/End/arrows. CollectionEntry uses id, textValue?, disabled?. It does not assign ARIA roles or mutate focus itself.
+
+- toggleSelection(values,id,multiple) returns a new selected-ID array. Focus/active state stays independent of selection.
+
+- createTypeahead(timeout) returns search(items,key,current?,now?) and reset(). Buffered repeated characters cycle through matching labels. Call only for unmodified, non-IME character events.
+
+- focusComposed(root) traverses native slots and open shadow roots for a visible focus target. It is not a focus trap. Native modal dialog behavior remains the focus-containment mechanism.
+
+- positionPopup(anchor,panel,{side,align,gap,padding}) accepts an element or a DOMRect getter, supporting context/virtual anchors. Uses the owning window visual viewport and clamping/flipping. Set fixed positioning, inset:auto, and margin:0 on the consumer surface.
+
+- observePopup(anchor,panel,optionsGetter) returns update()/dispose(). Positioning does not create a portal, set modal semantics, or own visibility. Call update after showing; dispose when detached.
+
+- createOverlayController(element,{modal,initialFocus,returnFocus,onClose}) returns open()/close(reason?)/dispose(). Use a native dialog or popover element. Default dialog behavior is modal; popovers remain nonmodal. Call dispose on teardown. Initial focus policy is caller-owned, with composed-tree fallback.
+
+- bindField(nativeControl,{label,descriptions,validationMessage,invalid}) requires label and descriptions in the same DOM root as the control. Returns update()/dispose(), preserves existing description IDs, and restores attributes/validity. This does not make a custom element form-associated; use native owning forms or Hearth fields for ElementInternals behavior.
+
+- createFormControlController(internals,{getValue,getState,getValidity,onDisabled,onReset,onRestore}) supports consumer-defined form controls without Hearth private data attributes. The custom-element class must declare static formAssociated=true, call attachInternals(), and forward formDisabledCallback/formResetCallback/formStateRestoreCallback to setDisabled/reset/restore. sync updates value/state/validity; setCustomValidity adds an external validation error; validity/validationMessage expose snapshots for consumer UI; dispose stops writes. Values may be strings, Files, FormData (for repeated values), or null. The consumer owns reset defaults, accessible naming and error associations, and an anchor inside its own DOM root.
+
+## Native markup styles
+
+Import @hearth-ui/vue/primitives.css or @hearth-ui/elements/primitives.css for h-visually-hidden, h-focus-ring, h-field-layout, h-field-label, h-field-description, h-field-error, and h-input-group. Import these styles inside a consumer-owned shadow root if its markup is encapsulated there.
+
+## Example
+
+```js
+import { createOverlayController, observePopup } from "@hearth-ui/elements";
+const trigger = document.querySelector("#filter-trigger");
+const content = document.querySelector("#filter-popover");
+const placement = observePopup(trigger, content, () => ({ side: "bottom", align: "end" }));
+const overlay = createOverlayController(content, { returnFocus: () => trigger });
+trigger.addEventListener("click", () => { overlay.open(); placement.update(); });
+// During application teardown: placement.dispose(); overlay.dispose();
+```
+
+## Related references
+
+- [HSurface](../components/surface/llms.txt) for custom presentation.
+
+- [HListbox](../components/listbox/llms.txt) for owner-rendered choices.
+
+- [HPane](../components/pane/llms.txt) for persistent responsive inspectors.
+
+- [HFieldset](../components/fieldset/llms.txt) for grouping and DOM-root constraints.

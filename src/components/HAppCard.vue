@@ -241,7 +241,7 @@ footer {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   color: var(--h-muted);
   background: none;
   border: 0;

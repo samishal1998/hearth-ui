@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import HSurface from "./HSurface.vue";
 defineProps<{ title?: string; description?: string }>();
 </script>
 <template>
-  <article class="h-card" part="base">
+  <HSurface as="article" class="h-card">
     <slot name="header"
       ><header v-if="title || description" part="header">
         <h2 v-if="title">{{ title }}</h2>
@@ -11,19 +12,13 @@ defineProps<{ title?: string; description?: string }>();
     >
     <div class="h-card-body" part="body"><slot /></div>
     <slot name="footer" />
-  </article>
+  </HSurface>
 </template>
 <style scoped>
 @import "../styles/base.css";
 .h-card {
-  padding: var(--h-card-padding);
-  border: 1px solid var(--h-border);
-  border-radius: var(--h-radius-card);
-  background: var(--h-panel);
-  color: var(--h-text);
-  font-family: var(--h-font);
+  --h-surface-padding: var(--h-card-padding);
   box-shadow: var(--h-shadow-soft);
-  min-width: 0;
 }
 header {
   margin-bottom: 20px;

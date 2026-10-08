@@ -262,7 +262,7 @@ button:disabled {
 }
 p {
   color: var(--h-muted);
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   margin: 7px 0 0;
 }
 .invalid .h-number-controls {

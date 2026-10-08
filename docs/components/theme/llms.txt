@@ -2,7 +2,7 @@
 
 > A scoped theme island. CSS variables flow through Vue trees, native slots, and shadow roots.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -18,11 +18,13 @@
 - Modes are dark, light, or system; system follows CSS media preferences. Comfortable and compact densities use 44px and 40px main controls.
 - Set mobileBreakpoint on the theme island to configure descendant overlays, including custom elements. Dialogs, sheets, command palettes, and dashboard navigation become bottom sheets; popovers and action menus dock at the bottom. Native dialog focus trapping and modal scroll locking remain intact. Popovers remain nonmodal, with native light dismissal. Navigation menus expand inline, and tooltips stay anchored and support touch dismissal.
 - CSS custom properties inherit across shadow roots and native slots. Override --h-* tokens through the tokens property, an ancestor, or a host style. Use themeStyle() to filter a token object and themeCSS() to serialize trusted CSS values.
+- modeTokens accepts independent dark/light maps. Precedence is preset, shared tokens, then the effective mode map. system follows OS changes; explicit light/dark modes remain fixed. For system-mode SSR, mode-specific overrides apply after mounting, while the base CSS supplies the initial OS-aware palette.
+- Use themeProfileCSS({tokens,modeTokens}) for mode-aware CSS. Its default owner is [data-hearth-theme=custom]; target=elements produces hearth-theme host selectors with ::part(base). Both system media branches are emitted to avoid partial-profile leakage. The existing themeCSS helper remains a one-mode flat snapshot serializer.
 - mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
 
 ## Public API
 
-theme: string = sunset · mode: dark | light | system · density: comfortable | compact · tokens: ThemeTokens · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
+theme: string = sunset · mode: dark | light | system · density: comfortable | compact · tokens: ThemeTokens · modeTokens: ThemeModeTokens · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -32,6 +34,7 @@ type Props = {
     mode?: Mode;
     density?: Density;
     tokens?: ThemeTokens;
+    modeTokens?: ThemeModeTokens;
     mobileBreakpoint?: number;
 };
 ```
@@ -68,6 +71,11 @@ export type Mode = "dark" | "light" | "system";
 export type Density = "comfortable" | "compact";
 
 export type ThemeTokens = Partial<Record<`--h-${string}`, string>>;
+
+export interface ThemeModeTokens {
+    dark?: ThemeTokens;
+    light?: ThemeTokens;
+}
 ```
 
 ## Vue example
@@ -148,6 +156,15 @@ mount.append(element);
     "Segoe UI", sans-serif;
   --h-font-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
   --h-font-size: 14px;
+  --h-font-min-size: 12px;
+  --h-text-sm: 12px;
+  --h-text-md: 14px;
+  --h-text-lg: 16px;
+  --h-heading-sm: 18px;
+  --h-heading-md: 24px;
+  --h-heading-lg: 32px;
+  --h-heading-xl: 40px;
+  --h-choice-height: 44px;
   --h-radius-control: 10px;
   --h-radius-card: 16px;
   --h-radius-panel: 20px;
@@ -312,6 +329,15 @@ mount.append(element);
   --h-control-padding: 12px;
   --h-card-padding: 18px;
   --h-font-size: 13px;
+  --h-choice-height: 32px;
+  --h-adornment-size: 32px;
+}
+@media (pointer: coarse) {
+  [data-hearth-density="compact"] {
+    --h-control-height: 44px;
+    --h-choice-height: 44px;
+    --h-adornment-size: 44px;
+  }
 }
 ```
 

@@ -82,7 +82,7 @@ const amount = computed(() =>
 }
 .h-progress-label > span {
   color: var(--h-muted);
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   font-variant-numeric: tabular-nums;
 }
 progress {
@@ -122,7 +122,7 @@ progress:indeterminate::-webkit-progress-bar {
   background: transparent;
 }
 p {
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
   line-height: 1.8;
   margin-top: 9px;

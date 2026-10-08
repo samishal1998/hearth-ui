@@ -2,7 +2,7 @@
 
 > A semantic list container for integrations, activity, and settings rows.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -16,6 +16,7 @@
 
 - Use HListItem children. The container supplies native list semantics and the divider token.
 - The default slot accepts app-owned rows; use descriptive labels when there are several lists.
+- HListSpacer or an aria-hidden native presentation li can separate groups. Use HVirtualList for bounded fixed-height rendering of large data collections; HList itself does not discover or virtualize slotted markup.
 
 ## Public API
 

@@ -116,7 +116,7 @@ function toggle() {
   gap: 24px;
 }
 .h-sidebar-lists h2 {
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   font-weight: 500;
   color: var(--h-muted);
   letter-spacing: 1.2px;

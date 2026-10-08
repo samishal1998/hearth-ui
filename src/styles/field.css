@@ -1,0 +1,26 @@
+.h-size-compact {
+  --h-control-height: 32px;
+  --h-choice-height: 32px;
+  --h-field-padding-y: 5px;
+  --h-input-padding-x: 10px;
+  --h-adornment-size: 24px;
+  --h-combo-line-padding: 3px;
+  --h-combo-input-padding-y: 2px;
+}
+.h-size-regular {
+  --h-control-height: 44px;
+  --h-choice-height: 44px;
+  --h-field-padding-y: 10px;
+  --h-input-padding-x: 12px;
+  --h-adornment-size: 44px;
+  --h-combo-line-padding: 4px;
+  --h-combo-input-padding-y: 8px;
+}
+@media (pointer: coarse) {
+  .h-size-compact {
+    --h-control-height: 44px;
+    --h-choice-height: 44px;
+    --h-adornment-size: 44px;
+    --h-field-padding-y: 10px;
+  }
+}

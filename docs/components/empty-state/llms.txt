@@ -2,7 +2,7 @@
 
 > An inviting first-run or no-results state, with room for a useful next action.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -19,7 +19,7 @@
 
 ## Public API
 
-title, description, icon: string
+title, description: string · icon: IconValue
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -27,7 +27,7 @@ A `?` marks optional source props. Props with defaults may be omitted. Internal 
 type Props = {
     title?: string;
     description?: string;
-    icon?: string;
+    icon?: IconValue;
 };
 ```
 
@@ -45,7 +45,7 @@ Vue-emitted custom-element events expose argument arrays in `event.detail`. List
 
 ### Slots
 
-default (actions)
+default (actions), icon
 
 Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 
@@ -54,6 +54,20 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 base, icon, title, description
 
 Use `hearth-empty-state::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
+}
+```
 
 ## Vue example
 

@@ -197,7 +197,7 @@ strong {
   overflow: auto;
   background: var(--h-bg);
   padding: 14px;
-  font: 11px/1.9 var(--h-font-mono);
+  font: max(var(--h-font-min-size, 12px), 11px)/1.9 var(--h-font-mono);
 }
 .h-log-line {
   display: flex;
@@ -239,7 +239,7 @@ footer {
   gap: 10px;
   flex-wrap: wrap;
   padding: 12px 16px;
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   color: var(--h-muted);
   border-top: 1px solid var(--h-border);
 }

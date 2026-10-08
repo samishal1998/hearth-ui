@@ -2,12 +2,13 @@
 import HIcon from "./HIcon.vue";
 import HBadge from "./HBadge.vue";
 import { safeHref } from "../internal";
-import type { Tone } from "../themes";
+import type { Tone, IconValue } from "../themes";
+defineOptions({ inheritAttrs: false });
 withDefaults(
   defineProps<{
     title: string;
     description?: string;
-    icon?: string;
+    icon?: IconValue;
     badge?: string;
     tone?: Tone;
     href?: string;
@@ -21,12 +22,21 @@ const emit = defineEmits<{ activate: [] }>();
 </script>
 <template>
   <li
+    :class="[$attrs.class, { selected, disabled }]"
+    :style="$attrs.style as any"
     class="h-list-item"
     role="listitem"
-    :class="{ selected, disabled }"
     part="base"
   >
-    <component
+    <slot name="before"><slot name="selection" /></slot
+    ><component
+      v-bind="
+        Object.fromEntries(
+          Object.entries($attrs).filter(
+            ([key]) => !['class', 'style'].includes(key),
+          ),
+        )
+      "
       :is="safeHref(href) ? 'a' : interactive ? 'button' : 'div'"
       class="h-list-body"
       :type="interactive && !safeHref(href) ? 'button' : undefined"
@@ -47,11 +57,17 @@ const emit = defineEmits<{ activate: [] }>();
       ><slot name="leading"><HIcon v-if="icon" :name="icon" /></slot
       ><span class="h-list-copy"
         ><strong part="title">{{ title }}</strong
-        ><small v-if="description" part="description">{{
-          description
-        }}</small></span
+        ><span class="h-list-description" part="description"
+          ><slot name="description"
+            ><small v-if="description">{{ description }}</small></slot
+          ></span
+        ></span
       ><slot name="trailing"
-        ><HBadge v-if="badge" :label="badge" :tone="tone" /></slot></component
+        ><slot name="badge"
+          ><HBadge
+            v-if="badge"
+            :label="badge"
+            :tone="tone" /></slot></slot></component
     ><slot name="actions" />
   </li>
 </template>
@@ -95,7 +111,7 @@ strong {
 small {
   display: block;
   margin-top: 4px;
-  font-size: 12px;
+  font-size: max(var(--h-font-min-size, 12px), 12px);
   line-height: 1.7;
   color: var(--h-muted);
   overflow-wrap: anywhere;

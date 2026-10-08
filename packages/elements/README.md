@@ -2,7 +2,7 @@
 
 **A home for what you build.** Framework-independent web components for dashboards, public pages, and authentication.
 
-Hearth UI includes **70 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. Version **0.6.0** adds responsive overlays with configurable mobile breakpoints.
+Hearth UI includes **94 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. Version **0.7.0** adds composable layout, typography, workspace, collection, and DOM behavior primitives.
 
 [Component registry](https://hearth-ui.samyx.net/#components) · [HTML example](https://hearth-ui.samyx.net/elements.html) · [React example](https://hearth-ui.samyx.net/react.html) · [GitHub](https://github.com/samishal1998/hearth-ui)
 
@@ -64,11 +64,11 @@ Use a pinned CDN version:
     <title>Hearth UI</title>
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.6.0/dist/themes.css"
+      href="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.7.0/dist/themes.css"
     />
     <script
       type="module"
-      src="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.6.0/dist/elements/auto.js"
+      src="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.7.0/dist/elements/auto.js"
     ></script>
   </head>
   <body>
@@ -148,6 +148,8 @@ The default mobile threshold is **640 CSS pixels**. Set `mobile-breakpoint` on t
 Date, time, and local date-time controls use Hearth picker popovers instead of native browser picker dropdowns. Their ISO string values, form validation, and submission contracts are preserved.
 
 ## Components and page recipes
+
+New in v0.7.0: layout/typography primitives, responsive inspectors, messages, virtual lists, trees, richer table/list/field composition, mode-aware profiles, and DOM-only behavior helpers. Both archives include `docs/primitives/llms.txt` and optional `primitives.css` for consumer-owned native markup. Vue scoped slots remain Vue-specific; use the documented native named-slot contracts in HTML. Tables default to mobile cards and compact action icons; use `mobile-layout="scroll"` and `action-display="label"` for the earlier presentation.
 
 The collection includes forms, tables, cards, lists, sparklines, activity timelines, logs, code blocks, navigation, dialogs, notifications, and layout primitives.
 

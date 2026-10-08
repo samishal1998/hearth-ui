@@ -1,6 +1,321 @@
 // Component-specific recipes complement the API extracted from source and catalog.
 // `props` are assigned before connection, preserving custom-element form reset defaults.
 export const examples = {
+  HStack: {
+    vue: '<HStack direction="row" :gap="3" wrap><HButton>Save</HButton><HButton>Cancel</HButton></HStack>',
+    imports: ["HButton"],
+    props: { direction: "row", gap: 3, wrap: true },
+    children:
+      "<hearth-button>Save</hearth-button><hearth-button>Cancel</hearth-button>",
+    notes: [
+      "Gap is a multiplier of --h-space. Direction, wrap, alignment, and justification use native flex layout. Choose structural semantics with as; interactive semantics belong to the children.",
+    ],
+    related: ["HGrid", "HContainer", "HToolbar"],
+  },
+  HGrid: {
+    vue: '<HGrid min-column-width="240px"><HSurface>First panel</HSurface><HSurface>Second panel</HSurface></HGrid>',
+    imports: ["HSurface"],
+    props: { minColumnWidth: "240px" },
+    children:
+      "<hearth-surface>First panel</hearth-surface><hearth-surface>Second panel</hearth-surface>",
+    notes: [
+      "Without columns, auto-fit follows the available container width. Explicit columns fixes a count; applications can change it at their own breakpoints. Gap uses --h-space units.",
+    ],
+    related: ["HStack", "HSurface"],
+  },
+  HContainer: {
+    vue: '<HContainer max-width="960px"><HHeading>Workspace</HHeading></HContainer>',
+    imports: ["HHeading"],
+    props: { maxWidth: "960px" },
+    children: "<hearth-heading>Workspace</hearth-heading>",
+    notes: [
+      "Use div or section by default; as=main should only be used for the owning page landmark. Padding and maxWidth are trusted application-authored CSS lengths.",
+    ],
+    related: ["HStack", "HGrid"],
+  },
+  HText: {
+    vue: '<HText as="p" tone="muted">A calmer place for your applications.</HText>',
+    props: { as: "p", tone: "muted" },
+    children: "A calmer place for your applications.",
+    notes: [
+      "as chooses text semantics independently of size, tone, and weight. Uses the shared type tokens and minimum text floor.",
+    ],
+    related: ["HHeading", "HLink"],
+  },
+  HHeading: {
+    vue: '<HHeading :level="2" size="lg">Your applications</HHeading>',
+    props: { level: 2, size: "lg" },
+    children: "Your applications",
+    notes: [
+      "Select the correct document heading level independently of visual size. Use headings in logical hierarchy; do not choose level based on font size.",
+    ],
+    related: ["HText", "HPageHeader"],
+  },
+  HLink: {
+    vue: '<HLink href="#settings">Workspace settings</HLink>',
+    props: { href: "#settings" },
+    children: "Workspace settings",
+    notes: [
+      "Native inline links preserve navigation semantics. Unsupported schemes are removed. Disabled links do not navigate; use HButton for application commands.",
+    ],
+    related: ["HButton", "HText"],
+  },
+  HScrollArea: {
+    vue: '<HScrollArea label="Activity history" max-height="180px"><p v-for="i in 20" :key="i">Activity {{ i }}</p></HScrollArea>',
+    props: { label: "Activity history", maxHeight: "180px" },
+    children: Array.from(
+      { length: 20 },
+      (_, i) => `<p>Activity ${i + 1}</p>`,
+    ).join(""),
+    notes: [
+      "Uses native scrolling and scrollbars, with a named keyboard-focusable region. No custom scrollbar drag implementation. maxHeight limits content; axis controls scroll directions.",
+    ],
+    related: ["HVirtualList", "HCodeBlock"],
+  },
+  HAspectRatio: {
+    vue: '<HAspectRatio :ratio="16/9"><HSurface>Media placeholder</HSurface></HAspectRatio>',
+    imports: ["HSurface"],
+    props: { ratio: 16 / 9 },
+    children: "<hearth-surface>Media placeholder</hearth-surface>",
+    notes: [
+      "Sets CSS aspect-ratio and clips overflow. Supply a positive ratio; images still need alt text appropriate to their purpose.",
+    ],
+    related: ["HSurface", "HGrid"],
+  },
+  HVisuallyHidden: {
+    vue: '<HButton icon-only label="Refresh" icon="health" /><HVisuallyHidden>Refresh requests the latest metadata.</HVisuallyHidden>',
+    imports: ["HButton"],
+    props: {},
+    children: "Refresh requests the latest metadata.",
+    notes: [
+      "Content stays in the accessibility tree. Do not hide an interactive control here; use hideLabel on form controls. It does not automatically label an adjacent control across shadow roots.",
+    ],
+    related: ["HInput", "HText"],
+  },
+  HFieldset: {
+    vue: '<HFieldset label="Notifications" description="Choose which events you want."><HSwitch label="Deployment updates" name="deployments" /></HFieldset>',
+    imports: ["HSwitch"],
+    props: {
+      label: "Notifications",
+      description: "Choose which events you want.",
+    },
+    children:
+      '<hearth-switch label="Deployment updates" name="deployments"></hearth-switch>',
+    notes: [
+      "In Vue, disabled applies through the native fieldset to controls in the same DOM tree. For separately slotted custom elements use an owning native fieldset in the application DOM when native disabled/form association is required; a shadow-internal fieldset cannot disable controls in another root.",
+    ],
+    related: ["HInput", "HCheckbox", "HSurface"],
+  },
+  HToolbar: {
+    vue: '<HToolbar label="Session controls"><HInput label="Search sessions" hide-label type="search" size="compact" /><HButton>Refresh</HButton></HToolbar>',
+    imports: ["HInput", "HButton"],
+    props: { label: "Session controls" },
+    children:
+      '<hearth-input label="Search sessions" hide-label type="search" size="compact"></hearth-input><hearth-button>Refresh</hearth-button>',
+    notes: [
+      "Uses role=group and normal Tab navigation because fields and editable controls coexist. It is not an ARIA toolbar that captures arrow keys used by text editing. Wraps rather than clipping actions.",
+    ],
+    related: ["HFilterBar", "HStack", "HButtonBar"],
+  },
+  HFilterBar: {
+    vue: '<HFilterBar :active-count="2" @clear="clear"><HInput label="Search" hide-label type="search" /></HFilterBar>',
+    imports: ["HInput"],
+    script: "function clear() { /* Reset application-owned filter models. */ }",
+    props: { activeCount: 2 },
+    children:
+      '<hearth-input label="Search" hide-label type="search"></hearth-input>',
+    event: "clear",
+    notes: [
+      "clear requests resetting all application filters; the component does not discover or mutate child models. Compose chip groups, switches, inputs, and buttons in the default slot.",
+    ],
+    related: ["HChipGroup", "HToolbar"],
+  },
+  HMessage: {
+    vue: '<HMessage role-label="Assistant" author="Hearth" timestamp="12:04 UTC"><p>Deployment checks passed.</p></HMessage>',
+    props: { roleLabel: "Assistant", author: "Hearth", timestamp: "12:04 UTC" },
+    children: "<p>Deployment checks passed.</p>",
+    notes: [
+      "Conversation presentation, distinct from streaming logs. Body, actions, and footer accept rich content. Applications own markdown rendering and sanitization; plain slot strings are escaped by the framework. No auto-scroll or assertive live announcement is added to every message.",
+    ],
+    related: ["HCodeBlock", "HTextarea", "HPane"],
+  },
+  HCollapsible: {
+    vue: '<HCollapsible label="Advanced settings" default-open><p>Application configuration goes here.</p></HCollapsible>',
+    props: { label: "Advanced settings", defaultOpen: true },
+    children: "<p>Application configuration goes here.</p>",
+    notes: [
+      "Native details disclosure. open controls state; defaultOpen initializes uncontrolled state. Trigger slot must contain noninteractive presentation; do not nest another button inside summary.",
+    ],
+    related: ["HAccordion"],
+  },
+  HToggleGroup: {
+    vue: '<HToggleGroup v-model="selected" label="View filters" :options="options" multiple />',
+    script:
+      "const selected=ref(['running']);const options=[{value:'running',label:'Running'},{value:'stopped',label:'Stopped'}];",
+    props: {
+      label: "View filters",
+      modelValue: ["running"],
+      multiple: true,
+      options: [
+        { value: "running", label: "Running" },
+        { value: "stopped", label: "Stopped" },
+      ],
+    },
+    event: "change",
+    notes: [
+      "Pressed-button selection uses an array model even for single-selection mode. All buttons use normal keyboard tab stops and aria-pressed. Use radios/segmented controls when exactly one choice is required.",
+    ],
+    related: ["HRadioGroup", "HChipGroup"],
+  },
+  HAlertDialog: {
+    vue: '<HAlertDialog :open="open" title="Remove this session?" description="This action cannot be undone." danger @cancel="open=false" @confirm="remove" />',
+    script:
+      "const open=ref(false);function remove() { /* Confirm through your API, then close on success. */ open.value=false; }",
+    props: {
+      title: "Remove this session?",
+      description: "This action cannot be undone.",
+      danger: true,
+    },
+    event: "confirm",
+    notes: [
+      "Cancel is the initial focus target. confirm requests the destructive operation; application code owns busy/error and closure on success. Escape/close emits cancel and update:open(false). Mobile uses the shared bottom-sheet breakpoint.",
+    ],
+    related: ["HDialog", "HButton"],
+  },
+  HPane: {
+    vue: '<HPane v-model:open="open" title="Session transcript"><HMessage><p>Inspector content stays mounted while resizing.</p></HMessage></HPane>',
+    imports: ["HMessage"],
+    script: "const open=ref(true);",
+    props: { open: true, title: "Session transcript" },
+    children:
+      "<hearth-message><p>Inspector content stays mounted while resizing.</p></hearth-message>",
+    js: "element.addEventListener('update:open',event=>element.open=event.detail[0]);",
+    notes: [
+      "Persistent nonmodal inspector beside content on desktop; a full-screen native modal dialog on mobile. The single content frame moves between presentation containers without remounting controls or duplicating native slots. Applications own open state and desktop placement.",
+    ],
+    related: ["HDashboardShell", "HResizablePane", "HMessage"],
+  },
+  HListbox: {
+    vue: '<HListbox v-model="choice" label="Choose a resource" :options="options" />',
+    script:
+      "const choice=ref('photos');const options=[{value:'photos',label:'Photos',description:'Photo library'},{value:'media',label:'Media'}];",
+    props: {
+      label: "Choose a resource",
+      value: "photos",
+      options: [
+        { value: "photos", label: "Photos", description: "Photo library" },
+        { value: "media", label: "Media" },
+      ],
+    },
+    event: "change",
+    notes: [
+      "Owner-rendered choices keep aria-activedescendant references in one root. Arrow/Home/End/typeahead navigate active choices; Enter/Space selects. Model is string or string[] in multiple mode; empty values are empty string/array. Not form-associated; use HSelect/HCombobox for owning-form submission, or bind a native hidden input in your application. Option slots must not contain interactive controls.",
+    ],
+    related: ["HCombobox", "HSelect", "HToggleGroup"],
+  },
+  HContextMenu: {
+    vue: '<HContextMenu label="Resource commands" :items="actions" @select="act"><HSurface>Right-click this resource.</HSurface></HContextMenu>',
+    imports: ["HSurface"],
+    script:
+      "const actions=[{id:'edit',label:'Edit'},{id:'remove',label:'Remove',danger:true}];function act(id:string) { /* Perform the requested action. */ }",
+    props: {
+      label: "Resource commands",
+      items: [
+        { id: "edit", label: "Edit" },
+        { id: "remove", label: "Remove", danger: true },
+      ],
+    },
+    children: "<hearth-surface>Right-click this resource.</hearth-surface>",
+    event: "select",
+    notes: [
+      "Explicit action button is the touch/non-context-menu alternative. Supports right-click and Shift+F10 when focused descendants exist. Native popover is nonmodal and mobile-docked. Escape returns focus; menus use Arrow/Home/End and buffered typeahead.",
+    ],
+    related: ["HDropdownMenu", "HPopover"],
+  },
+  HVirtualList: {
+    vue: '<HVirtualList :items="rows" label="Sessions" :height="240" :row-height="56" />',
+    script:
+      "const rows=Array.from({length:1000},(_,i)=>({id:String(i),label:`Session ${i+1}`}));",
+    props: {
+      items: Array.from({ length: 100 }, (_, i) => ({
+        id: String(i),
+        label: `Session ${i + 1}`,
+      })),
+      label: "Sessions",
+      height: 240,
+      rowHeight: 56,
+    },
+    notes: [
+      "Fixed row heights only: supply rowHeight matching the content; variable-height messages need HScrollArea. Windowed rendering adds bounded overscan and keeps one focused row mounted while scrolling. activeId scrolls to an item. aria-posinset/setsize describe the full supplied collection. item scoped slot is Vue-only; native elements use item:<id> slots or label/description data.",
+    ],
+    related: ["HList", "HScrollArea", "HTreeView"],
+  },
+  HTreeView: {
+    vue: '<HTreeView v-model="selected" label="Workspace resources" :items="nodes" :default-expanded="[\'workspace\']" />',
+    script:
+      "const selected=ref('photos');const nodes=[{id:'workspace',label:'Workspace',children:[{id:'photos',label:'Photos'},{id:'media',label:'Media'}]}];",
+    props: {
+      label: "Workspace resources",
+      value: undefined,
+      modelValue: "photos",
+      defaultExpanded: ["workspace"],
+      items: [
+        {
+          id: "workspace",
+          label: "Workspace",
+          children: [
+            { id: "photos", label: "Photos" },
+            { id: "media", label: "Media" },
+          ],
+        },
+      ],
+    },
+    event: "activate",
+    notes: [
+      "Flattened visible tree uses level, position, set size, expanded and selected semantics. ArrowRight expands/enters; ArrowLeft collapses/goes to parent, reversed for RTL. Up/Down/Home/End/typeahead move focus; Space selects, Enter also requests activate. Disabled branches are excluded. Expanded state is independent of selection.",
+    ],
+    related: ["HListbox", "HVirtualList"],
+  },
+  HResizablePane: {
+    vue: '<HResizablePane v-model="width"><HSurface>Main workspace</HSurface><template #pane><HSurface>Inspector</HSurface></template></HResizablePane>',
+    imports: ["HSurface"],
+    script: "const width=ref(320);",
+    props: { value: 320 },
+    children:
+      '<hearth-surface>Main workspace</hearth-surface><hearth-surface slot="pane">Inspector</hearth-surface>',
+    event: "change",
+    notes: [
+      "Separator supports pointer drag and keyboard Arrow/Home/End resizing. Explicit plus/minus controls provide a single-pointer alternative to dragging. Stacks content on mobile rather than keeping a narrow split. HPane can be composed inside for modal mobile inspector behavior.",
+    ],
+    related: ["HPane", "HSurface"],
+  },
+  HListSpacer: {
+    vue: '<HList label="Groups"><HListItem title="First group"/><HListSpacer :height="16"/><HListItem title="Second group"/></HList>',
+    imports: ["HList", "HListItem"],
+    props: { height: 16 },
+    mountTag: "hearth-list",
+    notes: [
+      "Presentation-only native li, not a selectable list item. height is CSS pixels; does not affect item data or keyboard focus.",
+    ],
+    related: ["HList", "HListItem"],
+  },
+  HSurface: {
+    vue: '<HSurface as="section" aria-label="Custom panel" tone="inset" padding="sm"><HButton>Custom action</HButton></HSurface>',
+    imports: ["HButton"],
+    props: {
+      as: "section",
+      "aria-label": "Custom panel",
+      tone: "inset",
+      padding: "sm",
+    },
+    children: "<hearth-button>Custom action</hearth-button>",
+    notes: [
+      "A presentation primitive with no generated heading or interaction behavior. Use it for custom rows, toolbars, messages, and panels; HCard composes this surface when a heading/body/footer recipe is useful.",
+      "Default padding is --h-surface-padding or four --h-space units. padding none/sm/md/lg explicitly selects 0/2/4/6 spacing units. Radius, border, colors, and elevation follow theme tokens. bordered=false removes the frame.",
+      "Use native controls for actions and navigation; the as prop selects structural semantics, not button behavior.",
+    ],
+    related: ["HCard", "HButtonBar", "HTheme"],
+  },
   HThemeSwitcher: {
     vue: '<HTheme :mode="mode"><HThemeSwitcher v-model="mode" /></HTheme>',
     imports: ["HTheme"],
@@ -254,6 +569,9 @@ export const examples = {
     notes: [
       "Supply unique string row IDs and column keys. Default rendering escapes cell text and handles flat primitive values.",
       "tableCellSlot(rowId, columnKey) returns a stable per-cell slot name usable in Vue and native slots. Scoped slots are not required.",
+      "Vue can use a generic cell slot with {row,column,value}; a per-cell named slot takes precedence. Generic scoped rendering is not a native-slot capability. Rows can carry arbitrary metadata; format complex cell values explicitly.",
+      "rowActions maps row IDs to commands, while getRowActions(row) is an optional callback. Command disabled flags are per row. rowActivatable adds a named first-cell action and row-activate(row); nested links/controls are excluded from row-background activation.",
+      "Column hideBelow measures container width, independently of the viewport breakpoint. minWidth, width, and truncate control dense desktop display. Actions are sticky and icon-only by default to preserve room for data; actionDisplay=label shows their text triggers. mobileLayout=cards keeps native row/cell content while presenting the first field as the card title and other fields as labeled values. Set scroll to retain desktop overflow presentation.",
       "Client mode sorts and paginates supplied rows. manual mode leaves data processing to the app; total controls the page count. Handle sort-change/page-change for server queries.",
       "Selection on the header applies to enabled rows on the current page. selected/disabledRows are ID arrays. The table uses semantic table markup, not spreadsheet-grid keyboard behavior.",
     ],
@@ -278,6 +596,7 @@ export const examples = {
     notes: [
       "Native dl/dt/dd semantics suit resource metadata and provenance. Values are escaped primitive text by default.",
       "Override a value through a slot named value:<item.key>. Use HDataTable for comparable records with columns.",
+      "dense shortens row spacing; variant=inline places label/value side by side. columns=auto uses container-driven auto-fit with minColumnWidth. Rich values remain ordinary named slots in both distributions.",
     ],
     related: ["HResourceDetail", "HCopyField", "HDataTable"],
   },
@@ -290,6 +609,7 @@ export const examples = {
     notes: [
       "Use HListItem children. The container supplies native list semantics and the divider token.",
       "The default slot accepts app-owned rows; use descriptive labels when there are several lists.",
+      "HListSpacer or an aria-hidden native presentation li can separate groups. Use HVirtualList for bounded fixed-height rendering of large data collections; HList itself does not discover or virtualize slotted markup.",
     ],
     related: ["HListItem", "HDataTable", "HCard"],
   },
@@ -308,6 +628,7 @@ export const examples = {
     notes: [
       "Place in HList or a native list. interactive creates a button; href creates a safe link.",
       "Use the actions slot for separate interactive controls. Keep leading/trailing slots noninteractive when the main row is a button or link.",
+      "before (with selection as fallback) is outside the primary button/link and is the correct place for a row checkbox. description and badge slots support rich noninteractive metadata. aria-label, title, and event attributes forward to the primary interactive element; class/style remain on the list item.",
     ],
     related: ["HList", "HAvatar", "HDropdownMenu"],
   },
@@ -605,6 +926,8 @@ export const examples = {
       "Modes are dark, light, or system; system follows CSS media preferences. Comfortable and compact densities use 44px and 40px main controls.",
       "Set mobileBreakpoint on the theme island to configure descendant overlays, including custom elements. Dialogs, sheets, command palettes, and dashboard navigation become bottom sheets; popovers and action menus dock at the bottom. Native dialog focus trapping and modal scroll locking remain intact. Popovers remain nonmodal, with native light dismissal. Navigation menus expand inline, and tooltips stay anchored and support touch dismissal.",
       "CSS custom properties inherit across shadow roots and native slots. Override --h-* tokens through the tokens property, an ancestor, or a host style. Use themeStyle() to filter a token object and themeCSS() to serialize trusted CSS values.",
+      "modeTokens accepts independent dark/light maps. Precedence is preset, shared tokens, then the effective mode map. system follows OS changes; explicit light/dark modes remain fixed. For system-mode SSR, mode-specific overrides apply after mounting, while the base CSS supplies the initial OS-aware palette.",
+      "Use themeProfileCSS({tokens,modeTokens}) for mode-aware CSS. Its default owner is [data-hearth-theme=custom]; target=elements produces hearth-theme host selectors with ::part(base). Both system media branches are emitted to avoid partial-profile leakage. The existing themeCSS helper remains a one-mode flat snapshot serializer.",
     ],
     related: ["HAuthPage", "HDashboardShell", "HPublicShell"],
   },
@@ -614,6 +937,7 @@ export const examples = {
     notes: [
       "Icons are decorative and aria-hidden. Name the containing button or link; an icon is not an accessible control on its own.",
       "Use a supported icon name. Unknown names fall back to apps.",
+      "iconNames exports the supported names. The name property also accepts a portable IconDefinition: {paths,viewBox?,fill?,fillRule?,strokeWidth?}. Definitions contain SVG path data, not Vue components or HTML, and work through icon properties on buttons, list items, stat cards, empty states, menus, and shell navigation.",
     ],
     related: ["HButton", "HBrand"],
   },
@@ -636,6 +960,7 @@ export const examples = {
       "click is a native event, not a Vue-emitted array payload. Do not read event.detail[0] from a click.",
       'The default type is button. Set type="submit" or type="reset" explicitly inside forms. href creates a link for supported HTTP(S)/relative URLs.',
       "For icon-only controls, provide label or aria-label. loading disables the control and sets aria-busy.",
+      "Custom glyphs can use the icon and trailing-icon slots. iconOnly also renders a custom default-slot glyph when no icon prop or icon slot is supplied. Icon slots are decorative content, not nested interactive controls. The icon/trailingIcon properties accept IconDefinition objects as well as built-in names.",
       "The web-component submit button invokes its owning form; do not rely on native SubmitEvent.submitter name/value semantics.",
     ],
     related: ["HButtonBar", "HIcon", "HDialog"],
@@ -652,10 +977,11 @@ export const examples = {
     },
     event: "change",
     notes: [
-      "Supply a visible label and a name for form submission. Use type=email/url/password/number/etc. for native input behavior.",
+      "Supply label and a name for form submission; hideLabel can remove the visual label in a toolbar while preserving its accessible name. Use type=email/url/password/number/etc. for native input behavior.",
       "type=date, time, and datetime-local use Hearth picker popovers with text entry instead of native browser dropdowns. Values retain their ISO date/time formats, form submission, and required/bounds validation.",
       'The model is a string, including type="number". Use HRange for a numeric slider.',
       "hint/error associate explanatory text with the input; native required, pattern, and length constraints control browser validation. Application error text does not replace backend validation.",
+      "leading and trailing slots accept adornments or separately labeled action buttons. leadingIcon accepts a built-in name or IconDefinition. Search fields have a clear action by default; set clearable=false to suppress it or true to enable it on other field types. Clearing emits an empty string and updates form state before change.",
     ],
     related: ["HTextarea", "HSelect", "HCombobox"],
   },
@@ -671,7 +997,7 @@ export const examples = {
     },
     event: "change",
     notes: [
-      "Enter inserts a newline. The form adapter does not turn textarea Enter into form submission.",
+      "Enter inserts a newline by default. submitOnEnter emits submit(value) instead; Shift+Enter still inserts a newline, IME/composition and modified shortcuts are left alone. Submission requests respect native validity and do not automatically send requests or submit the owning form.",
       "The model and submitted value are strings. Choose vertical, none, or both for resize.",
     ],
     related: ["HInput", "HButtonBar"],
@@ -713,6 +1039,7 @@ export const examples = {
     event: "change",
     notes: [
       "Single selection uses a string; multiple mode uses string[]. The public model type is the union. Prefer HMultiSelect when you want an array-only TypeScript API.",
+      "Clear emits an empty string for single selection and [] for multiple. A leading option with value='' can display All for the empty/no-filter state, but required still treats it as empty. Use a nonempty sentinel such as all when All must count as a selected value.",
       "Filtering matches labels, descriptions, and keywords. This is selection from options, not free-form tag creation.",
       "Arrow keys navigate enabled results, Enter selects an active result, Escape closes, and Tab leaves. Enter while choosing must not submit the surrounding form.",
       "Handle search(query) in application code for remote fetching and bind loading. Existing selected IDs are retained while option data changes.",
@@ -1147,8 +1474,10 @@ export const examples = {
     js: "element.addEventListener('navigate', event => { element.active = event.detail[0]; });\nelement.addEventListener('logout', () => { /* Revoke the application session. */ });",
     notes: [
       "Use as the authenticated workspace frame. It supplies desktop/sidebar and mobile-drawer presentation, not authentication or authorization.",
-      "The desktop navigation slot can replace the default list, but the mobile drawer uses items. Keep items populated even when customizing desktop navigation.",
+      "The sidebar content frame, including navigation and sidebar-footer, moves into the mobile drawer without duplicating slots or remounting controls. Navigation customizations apply on both sizes.",
       "header-actions, sidebar-footer, brand, and footer support application composition. The default slot is the content region.",
+      "showWorkspace/showWorkspaceIcon and workspace/workspace-icon slots remove or replace the account-specific tile. navigationLabel controls the visible label, navLabel the navigation name. page-title can replace the breadcrumb; titleAsHeading opts into an h1 when the shell owns the page title.",
+      "side-pane accepts HPane or another inspector. innerScroll bounds the shell to the viewport and keeps the topbar/footer outside the scrolling content. contentMaxWidth maps to the existing --h-content-max token. Use application CSS to size nested demos; standalone shell defaults remain viewport-sized.",
     ],
     related: ["HPublicShell", "HAuthPage", "HSidebar"],
   },

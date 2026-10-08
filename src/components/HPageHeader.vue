@@ -8,26 +8,36 @@ withDefaults(
     eyebrow?: string;
     variant?: "plain" | "hero";
     decoration?: boolean;
+    size?: "sm" | "md" | "lg";
+    level?: 1 | 2 | 3 | 4 | 5 | 6;
+    actionsPlacement?: "below" | "end";
   }>(),
-  { variant: "plain", decoration: true },
+  { variant: "plain", decoration: true, level: 1, actionsPlacement: "below" },
 );
 </script>
 <template>
-  <section class="h-page-header" :class="variant" part="base">
+  <section
+    class="h-page-header"
+    :class="[variant, size, `actions-${actionsPlacement}`]"
+    part="base"
+  >
+    <slot name="leading" />
     <div class="h-page-copy">
       <p v-if="eyebrow" class="h-eyebrow" part="eyebrow">{{ eyebrow }}</p>
-      <h1 part="title">
+      <component :is="`h${level}`" class="h-page-title" part="title">
         <slot name="title"
           >{{ title
           }}<template v-if="accent"
             ><br /><span>{{ accent }}</span></template
           ></slot
         >
-      </h1>
+      </component>
       <p v-if="description" class="h-description" part="description">
         {{ description }}
       </p>
-      <div class="h-header-actions" part="actions"><slot /></div>
+    </div>
+    <div class="h-header-actions" part="actions">
+      <slot name="actions"><slot /></slot>
     </div>
     <div
       v-if="variant === 'hero' && decoration"
@@ -54,6 +64,7 @@ withDefaults(
   color: var(--h-text);
   font-family: var(--h-font);
   min-width: 0;
+  flex-wrap: wrap;
 }
 .h-page-copy {
   position: relative;
@@ -62,19 +73,19 @@ withDefaults(
 }
 .h-eyebrow {
   color: var(--h-muted);
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   font-weight: 550;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   margin-bottom: 13px;
 }
-h1 {
+.h-page-title {
   font-size: clamp(28px, 3vw, 38px);
   font-weight: 550;
   letter-spacing: -1.3px;
   line-height: 1.2;
 }
-h1 span {
+.h-page-title span {
   color: var(--h-accent-text);
 }
 .h-description {
@@ -91,6 +102,28 @@ h1 span {
   flex-wrap: wrap;
   margin-top: 23px;
 }
+.h-header-actions:empty {
+  display: none;
+}
+.actions-below .h-header-actions {
+  flex-basis: 100%;
+  order: 3;
+  margin-top: 0;
+}
+.actions-end .h-header-actions {
+  margin-top: 0;
+  margin-inline-start: auto;
+}
+.sm .h-page-title {
+  font-size: 22px;
+  letter-spacing: -0.5px;
+}
+.md .h-page-title {
+  font-size: 28px;
+}
+.lg .h-page-title {
+  font-size: 38px;
+}
 .hero {
   padding: clamp(26px, 4vw, 40px);
   border-radius: var(--h-radius-panel);
@@ -104,7 +137,7 @@ h1 span {
 .hero .h-description {
   color: var(--h-scene-muted);
 }
-.hero h1 span {
+.hero .h-page-title span {
   color: var(--h-accent-hover);
 }
 .h-hero-art {

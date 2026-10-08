@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, onMounted, onBeforeUnmount } from "vue";
+import { useMobileLayout } from "../mobile";
 import HPagination from "./HPagination.vue";
 import HSkeleton from "./HSkeleton.vue";
 import HDropdownMenu from "./HDropdownMenu.vue";
@@ -30,6 +31,12 @@ const props = withDefaults(
     total?: number;
     actions?: MenuAction[];
     stickyHeader?: boolean;
+    stickyActions?: boolean;
+    mobileLayout?: "cards" | "scroll";
+    rowActions?: Record<string, MenuAction[]>;
+    getRowActions?: (row: TableRow) => MenuAction[];
+    rowActivatable?: boolean;
+    actionDisplay?: "icon" | "label";
   }>(),
   {
     rows: () => [],
@@ -41,6 +48,9 @@ const props = withDefaults(
     page: 1,
     pageSize: 10,
     actions: () => [],
+    stickyActions: true,
+    mobileLayout: "cards",
+    actionDisplay: "icon",
   },
 );
 const emit = defineEmits<{
@@ -50,7 +60,65 @@ const emit = defineEmits<{
   "update:page": [page: number];
   "page-change": [page: number];
   "row-action": [action: { id: string; action: string }];
+  "row-activate": [row: TableRow];
 }>();
+defineSlots<{
+  cell(props: {
+    row: TableRow;
+    column: TableColumn;
+    value: TableRow[string];
+  }): any;
+  [name: string]: (props: any) => any;
+}>();
+const root = ref<HTMLElement>(),
+  mobile = useMobileLayout(root, () => props.mobileBreakpoint),
+  containerWidth = ref(Infinity);
+let observer: ResizeObserver | undefined;
+onMounted(() => {
+  if (!root.value) return;
+  containerWidth.value = root.value.clientWidth;
+  observer = new ResizeObserver(
+    (entries) => (containerWidth.value = entries[0].contentRect.width),
+  );
+  observer.observe(root.value);
+});
+onBeforeUnmount(() => observer?.disconnect());
+const shownColumns = computed(() =>
+  props.columns.filter(
+    (column, index) =>
+      index === 0 ||
+      !column.hideBelow ||
+      containerWidth.value >= column.hideBelow,
+  ),
+);
+const cards = computed(() => mobile.value && props.mobileLayout === "cards");
+const cellText = (value: unknown) =>
+  value === null || value === undefined
+    ? "—"
+    : typeof value === "object" || typeof value === "function"
+      ? "[Object]"
+      : String(value);
+const actionsFor = (row: TableRow) =>
+  props.getRowActions?.(row) ?? props.rowActions?.[row.id] ?? props.actions;
+const hasActions = computed(
+  () => !!props.actions.length || !!props.getRowActions || !!props.rowActions,
+);
+function activate(row: TableRow, event?: MouseEvent) {
+  if (!props.rowActivatable || props.disabledRows.includes(row.id)) return;
+  if (
+    event
+      ?.composedPath()
+      .some(
+        (node) =>
+          node instanceof HTMLElement &&
+          node.matches(
+            "button,a,input,select,textarea,label,summary,[contenteditable=true],[role=button],[role=checkbox],[role=switch]",
+          ),
+      )
+  )
+    return;
+  emit("row-activate", row);
+}
 const localSelected = ref([...props.selected]);
 const localSort = ref(props.sort);
 const localPage = ref(props.page);
@@ -90,7 +158,7 @@ const sorted = computed(() => {
     const order =
       typeof x === "number" && typeof y === "number"
         ? x - y
-        : String(x ?? "").localeCompare(String(y ?? ""), undefined, {
+        : cellText(x).localeCompare(cellText(y), undefined, {
             numeric: true,
             sensitivity: "base",
           });
@@ -122,9 +190,9 @@ const some = computed(
 );
 const colspan = computed(
   () =>
-    props.columns.length +
+    shownColumns.value.length +
     Number(props.selectable) +
-    Number(!!props.actions.length),
+    Number(hasActions.value),
 );
 function select(ids: string[]) {
   localSelected.value = [...new Set(ids)];
@@ -171,7 +239,13 @@ watch(
 );
 </script>
 <template>
-  <section class="h-data-table" :aria-busy="loading || undefined" part="base">
+  <section
+    ref="root"
+    class="h-data-table"
+    :class="{ cards, 'sticky-actions': stickyActions }"
+    :aria-busy="loading || undefined"
+    part="base"
+  >
     <div
       class="h-table-scroll"
       tabindex="0"
@@ -179,15 +253,20 @@ watch(
       :aria-label="label"
       part="viewport"
     >
-      <table :aria-label="label">
+      <table :aria-label="label" role="table">
         <caption v-if="caption">
           {{
             caption
           }}
         </caption>
         <thead :class="{ sticky: stickyHeader }">
-          <tr>
-            <th v-if="selectable" class="h-table-select" scope="col">
+          <tr role="row">
+            <th
+              v-if="selectable"
+              class="h-table-select"
+              scope="col"
+              role="columnheader"
+            >
               <label
                 ><span class="h-sr-only">Select rows on this page</span
                 ><input
@@ -201,11 +280,13 @@ watch(
               /></label>
             </th>
             <th
-              v-for="column in columns"
+              v-for="column in shownColumns"
               :key="column.key"
               scope="col"
+              role="columnheader"
               :style="{
                 width: column.width,
+                minWidth: cards ? undefined : column.minWidth,
                 textAlign: column.align || 'start',
               }"
               :aria-sort="
@@ -232,7 +313,12 @@ watch(
                 /></button
               ><template v-else>{{ column.label }}</template>
             </th>
-            <th v-if="actions.length" scope="col">
+            <th
+              v-if="hasActions"
+              class="h-table-actions"
+              scope="col"
+              role="columnheader"
+            >
               <span class="h-sr-only">Actions</span>
             </th>
           </tr>
@@ -253,6 +339,8 @@ watch(
             :key="row.id"
             :class="{ selected: localSelected.includes(row.id) }"
             part="row"
+            role="row"
+            @click="activate(row, $event)"
           >
             <td v-if="selectable" class="h-table-select">
               <label
@@ -270,19 +358,58 @@ watch(
               /></label>
             </td>
             <td
-              v-for="column in columns"
+              v-for="(column, columnIndex) in shownColumns"
+              :class="{ 'h-table-title': columnIndex === 0 }"
               :key="column.key"
-              :style="{ textAlign: column.align || 'start' }"
+              :style="{
+                textAlign: cards ? 'start' : column.align || 'start',
+                minWidth: cards ? undefined : column.minWidth,
+              }"
+              role="cell"
               part="cell"
             >
-              <slot :name="tableCellSlot(row.id, column.key)">{{
-                row[column.key] ?? "—"
-              }}</slot>
+              <span class="h-table-card-label" aria-hidden="true">{{
+                column.label
+              }}</span>
+              <div
+                class="h-table-cell-value"
+                :title="column.truncate ? cellText(row[column.key]) : undefined"
+                :class="{ truncate: column.truncate }"
+                :style="{
+                  '--h-cell-width': column.width || column.minWidth || '240px',
+                }"
+              >
+                <slot :name="tableCellSlot(row.id, column.key)"
+                  ><slot
+                    name="cell"
+                    :row="row"
+                    :column="column"
+                    :value="row[column.key]"
+                    ><button
+                      v-if="rowActivatable && columnIndex === 0"
+                      type="button"
+                      class="h-table-activate"
+                      :disabled="disabledRows.includes(row.id)"
+                      @click="emit('row-activate', row)"
+                    >
+                      {{
+                        row[column.key] === undefined
+                          ? row.id
+                          : cellText(row[column.key])
+                      }}</button
+                    ><template v-else>{{
+                      cellText(row[column.key])
+                    }}</template></slot
+                  ></slot
+                >
+              </div>
             </td>
-            <td v-if="actions.length">
+            <td v-if="hasActions" class="h-table-actions" role="cell">
               <HDropdownMenu
+                :icon-only="actionDisplay === 'icon'"
+                v-if="actionsFor(row).length"
                 :mobile-breakpoint="mobileBreakpoint"
-                :items="actions"
+                :items="actionsFor(row)"
                 :label="`Actions for ${row.id}`"
                 @select="emit('row-action', { id: row.id, action: $event })"
               />
@@ -338,7 +465,7 @@ td {
   overflow-wrap: anywhere;
 }
 th {
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   font-weight: 550;
   color: var(--h-muted);
   background: var(--h-raised);
@@ -399,7 +526,112 @@ footer {
   border-top: 1px solid var(--h-border);
 }
 footer > span {
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
+}
+.h-table-card-label {
+  display: none;
+}
+.sticky-actions .h-table-actions {
+  position: sticky;
+  inset-inline-end: 0;
+  z-index: 1;
+  background: var(--h-raised);
+  box-shadow: -1px 0 0 var(--h-border);
+}
+.h-table-cell-value.truncate {
+  max-width: var(--h-cell-width);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.h-table-activate {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--h-accent-text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.h-table-activate:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.cards .h-table-scroll {
+  overflow: visible;
+}
+.cards table,
+.cards tbody {
+  display: block;
+  width: 100%;
+}
+.cards thead {
+  display: block;
+  padding: 12px;
+}
+.cards thead tr {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.cards thead th {
+  display: block;
+  padding: 4px 8px;
+  width: auto !important;
+  border: 0;
+  background: none;
+  white-space: normal;
+}
+.cards tbody tr {
+  display: grid;
+  margin: 12px;
+  padding: 16px;
+  border: 1px solid var(--h-border);
+  border-radius: var(--h-radius-control);
+  gap: 12px;
+}
+.cards td {
+  display: block;
+  padding: 0;
+  border: 0;
+  width: auto;
+  min-width: 0;
+}
+.cards .h-table-select label {
+  justify-content: start;
+  place-items: start;
+  min-height: 24px;
+}
+.cards .h-table-card-label {
+  display: block;
+  font-size: max(var(--h-font-min-size, 12px), 12px);
+  color: var(--h-muted);
+}
+.cards .h-table-actions {
+  position: static;
+  box-shadow: none;
+  background: none;
+}
+.cards .h-table-cell-value.truncate {
+  max-width: 100%;
+}
+.cards td.h-table-title > .h-table-card-label {
+  display: none;
+}
+.cards td.h-table-title .h-table-cell-value {
+  font-size: 16px;
+  font-weight: 550;
+}
+.cards .h-table-empty {
+  height: auto;
+  padding: 24px;
+  text-align: center;
+}
+.cards th.h-table-actions {
+  display: none;
 }
 </style>

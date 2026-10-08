@@ -2,7 +2,7 @@
 
 > Connection lifecycle feedback with an optional application-owned retry action.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -19,7 +19,7 @@
 
 ## Public API
 
-state: connecting | connected | reconnecting | failed | offline · label, description: string · retryable: boolean
+state: connecting | connected | reconnecting | failed | offline · label, description: string · retryable: boolean · showState: boolean
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -29,13 +29,14 @@ type Props = {
     label?: string;
     description?: string;
     retryable?: boolean;
+    showState?: boolean;
 };
 ```
 
 ### Defaults
 
 ```ts
-{ state: "offline", label: "Connection", retryable: true }
+{ state: "offline", label: "Connection", retryable: true, showState: true }
 ```
 
 ### Events
@@ -53,7 +54,7 @@ Vue-emitted custom-element events expose argument arrays in `event.detail`. List
 
 ### Slots
 
-None
+detail
 
 Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 

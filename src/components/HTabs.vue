@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, useId } from "vue";
 import type { TabItem } from "../themes";
+import { nextCollectionId } from "../primitives";
 const props = withDefaults(
   defineProps<{
     items: TabItem[];
@@ -56,21 +57,23 @@ function key(e: KeyboardEvent) {
   )
     return;
   e.preventDefault();
-  const at = available.findIndex(
-    (i) => i.value === (focused.value || selected.value),
+  const next = nextCollectionId(
+    props.items.map((item) => ({ id: item.value, disabled: item.disabled })),
+    focused.value || selected.value,
+    e.key,
+    {
+      orientation: props.orientation,
+      direction:
+        root.value && getComputedStyle(root.value).direction === "rtl"
+          ? "rtl"
+          : "ltr",
+      wrap: true,
+    },
   );
-  const next =
-    e.key === "Home"
-      ? 0
-      : e.key === "End"
-        ? available.length - 1
-        : (at +
-            (["ArrowRight", "ArrowDown"].includes(e.key) ? 1 : -1) +
-            available.length) %
-          available.length;
-  focused.value = available[next].value;
-  if (props.activation === "automatic") select(available[next].value);
-  const index = props.items.indexOf(available[next]);
+  if (next === undefined) return;
+  focused.value = next;
+  if (props.activation === "automatic") select(next);
+  const index = props.items.findIndex((item) => item.value === next);
   root.value?.querySelectorAll<HTMLButtonElement>("[role=tab]")[index]?.focus();
 }
 </script>

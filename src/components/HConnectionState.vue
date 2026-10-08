@@ -7,8 +7,9 @@ withDefaults(
     label?: string;
     description?: string;
     retryable?: boolean;
+    showState?: boolean;
   }>(),
-  { state: "offline", label: "Connection", retryable: true },
+  { state: "offline", label: "Connection", retryable: true, showState: true },
 );
 const emit = defineEmits<{ retry: [] }>();
 const labels = {
@@ -32,8 +33,13 @@ const labels = {
       "
     />
     <div class="h-connection-copy">
-      <strong part="title">{{ label }} · {{ labels[state] }}</strong>
-      <p v-if="description" part="description">{{ description }}</p>
+      <strong part="title"
+        >{{ label
+        }}<template v-if="showState"> · {{ labels[state] }}</template></strong
+      >
+      <slot name="detail"
+        ><p v-if="description" part="description">{{ description }}</p></slot
+      >
     </div>
     <HButton
       v-if="retryable && (state === 'failed' || state === 'offline')"

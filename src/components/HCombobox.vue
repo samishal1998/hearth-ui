@@ -231,6 +231,7 @@ function toggled() {
   <fieldset
     ref="root"
     class="h-combobox"
+    :class="size ? `h-size-${size}` : undefined"
     part="base"
     :disabled="blocked"
     @focusout="
@@ -239,7 +240,7 @@ function toggled() {
       }
     "
   >
-    <label :for="id" part="label"
+    <label :for="id" :class="{ 'h-sr-only': hideLabel }" part="label"
       >{{ label }}<span v-if="required" aria-hidden="true"> *</span></label
     >
     <div
@@ -411,6 +412,7 @@ function toggled() {
 </template>
 <style scoped>
 @import "../styles/base.css";
+@import "../styles/field.css";
 @import "../styles/mobile-overlay.css";
 .h-combobox {
   position: relative;
@@ -423,7 +425,7 @@ function toggled() {
 }
 label {
   display: block;
-  font-size: 12px;
+  font-size: max(var(--h-font-min-size, 12px), 12px);
   font-weight: 500;
   margin-bottom: 7px;
 }
@@ -451,7 +453,7 @@ label > span {
   display: flex;
   align-items: center;
   min-height: var(--h-control-height);
-  padding: 4px 6px;
+  padding: var(--h-combo-line-padding, 4px) 6px;
   padding-inline-start: 12px;
   gap: 4px;
 }
@@ -459,12 +461,13 @@ input[role="combobox"] {
   min-width: 0;
   flex: 1;
   width: 100%;
-  min-height: 40px;
+  min-height: calc(var(--h-control-height) - 8px);
   border: 0;
   background: none;
   color: var(--h-text);
-  padding: 8px 0;
-  font-size: var(--h-field-font-size, 13px);
+  padding: var(--h-combo-input-padding-y, 8px) 0;
+  font-size: max(var(--h-font-min-size, 12px), var(--h-field-font-size, 13px));
+  line-height: 1.4;
 }
 input[role="combobox"]:focus-visible {
   outline: none;
@@ -475,8 +478,8 @@ input::placeholder {
 .h-combo-action {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: var(--h-adornment-size, 40px);
+  height: var(--h-adornment-size, 40px);
   flex-shrink: 0;
   border: 0;
   border-radius: calc(var(--h-radius-control) - 4px);
@@ -500,7 +503,7 @@ input::placeholder {
   border-radius: 6px;
   background: var(--h-accent-subtle);
   color: var(--h-accent-text);
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
 }
 .h-chip > span {
   overflow: hidden;
@@ -565,7 +568,7 @@ input::placeholder {
 }
 [role="option"] small {
   display: block;
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
   margin-top: 3px;
   line-height: 1.7;
@@ -576,7 +579,7 @@ input::placeholder {
   color: var(--h-muted);
 }
 .h-combo-hint {
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   line-height: 1.8;
   color: var(--h-muted);
   margin-top: 7px;

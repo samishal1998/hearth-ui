@@ -14,6 +14,8 @@ import HPopover from "./HPopover.vue";
 import HButton from "./HButton.vue";
 import HIcon from "./HIcon.vue";
 import { timeSeconds, timeError } from "../dates";
+import type { ControlSize, IconValue } from "../themes";
+import { useSlotPresence } from "../slots";
 const props = withDefaults(
   defineProps<{
     modelValue?: string;
@@ -30,6 +32,10 @@ const props = withDefaults(
     hint?: string;
     error?: string;
     mobileBreakpoint?: number;
+    hideLabel?: boolean;
+    size?: ControlSize;
+    leadingIcon?: IconValue;
+    clearable?: boolean;
   }>(),
   { value: "", step: 60 },
 );
@@ -41,6 +47,8 @@ const emit = defineEmits<{
 const id = useId(),
   local = ref(props.modelValue ?? props.value),
   open = ref(false);
+const root = ref<HTMLElement>();
+const hasSlot = useSlotPresence(() => root.value);
 const input = ref<InstanceType<typeof HTextInput>>(),
   popover = ref<InstanceType<typeof HPopover>>(),
   panel = ref<HTMLElement>();
@@ -318,12 +326,16 @@ onMounted(() => {
 onBeforeUnmount(() => resize?.disconnect());
 </script>
 <template>
-  <div class="h-time-picker" part="base">
+  <div ref="root" class="h-time-picker" part="base">
     <HTextInput
       ref="input"
       type="text"
       :model-value="local"
       :label="label"
+      :hide-label="hideLabel"
+      :size="size"
+      :leading-icon="leadingIcon"
+      :clearable="clearable"
       :name="name"
       :placeholder="secondsShown ? 'HH:mm:ss' : 'HH:mm'"
       autocomplete="off"
@@ -335,8 +347,10 @@ onBeforeUnmount(() => resize?.disconnect());
       @update:model-value="update"
       @change="emit('change', $event)"
       @control-sync="sync"
+      ><template v-if="hasSlot('leading')" #leading
+        ><slot name="leading" /></template
       ><template #trailing
-        ><HPopover
+        ><slot v-if="hasSlot('trailing')" name="trailing" /><HPopover
           ref="popover"
           v-model:open="open"
           :mobile-breakpoint="mobileBreakpoint"
@@ -459,7 +473,7 @@ onBeforeUnmount(() => resize?.disconnect());
   color: var(--h-text);
 }
 .h-time-summary > span {
-  font: 11px/1.5 var(--h-font);
+  font: max(var(--h-font-min-size, 12px), 11px)/1.5 var(--h-font);
   color: var(--h-muted);
 }
 .h-time-columns {
@@ -472,7 +486,7 @@ onBeforeUnmount(() => resize?.disconnect());
 }
 .h-time-column-label {
   display: block;
-  font: 500 11px/1.5 var(--h-font);
+  font: 500 max(var(--h-font-min-size, 12px), 11px)/1.5 var(--h-font);
   color: var(--h-muted);
   padding: 0 4px 8px;
 }
@@ -529,7 +543,7 @@ onBeforeUnmount(() => resize?.disconnect());
   cursor: not-allowed;
 }
 .h-time-help {
-  font: 11px/1.7 var(--h-font);
+  font: max(var(--h-font-min-size, 12px), 11px)/1.7 var(--h-font);
   color: var(--h-muted);
   margin: 12px 0;
   overflow-wrap: anywhere;

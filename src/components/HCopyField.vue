@@ -97,7 +97,7 @@ input {
   font: 12px var(--h-font-mono);
 }
 p {
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
   line-height: 1.7;
   margin-top: 6px;

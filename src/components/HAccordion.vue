@@ -8,8 +8,11 @@ const props = withDefaults(
     modelValue?: string[];
     value?: string[];
     multiple?: boolean;
+    defaultOpen?: string[];
+    compact?: boolean;
+    variant?: "surface" | "flat";
   }>(),
-  { items: () => [], value: () => [] },
+  { items: () => [], value: undefined, variant: "surface" },
 );
 const emit = defineEmits<{
   "update:modelValue": [value: string[]];
@@ -17,12 +20,17 @@ const emit = defineEmits<{
 }>();
 const id = useId();
 const local = ref(
-  (props.modelValue ?? props.value).slice(0, props.multiple ? undefined : 1),
+  (
+    props.modelValue ??
+    props.value ??
+    props.defaultOpen ??
+    props.items.filter((item) => item.defaultOpen).map((item) => item.id)
+  ).slice(0, props.multiple ? undefined : 1),
 );
 watch(
   () => [props.modelValue, props.value, props.multiple],
   () =>
-    (local.value = (props.modelValue ?? props.value).slice(
+    (local.value = (props.modelValue ?? props.value ?? local.value).slice(
       0,
       props.multiple ? undefined : 1,
     )),
@@ -40,7 +48,7 @@ function toggle(item: AccordionItem, e: Event) {
 }
 </script>
 <template>
-  <div class="h-accordion" part="base">
+  <div class="h-accordion" :class="[variant, { compact }]" part="base">
     <details
       v-for="(item, i) in items"
       :key="item.id"
@@ -60,7 +68,14 @@ function toggle(item: AccordionItem, e: Event) {
           }
         "
       >
-        {{ item.title }}<HIcon name="down" :size="17" />
+        <span
+          ><slot
+            :name="`header:${item.id}`"
+            :item="item"
+            :open="local.includes(item.id)"
+            >{{ item.title }}</slot
+          ></span
+        ><HIcon name="down" :size="17" />
       </summary>
       <div
         :id="`${id}-panel-${i}`"
@@ -121,5 +136,21 @@ summary[aria-disabled="true"] {
   color: var(--h-muted);
   font-size: 13px;
   line-height: 1.85;
+}
+.flat {
+  gap: 0;
+}
+.flat details {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--h-border);
+  border-radius: 0;
+}
+.compact summary {
+  min-height: 40px;
+  padding: 8px 12px;
+}
+.compact [role="region"] {
+  padding: 0 12px 12px;
 }
 </style>

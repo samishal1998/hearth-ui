@@ -142,7 +142,7 @@ function account(e: SubmitEvent) {
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
 }
 .h-setup-steps span {

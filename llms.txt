@@ -2,7 +2,7 @@
 
 > Themeable Vue and web components for self-hosted dashboards, public pages, and authentication. Start here, then read only the component references needed for the task.
 
-This index covers 70 public components in source version 0.6.0. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
+This index covers 94 public components in source version 0.7.0. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
 
 ## Agent workflow
 
@@ -45,6 +45,10 @@ This index covers 70 public components in source version 0.6.0. The working tree
 - Work progress: HProgress. Loading shapes: HSkeleton. Empty results: HEmptyState. Feedback: HAlert. State label: HBadge.
 - Content: HCard. App launcher: HAppCard. Metric: HStatCard.
 
+## Custom UI foundation
+
+Start with HSurface, HStack/HGrid/HContainer, HText/HHeading/HLink, and HToolbar/HFilterBar. Use [behavior and native-markup primitives](docs/primitives/llms.txt) when custom markup needs shared focus, selection, field association, or overlay positioning. HPane is persistent desktop content with a mobile full-screen dialog; HSheet remains modal on both sizes. HVirtualList uses fixed-height rows, not variable-height messages.
+
 ## Layouts
 
 - [HAuthPage](docs/components/auth-page/llms.txt): The full split-screen welcome/login page. It emits credentials; your application owns authentication.
@@ -54,13 +58,16 @@ This index covers 70 public components in source version 0.6.0. The working tree
 - [HFirstRunSetup](docs/components/first-run-setup/llms.txt): An application-controlled owner-account, provider, and completion setup recipe.
 - [HNavigationMenu](docs/components/navigation-menu/llms.txt): A navigation disclosure menu with native links, nested groups, outside-click dismissal, and Escape support.
 - [HPageHeader](docs/components/page-header/llms.txt): A plain page introduction or the signature atmospheric dashboard hero.
+- [HPane](docs/components/pane/llms.txt): Persistent desktop inspector that moves into a full-screen mobile dialog without remounting content.
 - [HProviderSetup](docs/components/provider-setup/llms.txt): A connection setup recipe with required fields, test/save requests, and connection feedback.
 - [HPublicShell](docs/components/public-shell/llms.txt): A public landing-page frame: brand, a few links, an account action, and a quiet footer.
+- [HResizablePane](docs/components/resizable-pane/llms.txt): Resizable inspector layout with keyboard and non-dragging pointer alternatives.
 - [HResourceDetail](docs/components/resource-detail/llms.txt): A resource introduction with breadcrumbs, state, metadata, and tabbed details.
 - [HSettingsPage](docs/components/settings-page/llms.txt): Grouped settings content with dirty-state feedback and save/reset requests.
 - [HSidebar](docs/components/sidebar/llms.txt): A standalone, collapsible sidebar with grouped navigation and optional custom header/footer.
 - [HStatusPage](docs/components/status-page/llms.txt): A public status-page recipe with service groups, derived summary, and incident updates.
 - [HStepper](docs/components/stepper/llms.txt): An ordered workflow indicator with optional step selection and completed or unavailable states.
+- [HToolbar](docs/components/toolbar/llms.txt): Wrapping controls with consistent gap and alignment.
 
 ## Controls
 
@@ -71,14 +78,18 @@ This index covers 70 public components in source version 0.6.0. The working tree
 - [HCheckbox](docs/components/checkbox/llms.txt): A native checkbox with a mixed-state option and optional description.
 - [HChip](docs/components/chip/llms.txt): A compact selectable or removable label with distinct toggle and remove actions.
 - [HChipGroup](docs/components/chip-group/llms.txt): An array-valued filter group or removable set of selected tags.
+- [HCollapsible](docs/components/collapsible/llms.txt): Independent native disclosure with controlled or default-open state.
 - [HCombobox](docs/components/combobox/llms.txt): Searchable single or multi-select with selected chips, disabled options, keyboard navigation, and repeated form values.
 - [HCommandPalette](docs/components/command-palette/llms.txt): A searchable command dialog that becomes a bottom sheet on mobile, with grouping, shortcuts, and disabled commands.
+- [HContextMenu](docs/components/context-menu/llms.txt): Contextual commands with right-click, Shift+F10, and an explicit touch/keyboard trigger.
 - [HCopyField](docs/components/copy-field/llms.txt): A read-only endpoint, identifier, or secret field with explicit clipboard and reveal actions.
 - [HDatePicker](docs/components/date-picker/llms.txt): Date text entry with a Hearth calendar popover and form validation.
 - [HDateRangePicker](docs/components/date-range-picker/llms.txt): Two date pickers with start/end constraints and native form validation.
 - [HDropdownMenu](docs/components/dropdown-menu/llms.txt): A keyboard-operated command menu with a touch-friendly bottom panel on mobile.
 - [HFileUpload](docs/components/file-upload/llms.txt): Native file selection and drag/drop with configurable validation, file lists, and application-owned progress.
+- [HFilterBar](docs/components/filter-bar/llms.txt): Wrapping filters with an application-owned clear request.
 - [HInput](docs/components/input/llms.txt): A labeled input with help/error text and native validation. Web components participate in their owning form.
+- [HListbox](docs/components/listbox/llms.txt): Rich owner-rendered choice list with typeahead and active-descendant navigation.
 - [HMultiSelect](docs/components/multi-select/llms.txt): An array-typed multi-select combobox using the same searchable selection engine as HCombobox.
 - [HNumberInput](docs/components/number-input/llms.txt): A compact numeric stepper with direct entry, press-and-hold buttons, bounds, and form validation.
 - [HPagination](docs/components/pagination/llms.txt): Bounded page navigation with current-page semantics and ellipses for long lists.
@@ -93,6 +104,8 @@ This index covers 70 public components in source version 0.6.0. The working tree
 - [HTextarea](docs/components/textarea/llms.txt): A labeled multiline field with native constraints and form reset support.
 - [HThemeSwitcher](docs/components/theme-switcher/llms.txt): A light, dark, and system preference selector. Bind its value to HTheme mode.
 - [HTimePicker](docs/components/time-picker/llms.txt): Time entry with an inset clock button and step-aware hour, minute, and second columns.
+- [HToggleGroup](docs/components/toggle-group/llms.txt): Single or multiple pressed-button selection.
+- [HTreeView](docs/components/tree-view/llms.txt): Expandable hierarchical navigation with roving focus and typeahead.
 
 ## Surfaces
 
@@ -104,14 +117,17 @@ This index covers 70 public components in source version 0.6.0. The working tree
 - [HList](docs/components/list/llms.txt): A semantic list container for integrations, activity, and settings rows.
 - [HListItem](docs/components/list-item/llms.txt): A readable row with icon, description, badge, and separate action content.
 - [HLogViewer](docs/components/log-viewer/llms.txt): A bounded log tail with search, level filtering, pause/follow controls, and copy support.
+- [HMessage](docs/components/message/llms.txt): Conversation messages with author, role, timestamp, and rich body.
 - [HSeparator](docs/components/separator/llms.txt): A structural divider, optionally labeled or exposed as an accessible separator.
 - [HSparkline](docs/components/sparkline/llms.txt): A small SVG trend with a textual summary, finite-data handling, and semantic tones.
 - [HStatCard](docs/components/stat-card/llms.txt): A quiet overview metric with tabular numbers, an icon, and a supporting label.
 - [HTimeline](docs/components/timeline/llms.txt): An ordered activity history for deployments, audit events, and incident updates, with timestamps and per-event detail slots.
+- [HVirtualList](docs/components/virtual-list/llms.txt): Bounded fixed-height list window with overscan and focused-row retention.
 
 ## Feedback
 
 - [HAlert](docs/components/alert/llms.txt): Inline feedback for success, information, and problems. Errors announce as alerts; other tones use status.
+- [HAlertDialog](docs/components/alert-dialog/llms.txt): Confirmation dialog with a safe initial cancel action and responsive bottom-sheet layout.
 - [HBadge](docs/components/badge/llms.txt): A compact label with optional status dot. Color always accompanies text.
 - [HConnectionState](docs/components/connection-state/llms.txt): Connection lifecycle feedback with an optional application-owned retry action.
 - [HDialog](docs/components/dialog/llms.txt): A native modal dialog that becomes a bottom sheet on mobile, preserving focus containment, Escape dismissal, and focus return.
@@ -125,10 +141,22 @@ This index covers 70 public components in source version 0.6.0. The working tree
 
 ## Foundation
 
+- [HAspectRatio](docs/components/aspect-ratio/llms.txt): A ratio-constrained media container.
 - [HAvatar](docs/components/avatar/llms.txt): An image avatar with initials fallback and an optional decorative mode.
 - [HBrand](docs/components/brand/llms.txt): A text wordmark with the signature accent. Use your own name, optional logo, and tagline.
+- [HContainer](docs/components/container/llms.txt): A constrained, centered structural container.
+- [HFieldset](docs/components/fieldset/llms.txt): Native grouped-control semantics and a legend.
+- [HGrid](docs/components/grid/llms.txt): Responsive grids with explicit columns or auto-fit minimum widths.
+- [HHeading](docs/components/heading/llms.txt): Heading semantics independent of visual size.
 - [HIcon](docs/components/icon/llms.txt): A small, consistent supporting icon set. Decorative by default; put the accessible label on its control.
+- [HLink](docs/components/link/llms.txt): Native inline navigation with safe URLs and visible focus.
+- [HListSpacer](docs/components/list-spacer/llms.txt): Presentation-only spacing inside a semantic list.
+- [HScrollArea](docs/components/scroll-area/llms.txt): Keyboard-accessible native overflow viewport.
+- [HStack](docs/components/stack/llms.txt): Flexible stacks and wrapping rows using the theme spacing scale.
+- [HSurface](docs/components/surface/llms.txt): A neutral, themeable container for custom rows, toolbars, panels, and messages.
+- [HText](docs/components/text/llms.txt): Semantic body text with token-driven size, weight, and tone.
 - [HTheme](docs/components/theme/llms.txt): A scoped theme island. CSS variables flow through Vue trees, native slots, and shadow roots.
+- [HVisuallyHidden](docs/components/visually-hidden/llms.txt): Content retained for assistive technology without visible layout.
 
 ## Project references
 

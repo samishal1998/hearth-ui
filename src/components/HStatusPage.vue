@@ -118,7 +118,7 @@ const overall = computed<ServiceState>(() => {
   font-family: var(--h-font);
 }
 .h-status-updated {
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
   margin: 0;
   line-height: 1.8;

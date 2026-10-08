@@ -989,3 +989,21 @@ input[type="range"] {
     animation: none !important;
   }
 }
+.theme-probe {
+  position: fixed;
+  inset: 0 auto auto -10000px;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
+.theme-mode-previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 16px;
+}
+.theme-mode-previews > .h-theme { border-radius: var(--h-radius-card); overflow: hidden; }
+.theme-mode-previews .h-card-body { display: grid; gap: 12px; }
+.theme-mode-previews p { margin: 0; }
+.theme-mode-previews .h-button { justify-self: start; }

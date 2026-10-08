@@ -259,7 +259,7 @@ input::file-selector-button {
   cursor: pointer;
 }
 .h-file-help {
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
   line-height: 1.8;
   margin-top: 8px;
@@ -285,7 +285,7 @@ input::file-selector-button {
 }
 small {
   display: block;
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   color: var(--h-muted);
   margin-top: 3px;
 }

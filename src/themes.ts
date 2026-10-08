@@ -2,6 +2,15 @@ export const themes = ["sunset", "ocean", "forest", "dusk", "rose"] as const;
 export type Theme = (typeof themes)[number];
 export type Mode = "dark" | "light" | "system";
 export type Density = "comfortable" | "compact";
+export type ControlSize = "regular" | "compact";
+export interface IconDefinition {
+  paths: readonly string[];
+  viewBox?: string;
+  fill?: "none" | "currentColor";
+  fillRule?: "nonzero" | "evenodd";
+  strokeWidth?: number;
+}
+export type IconValue = string | IconDefinition;
 export type DateRange = [string, string];
 export type NumberRange = [number, number];
 export interface StepItem {
@@ -11,13 +20,36 @@ export interface StepItem {
   completed?: boolean;
   disabled?: boolean;
 }
+export interface VirtualItem {
+  id: string;
+  label: string;
+  description?: string;
+}
+export interface TreeItem {
+  id: string;
+  label: string;
+  disabled?: boolean;
+  children?: TreeItem[];
+}
 export type ThemeTokens = Partial<Record<`--h-${string}`, string>>;
+export interface ThemeModeTokens {
+  dark?: ThemeTokens;
+  light?: ThemeTokens;
+}
+export interface ThemeProfile {
+  tokens?: ThemeTokens;
+  modeTokens?: ThemeModeTokens;
+}
+export interface ThemeExportOptions {
+  selector?: string;
+  target?: "vue" | "elements";
+}
 export type Tone =
   "neutral" | "accent" | "success" | "warning" | "danger" | "info";
 export interface NavItem {
   id: string;
   label: string;
-  icon?: string;
+  icon?: IconValue;
   href?: string;
   badge?: string | number;
   disabled?: boolean;
@@ -32,6 +64,11 @@ export interface SelectOption {
   label: string;
   disabled?: boolean;
 }
+export interface ChipOption extends SelectOption {
+  count?: number;
+  icon?: IconValue;
+  title?: string;
+}
 export interface ChoiceOption extends SelectOption {
   description?: string;
 }
@@ -39,6 +76,8 @@ export interface ComboboxOption extends ChoiceOption {
   keywords?: string[];
 }
 export interface ComboboxProps {
+  hideLabel?: boolean;
+  size?: ControlSize;
   mobileBreakpoint?: number;
   modelValue?: string | string[];
   value?: string | string[];
@@ -72,6 +111,7 @@ export interface AccordionItem {
   title: string;
   description?: string;
   disabled?: boolean;
+  defaultOpen?: boolean;
 }
 export interface AuthCredentials {
   username: string;
@@ -91,7 +131,7 @@ export interface TimelineItem {
 export interface MenuAction {
   id: string;
   label: string;
-  icon?: string;
+  icon?: IconValue;
   shortcut?: string;
   disabled?: boolean;
   danger?: boolean;
@@ -108,7 +148,7 @@ export interface ToastItem {
 export type TableCell = string | number | boolean | null | undefined;
 export interface TableRow {
   id: string;
-  [key: string]: TableCell;
+  [key: string]: unknown;
 }
 export interface TableColumn {
   key: string;
@@ -116,6 +156,9 @@ export interface TableColumn {
   sortable?: boolean;
   align?: "start" | "end";
   width?: string;
+  minWidth?: string;
+  truncate?: boolean;
+  hideBelow?: number;
 }
 export interface TableSort {
   key: string;
@@ -131,7 +174,7 @@ export interface CommandItem {
   id: string;
   label: string;
   description?: string;
-  icon?: string;
+  icon?: IconValue;
   group?: string;
   shortcut?: string;
   keywords?: string[];
@@ -178,6 +221,7 @@ export function tableCellSlot(rowId: string, columnKey: string): string {
 
 /** Filters to Hearth variables; values are CSS authored by the consuming application. */
 export function themeStyle(tokens: ThemeTokens = {}): Record<string, string> {
+  if (!tokens || typeof tokens !== "object" || Array.isArray(tokens)) return {};
   return Object.fromEntries(
     Object.entries(tokens).filter(
       (entry): entry is [string, string] =>
@@ -186,9 +230,41 @@ export function themeStyle(tokens: ThemeTokens = {}): Record<string, string> {
   );
 }
 
-/** A complete, copyable stylesheet for an application or scoped theme island. */
+/** Serialize flat tokens. Use themeProfileCSS for independent color modes. */
 export function themeCSS(tokens: ThemeTokens, selector = ":root"): string {
   return `${selector} {\n${Object.entries(themeStyle(tokens))
     .map(([k, v]) => `  ${k}: ${v};`)
     .join("\n")}\n}`;
+}
+
+/** Mode-aware CSS targets the owning theme element, including the web-component base part. */
+export function themeProfileCSS(
+  profile: ThemeProfile,
+  options: ThemeExportOptions = {},
+): string {
+  const elements = options.target === "elements";
+  const owner = `:is(${options.selector || (elements ? 'hearth-theme[theme="custom"]' : '[data-hearth-theme="custom"]')})`;
+  const attribute = elements ? "mode" : "data-hearth-mode";
+  const part = elements ? "::part(base)" : "";
+  const selector = (mode: "dark" | "light" | "system") =>
+    `${owner}[${attribute}="${mode}"]${part}`;
+  const rule = (mode: "dark" | "light", target: string) => {
+    const css = themeCSS(profile.modeTokens?.[mode] || {}, target);
+    return css.replace("{\n", `{\n  color-scheme: ${mode};\n`);
+  };
+  return [
+    themeCSS(profile.tokens || {}, `${owner}${part}`),
+    rule("dark", `${owner}:not([${attribute}])${part},\n${selector("dark")}`),
+    rule("light", selector("light")),
+    ...(["dark", "light"] as const).map(
+      (mode) =>
+        `@media (prefers-color-scheme: ${mode}) {\n${rule(
+          mode,
+          selector("system"),
+        )
+          .split("\n")
+          .map((line) => `  ${line}`)
+          .join("\n")}\n}`,
+    ),
+  ].join("\n\n");
 }

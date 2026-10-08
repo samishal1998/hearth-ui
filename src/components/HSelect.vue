@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, useId } from "vue";
-import type { SelectOption } from "../themes";
-import { controlSync } from "../internal";
+import type { SelectOption, ControlSize } from "../themes";
+import { controlSync, describedBy } from "../internal";
 import HIcon from "./HIcon.vue";
 defineOptions({ inheritAttrs: false });
 const props = withDefaults(
@@ -16,6 +16,8 @@ const props = withDefaults(
     error?: string;
     disabled?: boolean;
     required?: boolean;
+    hideLabel?: boolean;
+    size?: ControlSize;
   }>(),
   { value: "", options: () => [] },
 );
@@ -38,8 +40,8 @@ function change(e: Event) {
 }
 </script>
 <template>
-  <div class="h-field" part="base">
-    <label :for="id" part="label"
+  <div class="h-field" :class="size ? `h-size-${size}` : undefined" part="base">
+    <label :for="id" :class="{ 'h-sr-only': hideLabel }" part="label"
       >{{ label }}<span v-if="required" aria-hidden="true"> *</span></label
     >
     <div class="h-select-control">
@@ -51,7 +53,12 @@ function change(e: Event) {
         :disabled="disabled"
         :required="required"
         :aria-invalid="!!error"
-        :aria-describedby="hint || error ? `${id}-help` : undefined"
+        :aria-describedby="
+          describedBy(
+            $attrs['aria-describedby'],
+            hint || error ? `${id}-help` : undefined,
+          )
+        "
         part="control"
         @change="change"
       >
@@ -79,14 +86,16 @@ function change(e: Event) {
 </template>
 <style scoped>
 @import "../styles/base.css";
+@import "../styles/field.css";
 .h-field {
+  position: relative;
   font-family: var(--h-font);
   color: var(--h-text);
   min-width: 0;
 }
 label {
   display: block;
-  font-size: 12px;
+  font-size: max(var(--h-font-min-size, 12px), 12px);
   font-weight: 500;
   margin-bottom: 7px;
 }
@@ -97,13 +106,14 @@ select {
   appearance: none;
   width: 100%;
   min-height: var(--h-control-height);
-  padding: 10px 12px;
+  padding: var(--h-field-padding-y, 10px) var(--h-input-padding-x, 12px);
   padding-inline-end: 44px;
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-control);
   background: var(--h-bg);
   color: var(--h-text);
-  font-size: var(--h-field-font-size, 13px);
+  font-size: max(var(--h-font-min-size, 12px), var(--h-field-font-size, 13px));
+  line-height: 1.4;
 }
 select:disabled {
   opacity: 0.55;
@@ -124,7 +134,7 @@ select[aria-invalid="true"] {
   border-color: var(--h-danger);
 }
 p {
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
   margin-top: 7px;
   line-height: 1.7;

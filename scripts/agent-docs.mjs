@@ -58,6 +58,9 @@ export async function renderAgentDocs() {
     )
       ? "mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots."
       : "";
+    const fieldNote = `${source.props} ${source.types}`.includes("hideLabel")
+      ? "hideLabel visually hides the label while retaining the accessible name; keep supplying label. size=compact provides dense desktop controls, with larger touch targets on coarse pointers. Without size, controls inherit theme density. --h-font-min-size supplies a 12px default floor for caption/helper text and field typography."
+      : "";
     const imports = [...new Set([component.name, ...(recipe.imports || [])])];
     for (const name of [...imports, ...recipe.related])
       if (!names.has(name))
@@ -91,7 +94,11 @@ export async function renderAgentDocs() {
         `# ${component.name}\n\n> ${component.description}`,
         `[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version ${version}. Match documentation to your installed source/release.`,
         `## Identity\n\n- Vue export: \`${component.name}\` from \`${vuePackage}\`.\n- Custom element: \`<${component.tag}>\`.\n- Constructor: \`Hearth${component.name.slice(1)}Element\` from \`${elementsPackage}\`.\n- Category: ${component.category}.\n- [Implementation](${sourceURL}${source.path}).`,
-        `## Choose and use it correctly\n\n${[...recipe.notes, mobileNote]
+        `## Choose and use it correctly\n\n${[
+          ...recipe.notes,
+          mobileNote,
+          fieldNote,
+        ]
           .filter(Boolean)
           .map((n) => "- " + n)
           .join("\n")}`,
@@ -146,6 +153,34 @@ export async function renderAgentDocs() {
         .join("\n")}`,
   );
   files.set(
+    "docs/primitives/llms.txt",
+    [
+      "# Hearth UI behavior and native markup primitives",
+      `[Start at the agent index](../../llms.txt). Version ${version}. Match this reference to your installed package or release.`,
+      "## Public API",
+      "Both package roots export nextCollectionId, toggleSelection, createTypeahead, focusComposed, positionPopup, observePopup, createOverlayController, bindField, and createFormControlController. Their types use DOM/data types, not Vue. Imports are SSR-safe; call DOM controllers only after mounting.",
+      "## Composition contracts",
+      "- nextCollectionId(items,current,key,{orientation,direction,wrap}) handles enabled IDs and Home/End/arrows. CollectionEntry uses id, textValue?, disabled?. It does not assign ARIA roles or mutate focus itself.",
+      "- toggleSelection(values,id,multiple) returns a new selected-ID array. Focus/active state stays independent of selection.",
+      "- createTypeahead(timeout) returns search(items,key,current?,now?) and reset(). Buffered repeated characters cycle through matching labels. Call only for unmodified, non-IME character events.",
+      "- focusComposed(root) traverses native slots and open shadow roots for a visible focus target. It is not a focus trap. Native modal dialog behavior remains the focus-containment mechanism.",
+      "- positionPopup(anchor,panel,{side,align,gap,padding}) accepts an element or a DOMRect getter, supporting context/virtual anchors. Uses the owning window visual viewport and clamping/flipping. Set fixed positioning, inset:auto, and margin:0 on the consumer surface.",
+      "- observePopup(anchor,panel,optionsGetter) returns update()/dispose(). Positioning does not create a portal, set modal semantics, or own visibility. Call update after showing; dispose when detached.",
+      "- createOverlayController(element,{modal,initialFocus,returnFocus,onClose}) returns open()/close(reason?)/dispose(). Use a native dialog or popover element. Default dialog behavior is modal; popovers remain nonmodal. Call dispose on teardown. Initial focus policy is caller-owned, with composed-tree fallback.",
+      "- bindField(nativeControl,{label,descriptions,validationMessage,invalid}) requires label and descriptions in the same DOM root as the control. Returns update()/dispose(), preserves existing description IDs, and restores attributes/validity. This does not make a custom element form-associated; use native owning forms or Hearth fields for ElementInternals behavior.",
+      "- createFormControlController(internals,{getValue,getState,getValidity,onDisabled,onReset,onRestore}) supports consumer-defined form controls without Hearth private data attributes. The custom-element class must declare static formAssociated=true, call attachInternals(), and forward formDisabledCallback/formResetCallback/formStateRestoreCallback to setDisabled/reset/restore. sync updates value/state/validity; setCustomValidity adds an external validation error; validity/validationMessage expose snapshots for consumer UI; dispose stops writes. Values may be strings, Files, FormData (for repeated values), or null. The consumer owns reset defaults, accessible naming and error associations, and an anchor inside its own DOM root.",
+      "## Native markup styles",
+      "Import @hearth-ui/vue/primitives.css or @hearth-ui/elements/primitives.css for h-visually-hidden, h-focus-ring, h-field-layout, h-field-label, h-field-description, h-field-error, and h-input-group. Import these styles inside a consumer-owned shadow root if its markup is encapsulated there.",
+      "## Example",
+      '```js\nimport { createOverlayController, observePopup } from "@hearth-ui/elements";\nconst trigger = document.querySelector("#filter-trigger");\nconst content = document.querySelector("#filter-popover");\nconst placement = observePopup(trigger, content, () => ({ side: "bottom", align: "end" }));\nconst overlay = createOverlayController(content, { returnFocus: () => trigger });\ntrigger.addEventListener("click", () => { overlay.open(); placement.update(); });\n// During application teardown: placement.dispose(); overlay.dispose();\n```',
+      "## Related references",
+      "- [HSurface](../components/surface/llms.txt) for custom presentation.",
+      "- [HListbox](../components/listbox/llms.txt) for owner-rendered choices.",
+      "- [HPane](../components/pane/llms.txt) for persistent responsive inspectors.",
+      "- [HFieldset](../components/fieldset/llms.txt) for grouping and DOM-root constraints.",
+    ].join("\n\n") + "\n",
+  );
+  files.set(
     "llms.txt",
     [
       "# Hearth UI\n\n> Themeable Vue and web components for self-hosted dashboards, public pages, and authentication. Start here, then read only the component references needed for the task.",
@@ -154,6 +189,7 @@ export async function renderAgentDocs() {
       `## Packages and entry points\n\n- Native Vue: \`${vuePackage}\`. Import named components and \`${vuePackage}/styles.css\`. Vue 3.5+ is a peer dependency; this build does not bundle Vue.\n- Web components: \`${elementsPackage}\`. Import \`registerElements\` from its root and load \`${elementsPackage}/themes.css\`. No Vue dependency or Vue types are required by the host.\n- Auto-registration: \`${elementsPackage}/auto\`. Custom prefixes use \`registerElements('my-app')\`.\n- Both packages export theme helpers/types and include these references. Install from npm after publication, or use tarballs from \`npm run pack:packages\` / [GitHub Releases](https://github.com/samishal1998/hearth-ui/releases). Do not assume a prepared package is already on npm.\n- Raw HTML: extract the elements package, link \`dist/themes.css\`, and load \`dist/elements/auto.js\` as a module. Keep shared chunks together. No Node globals or global Vue are required.\n- Native Vue supports SSR. Custom elements render when connected in the browser; declarative shadow-DOM hydration is not provided.\n- The repository root is a private build workspace, not a publishable UI package. Earlier \`@samishal1998/hearth-ui\` release artifacts were a combined distribution; use matching version documentation when maintaining those installs.`,
       `## Shared integration rules\n\n- Vue props use camelCase; HTML attributes use kebab-case. Array/object values are DOM properties, never JSON attributes.\n- Boolean attributes use presence/absence. Assign \`element.disabled = false\`, not \`disabled="false"\`.\n- Custom events emitted by Vue use argument arrays: \`const [value] = event.detail\`. Listen on the element; do not assume bubbling. Native \`click\` remains a MouseEvent.\n- Vue uses \`v-model\` or a documented named model. Apply consumer-owned state changes for favorite, close, and navigation events.\n- Vue named slots use \`#name\`; native slots use \`slot="name"\`. Web components have no scoped slots.\n- Named fields join their owning form through ElementInternals. Multi-selects submit repeated values: read \`FormData.getAll(name)\`.\n- Keep forms and field hosts in one DOM tree. Set initial properties before connection for reset defaults. Do not put unrelated fields into an auth page's non-form slots.\n- \`formDisabled\` and \`control-sync\` are internal plumbing, not application APIs.\n- Source palettes: ${themes.map((t) => "`" + t + "`").join(", ")}. Sunset is default. Modes: dark, light, system. Densities: comfortable, compact.\n- Prefer inherited \`--h-*\` variables, then exposed CSS parts. Do not patch shadow-root implementation DOM.\n- Use visible labels, state text, and native keyboard behavior. Verify your custom palette and complete application, not just isolated components.`,
       "## Quick component selection\n\n- Fixed choice: HSelect. Searchable choice: HCombobox. Array-only searchable choice: HMultiSelect. Visible exclusive choices: HRadioGroup.\n- Selection/agreement: HCheckbox. On/off setting: HSwitch. Text: HInput/HTextarea. Numeric adjustment: HRange.\n- Panels: HTabs. Expandable sections: HAccordion. Routes: HNavigationMenu/HSidebar/HBreadcrumbs.\n- Work progress: HProgress. Loading shapes: HSkeleton. Empty results: HEmptyState. Feedback: HAlert. State label: HBadge.\n- Content: HCard. App launcher: HAppCard. Metric: HStatCard.",
+      "## Custom UI foundation\n\nStart with HSurface, HStack/HGrid/HContainer, HText/HHeading/HLink, and HToolbar/HFilterBar. Use [behavior and native-markup primitives](docs/primitives/llms.txt) when custom markup needs shared focus, selection, field association, or overlay positioning. HPane is persistent desktop content with a mobile full-screen dialog; HSheet remains modal on both sizes. HVirtualList uses fixed-height rows, not variable-height messages.",
       ...groups,
       `## Project references\n\n- [Repository](https://github.com/samishal1998/hearth-ui): source and workflows.\n- [README](${sourceURL}README.md): integration and publishing.\n- [Live catalog](https://hearth-ui.samyx.net/#components): interactive examples.\n- [Theme studio](https://hearth-ui.samyx.net/#themes): configure tokens.\n- [Shared types](${sourceURL}src/themes.ts): theme and data contracts.\n\nRelative links work in the repository and under the site's base path. Source links point to main; choose a matching tag when maintaining an older release.`,
       "---\nGenerated by `npm run docs:generate`; edit source, catalog, and recipes instead.",

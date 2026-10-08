@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, watchEffect } from "vue";
+import { ref, watch, watchEffect, useId } from "vue";
+import type { ControlSize } from "../themes";
 import { controlSync } from "../internal";
 const props = withDefaults(
   defineProps<{
@@ -12,6 +13,8 @@ const props = withDefaults(
     value?: string;
     disabled?: boolean;
     required?: boolean;
+    hideLabel?: boolean;
+    size?: ControlSize;
   }>(),
   { modelValue: undefined, checked: false, value: "on" },
 );
@@ -22,6 +25,7 @@ const emit = defineEmits<{
   "control-sync": [];
 }>();
 const input = ref<HTMLInputElement>();
+const id = useId();
 const local = ref(props.modelValue ?? props.checked);
 watch(
   () => [props.modelValue, props.checked],
@@ -39,10 +43,15 @@ function change(e: Event) {
 }
 </script>
 <template>
-  <label class="h-checkbox" part="base"
+  <label
+    class="h-checkbox"
+    :class="[size ? `h-size-${size}` : undefined, { 'hide-label': hideLabel }]"
+    part="base"
     ><input
       ref="input"
       type="checkbox"
+      :aria-labelledby="`${id}-label`"
+      :aria-describedby="description ? `${id}-description` : undefined"
       part="control"
       :name="name"
       :value="value"
@@ -50,9 +59,13 @@ function change(e: Event) {
       :disabled="disabled"
       :required="required"
       @change="change"
-    /><span
-      ><strong part="label">{{ label }}</strong
-      ><small v-if="description" part="description">{{
+    /><span :class="{ 'h-sr-only': hideLabel && !description }"
+      ><strong
+        :id="`${id}-label`"
+        :class="{ 'h-sr-only': hideLabel && !!description }"
+        part="label"
+        >{{ label }}</strong
+      ><small v-if="description" :id="`${id}-description`" part="description">{{
         description
       }}</small></span
     ></label
@@ -60,11 +73,13 @@ function change(e: Event) {
 </template>
 <style scoped>
 @import "../styles/base.css";
+@import "../styles/field.css";
 .h-checkbox {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 44px;
+  min-height: var(--h-choice-height, 44px);
   font-family: var(--h-font);
   color: var(--h-text);
   cursor: pointer;
@@ -78,12 +93,12 @@ input {
   cursor: pointer;
 }
 strong {
-  font-size: 13px;
+  font-size: max(var(--h-font-min-size, 12px), 13px);
   font-weight: 500;
 }
 small {
   display: block;
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
   line-height: 1.8;
   margin-top: 3px;
@@ -94,5 +109,18 @@ small {
 }
 input:disabled {
   cursor: not-allowed;
+}
+.h-checkbox.hide-label {
+  display: inline-flex;
+  justify-content: center;
+  min-width: var(--h-choice-height, 44px);
+}
+@media (pointer: coarse) {
+  .h-checkbox {
+    min-height: max(44px, var(--h-choice-height, 44px));
+  }
+  .h-checkbox.hide-label {
+    min-width: max(44px, var(--h-choice-height, 44px));
+  }
 }
 </style>

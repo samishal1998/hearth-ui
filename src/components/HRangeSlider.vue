@@ -307,7 +307,7 @@ legend {
 }
 .h-range-bound > span {
   color: var(--h-muted);
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
 }
 output {
   font-size: 20px;
@@ -429,7 +429,7 @@ input:focus-visible + .h-range-thumb {
   display: flex;
   justify-content: space-between;
   color: var(--h-faint);
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   font-variant-numeric: tabular-nums;
   padding-inline: 12px;
 }

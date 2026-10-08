@@ -2,7 +2,7 @@
 
 > A native checkbox with a mixed-state option and optional description.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -16,10 +16,11 @@
 
 - The model is boolean. The value prop is the submitted string for a checked checkbox; unchecked checkboxes contribute no form entry.
 - indeterminate is a mixed visual state, not a third form value. Handle update:indeterminate(false) after user interaction, or use v-model:indeterminate.
+- hideLabel visually hides the label while retaining the accessible name; keep supplying label. size=compact provides dense desktop controls, with larger touch targets on coarse pointers. Without size, controls inherit theme density. --h-font-min-size supplies a 12px default floor for caption/helper text and field typography.
 
 ## Public API
 
-label, description, name, value: string · modelValue, checked, indeterminate, required, disabled: boolean
+label, description, name, value: string · modelValue, checked, indeterminate, required, disabled: boolean · hideLabel: boolean · size: regular | compact (otherwise inherits density)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -34,6 +35,8 @@ type Props = {
     value?: string;
     disabled?: boolean;
     required?: boolean;
+    hideLabel?: boolean;
+    size?: ControlSize;
 };
 ```
 
@@ -74,6 +77,12 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 base, control, label, description
 
 Use `hearth-checkbox::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export type ControlSize = "regular" | "compact";
+```
 
 ## Vue example
 

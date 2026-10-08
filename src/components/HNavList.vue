@@ -93,7 +93,7 @@ button:hover {
 }
 small {
   margin-left: auto;
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   padding: 1px 6px;
   border-radius: 5px;
   background: var(--h-accent-subtle);

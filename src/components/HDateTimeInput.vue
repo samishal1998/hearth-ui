@@ -5,6 +5,8 @@ import HCalendar from "./HCalendar.vue";
 import HTimePicker from "./HTimePicker.vue";
 import HPopover from "./HPopover.vue";
 import HButton from "./HButton.vue";
+import type { ControlSize, IconValue } from "../themes";
+import { useSlotPresence } from "../slots";
 import { parseDate, timeSeconds, dateString } from "../dates";
 const props = withDefaults(
   defineProps<{
@@ -22,6 +24,10 @@ const props = withDefaults(
     hint?: string;
     error?: string;
     mobileBreakpoint?: number;
+    hideLabel?: boolean;
+    size?: ControlSize;
+    leadingIcon?: IconValue;
+    clearable?: boolean;
   }>(),
   { value: "" },
 );
@@ -35,6 +41,8 @@ const local = ref(props.modelValue ?? props.value),
   date = ref(""),
   time = ref("00:00");
 const input = ref<InstanceType<typeof HTextInput>>();
+const root = ref<HTMLElement>();
+const hasSlot = useSlotPresence(() => root.value);
 const popover = ref<InstanceType<typeof HPopover>>();
 watch(
   () => [props.modelValue, props.value],
@@ -107,12 +115,16 @@ onMounted(sync);
 onUpdated(sync);
 </script>
 <template>
-  <div class="h-date-time">
+  <div ref="root" class="h-date-time">
     <HTextInput
       ref="input"
       :model-value="local"
       type="text"
       :label="label"
+      :hide-label="hideLabel"
+      :size="size"
+      :leading-icon="leadingIcon"
+      :clearable="clearable"
       :name="name"
       placeholder="YYYY-MM-DDTHH:mm"
       autocomplete="off"
@@ -124,8 +136,10 @@ onUpdated(sync);
       @update:model-value="update"
       @change="emit('change', $event)"
       @control-sync="sync"
+      ><template v-if="hasSlot('leading')" #leading
+        ><slot name="leading" /></template
       ><template #trailing
-        ><HPopover
+        ><slot v-if="hasSlot('trailing')" name="trailing" /><HPopover
           ref="popover"
           v-model:open="open"
           :mobile-breakpoint="mobileBreakpoint"

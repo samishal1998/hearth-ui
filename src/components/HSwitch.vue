@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, useId } from "vue";
+import type { ControlSize } from "../themes";
 import { controlSync } from "../internal";
 const props = withDefaults(
   defineProps<{
@@ -11,6 +12,8 @@ const props = withDefaults(
     value?: string;
     disabled?: boolean;
     required?: boolean;
+    hideLabel?: boolean;
+    size?: ControlSize;
   }>(),
   { modelValue: undefined, checked: false, value: "on" },
 );
@@ -20,6 +23,7 @@ const emit = defineEmits<{
   "control-sync": [];
 }>();
 const local = ref(props.modelValue ?? props.checked);
+const id = useId();
 watch(
   () => [props.modelValue, props.checked],
   () => (local.value = props.modelValue ?? props.checked),
@@ -32,10 +36,21 @@ function change(e: Event) {
 }
 </script>
 <template>
-  <label class="h-switch" part="base" :class="{ disabled }"
-    ><span class="h-switch-copy"
-      ><strong part="label">{{ label }}</strong
-      ><small v-if="description" part="description">{{
+  <label
+    class="h-switch"
+    part="base"
+    :class="[
+      size ? `h-size-${size}` : undefined,
+      { disabled, 'hide-label': hideLabel },
+    ]"
+    ><span
+      class="h-switch-copy"
+      :class="{ 'h-sr-only': hideLabel && !description }"
+      ><strong
+        :class="{ 'h-sr-only': hideLabel && !!description }"
+        part="label"
+        >{{ label }}</strong
+      ><small v-if="description" :id="`${id}-description`" part="description">{{
         description
       }}</small></span
     ><span class="h-toggle"
@@ -43,6 +58,7 @@ function change(e: Event) {
         type="checkbox"
         role="switch"
         :aria-label="label"
+        :aria-describedby="description ? `${id}-description` : undefined"
         :name="name"
         :value="value"
         :checked="local"
@@ -57,12 +73,14 @@ function change(e: Event) {
 </template>
 <style scoped>
 @import "../styles/base.css";
+@import "../styles/field.css";
 .h-switch {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  min-height: 44px;
+  min-height: var(--h-choice-height, 44px);
   font-family: var(--h-font);
   color: var(--h-text);
   cursor: pointer;
@@ -71,13 +89,13 @@ function change(e: Event) {
   min-width: 0;
 }
 strong {
-  font-size: 13px;
+  font-size: max(var(--h-font-min-size, 12px), 13px);
   font-weight: 500;
 }
 small {
   display: block;
   color: var(--h-muted);
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   line-height: 1.7;
   margin-top: 5px;
 }
@@ -86,7 +104,7 @@ small {
   display: grid;
   place-items: center;
   min-width: 44px;
-  height: 44px;
+  height: var(--h-choice-height, 44px);
   flex-shrink: 0;
 }
 input {
@@ -136,5 +154,14 @@ input:focus-visible + .h-track {
 .disabled input,
 input:disabled {
   cursor: not-allowed;
+}
+.h-switch.hide-label {
+  display: inline-flex;
+}
+@media (pointer: coarse) {
+  .h-switch,
+  .h-toggle {
+    min-height: max(44px, var(--h-choice-height, 44px));
+  }
 }
 </style>

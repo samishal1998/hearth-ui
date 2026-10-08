@@ -4,12 +4,14 @@ import HButton from "./HButton.vue";
 import HIcon from "./HIcon.vue";
 import { useFloating } from "../floating";
 import { useMobileLayout } from "../mobile";
-import type { MenuAction } from "../themes";
+import { useSlotPresence } from "../slots";
+import type { MenuAction, IconValue } from "../themes";
 const props = withDefaults(
   defineProps<{
     items: MenuAction[];
     label?: string;
-    icon?: string;
+    icon?: IconValue;
+    iconOnly?: boolean;
     open?: boolean;
     disabled?: boolean;
     placement?: "top" | "bottom" | "left" | "right";
@@ -24,6 +26,7 @@ const emit = defineEmits<{
 const trigger = ref<InstanceType<typeof HButton>>();
 const anchor = ref<HTMLElement>();
 const panel = ref<HTMLElement>();
+const hasSlot = useSlotPresence(() => panel.value?.parentElement ?? undefined);
 const mobile = useMobileLayout(panel, () => props.mobileBreakpoint);
 const visible = ref(false);
 const id = useId();
@@ -108,7 +111,9 @@ onBeforeUnmount(() => close(false));
   <span class="h-dropdown" part="base"
     ><HButton
       ref="trigger"
-      :icon="icon"
+      :icon="icon || (iconOnly ? 'more' : undefined)"
+      :icon-only="iconOnly"
+      :label="iconOnly ? label : undefined"
       trailing-icon="down"
       :disabled="disabled"
       aria-haspopup="menu"
@@ -117,7 +122,8 @@ onBeforeUnmount(() => close(false));
       @click="visible ? close() : show()"
       @keydown.down.prevent="show()"
       @keydown.up.prevent="show(true)"
-      >{{ label }}</HButton
+      ><template v-if="hasSlot('icon')" #icon><slot name="icon" /></template
+      ><slot name="trigger-label">{{ label }}</slot></HButton
     >
     <div
       ref="panel"
@@ -209,7 +215,7 @@ onBeforeUnmount(() => close(false));
 }
 kbd {
   margin-left: auto;
-  font: 10px var(--h-font-mono);
+  font: max(var(--h-font-min-size, 12px), 10px) var(--h-font-mono);
   color: var(--h-muted);
 }
 hr {

@@ -2,7 +2,7 @@
 
 > Escaped, copyable code or configuration text with optional wrapping and line numbers.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -19,7 +19,7 @@
 
 ## Public API
 
-code, language, title: string · wrap, lineNumbers, copyable: boolean
+code, language, title: string · wrap, lineNumbers, copyable: boolean · maxHeight: string · bare: boolean
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -31,6 +31,8 @@ type Props = {
     wrap?: boolean;
     lineNumbers?: boolean;
     copyable?: boolean;
+    maxHeight?: string;
+    bare?: boolean;
 };
 ```
 

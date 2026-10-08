@@ -2,7 +2,7 @@
 
 > Responsive native key/value metadata with links and per-value slots.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -16,17 +16,21 @@
 
 - Native dl/dt/dd semantics suit resource metadata and provenance. Values are escaped primitive text by default.
 - Override a value through a slot named value:<item.key>. Use HDataTable for comparable records with columns.
+- dense shortens row spacing; variant=inline places label/value side by side. columns=auto uses container-driven auto-fit with minColumnWidth. Rich values remain ordinary named slots in both distributions.
 
 ## Public API
 
-items: DescriptionItem[] · columns: 1 | 2 | 3
+items: DescriptionItem[] · columns: 1 | 2 | 3 · columns: 1 | 2 | 3 | auto · minColumnWidth: string · dense: boolean · variant: stacked | inline
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
 ```ts
 type Props = {
     items: DescriptionItem[];
-    columns?: 1 | 2 | 3;
+    columns?: 1 | 2 | 3 | "auto";
+    dense?: boolean;
+    variant?: "stacked" | "inline";
+    minColumnWidth?: string;
 };
 ```
 
@@ -34,9 +38,11 @@ type Props = {
 
 ```ts
 {
-  items: () => [],
-  columns: 1,
-}
+    items: () => [],
+    columns: 1,
+    variant: "stacked",
+    minColumnWidth: "200px",
+  }
 ```
 
 ### Events

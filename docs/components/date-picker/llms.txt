@@ -2,7 +2,7 @@
 
 > Date text entry with a Hearth calendar popover and form validation.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -17,10 +17,11 @@
 - Text entry with an inset calendar button and HCalendar in a Hearth top-layer popover. Selection, Clear, and Escape return focus to the calendar button so a mobile keyboard does not reopen. Dates are YYYY-MM-DD or empty, without time zones.
 - Date parsing and min/max use the form validity API; required uses the underlying text field. readonly blocks both typing and the calendar trigger. Invalid dates remain visible for correction.
 - mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
+- hideLabel visually hides the label while retaining the accessible name; keep supplying label. size=compact provides dense desktop controls, with larger touch targets on coarse pointers. Without size, controls inherit theme density. --h-font-min-size supplies a 12px default floor for caption/helper text and field typography.
 
 ## Public API
 
-modelValue, value, label, name, min, max, locale, hint, error: string · weekStartsOn: 0 | 1 · required, disabled, readonly: boolean · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
+modelValue, value, label, name, min, max, locale, hint, error: string · weekStartsOn: 0 | 1 · required, disabled, readonly: boolean · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables) · hideLabel: boolean · size: regular | compact (otherwise inherits density)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -40,6 +41,10 @@ type Props = {
     locale?: string;
     weekStartsOn?: 0 | 1;
     mobileBreakpoint?: number;
+    hideLabel?: boolean;
+    size?: ControlSize;
+    leadingIcon?: IconValue;
+    clearable?: boolean;
 };
 ```
 
@@ -68,7 +73,7 @@ Vue-emitted custom-element events expose argument arrays in `event.detail`. List
 
 ### Slots
 
-None
+leading, trailing
 
 Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 
@@ -77,6 +82,22 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 base, label, control, hint, adornment, panel, grid, day, footer
 
 Use `hearth-date-picker::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export type ControlSize = "regular" | "compact";
+
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
+}
+```
 
 ## Vue example
 

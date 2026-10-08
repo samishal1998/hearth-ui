@@ -2,6 +2,7 @@
 .h-mobile-overlay.h-mobile:is([open], :popover-open) {
   --h-field-font-size: 16px;
   --h-control-height: 44px;
+  --h-adornment-size: 44px;
   --h-calendar-day-height: 44px;
   position: fixed;
   inset: auto auto var(--h-overlay-bottom, 0px) var(--h-overlay-left, 0px);

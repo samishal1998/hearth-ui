@@ -2,7 +2,7 @@
 
 > A readable row with icon, description, badge, and separate action content.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -16,10 +16,11 @@
 
 - Place in HList or a native list. interactive creates a button; href creates a safe link.
 - Use the actions slot for separate interactive controls. Keep leading/trailing slots noninteractive when the main row is a button or link.
+- before (with selection as fallback) is outside the primary button/link and is the correct place for a row checkbox. description and badge slots support rich noninteractive metadata. aria-label, title, and event attributes forward to the primary interactive element; class/style remain on the list item.
 
 ## Public API
 
-title, description, icon, badge, href: string · tone: Tone · interactive, disabled, selected: boolean
+title, description, badge, href: string · icon: IconValue · tone: Tone · interactive, disabled, selected: boolean · aria-label/title and other attributes forward to the row action
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -27,7 +28,7 @@ A `?` marks optional source props. Props with defaults may be omitted. Internal 
 type Props = {
     title: string;
     description?: string;
-    icon?: string;
+    icon?: IconValue;
     badge?: string;
     tone?: Tone;
     href?: string;
@@ -58,7 +59,7 @@ Vue-emitted custom-element events expose argument arrays in `event.detail`. List
 
 ### Slots
 
-leading, trailing, actions
+before, selection (fallback for before), leading, description, trailing, badge, actions
 
 Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 
@@ -71,6 +72,16 @@ Use `hearth-list-item::part(part-name)` for an exposed part or inherited `--h-*`
 ## Supporting types
 
 ```ts
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
+}
+
 export type Tone = "neutral" | "accent" | "success" | "warning" | "danger" | "info";
 ```
 

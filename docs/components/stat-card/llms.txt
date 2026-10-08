@@ -2,7 +2,7 @@
 
 > A quiet overview metric with tabular numbers, an icon, and a supporting label.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -19,7 +19,7 @@
 
 ## Public API
 
-label: string · value: string | number · detail, icon: string · tone: Tone
+label: string · value: string | number · detail: string · icon: IconValue · tone: Tone · detail slot for rich supporting values
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -28,7 +28,7 @@ type Props = {
     label: string;
     value: string | number;
     detail?: string;
-    icon?: string;
+    icon?: IconValue;
     tone?: Tone;
 };
 ```
@@ -47,7 +47,7 @@ Vue-emitted custom-element events expose argument arrays in `event.detail`. List
 
 ### Slots
 
-None
+icon, detail
 
 Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 
@@ -60,6 +60,16 @@ Use `hearth-stat-card::part(part-name)` for an exposed part or inherited `--h-*`
 ## Supporting types
 
 ```ts
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
+}
+
 export type Tone = "neutral" | "accent" | "success" | "warning" | "danger" | "info";
 ```
 

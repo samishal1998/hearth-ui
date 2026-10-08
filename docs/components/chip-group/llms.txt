@@ -2,7 +2,7 @@
 
 > An array-valued filter group or removable set of selected tags.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -19,13 +19,13 @@
 
 ## Public API
 
-options: SelectOption[] · modelValue: string[] · label: string · removable, disabled: boolean
+options: SelectOption[] · modelValue: string[] · label: string · removable, disabled: boolean · options: ChipOption[] (count/icon/title metadata)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
 ```ts
 type Props = {
-    options: SelectOption[];
+    options: ChipOption[];
     modelValue?: string[];
     label?: string;
     removable?: boolean;
@@ -74,10 +74,26 @@ Use `hearth-chip-group::part(part-name)` for an exposed part or inherited `--h-*
 ## Supporting types
 
 ```ts
+export interface ChipOption extends SelectOption {
+    count?: number;
+    icon?: IconValue;
+    title?: string;
+}
+
 export interface SelectOption {
     value: string;
     label: string;
     disabled?: boolean;
+}
+
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
 }
 ```
 

@@ -97,6 +97,16 @@ export function apiSource(name, shared = sharedTypes()) {
     ts.forEachChild(node, visit);
   }
   visit(source);
+  if (name === "HIcon")
+    visit(
+      ts.createSourceFile(
+        "src/icons.ts",
+        read("src/icons.ts"),
+        ts.ScriptTarget.Latest,
+        true,
+        ts.ScriptKind.TS,
+      ),
+    );
   if (!props) throw new Error(`No typed props found for ${name}`);
   const found = new Map();
   function dependencies(node) {

@@ -2,7 +2,7 @@
 
 > Native button or link behavior, clear focus, icon-only labels, and restrained press feedback.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -17,11 +17,12 @@
 - click is a native event, not a Vue-emitted array payload. Do not read event.detail[0] from a click.
 - The default type is button. Set type="submit" or type="reset" explicitly inside forms. href creates a link for supported HTTP(S)/relative URLs.
 - For icon-only controls, provide label or aria-label. loading disables the control and sets aria-busy.
+- Custom glyphs can use the icon and trailing-icon slots. iconOnly also renders a custom default-slot glyph when no icon prop or icon slot is supplied. Icon slots are decorative content, not nested interactive controls. The icon/trailingIcon properties accept IconDefinition objects as well as built-in names.
 - The web-component submit button invokes its owning form; do not rely on native SubmitEvent.submitter name/value semantics.
 
 ## Public API
 
-variant: primary | secondary | ghost | danger · size: regular | compact · type: button | submit | reset · disabled, loading, iconOnly: boolean · icon, trailingIcon, label, href, target: string
+variant: primary | secondary | ghost | danger · size: regular | compact · type: button | submit | reset · disabled, loading, iconOnly: boolean · icon, trailingIcon: IconValue · label, href, target: string
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -32,8 +33,8 @@ type Props = {
     type?: "button" | "submit" | "reset";
     disabled?: boolean;
     loading?: boolean;
-    icon?: string;
-    trailingIcon?: string;
+    icon?: IconValue;
+    trailingIcon?: IconValue;
     label?: string;
     iconOnly?: boolean;
     href?: string;
@@ -55,15 +56,29 @@ Vue-emitted custom-element events expose argument arrays in `event.detail`. List
 
 ### Slots
 
-default
+default, icon, trailing-icon (decorative content)
 
 Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 
 ### CSS parts
 
-control, label
+control, label, icon, trailing-icon
 
 Use `hearth-button::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
+}
+```
 
 ## Vue example
 

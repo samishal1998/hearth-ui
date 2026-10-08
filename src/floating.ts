@@ -1,4 +1,5 @@
 import { nextTick, onBeforeUnmount, watch, type Ref } from "vue";
+import { positionPopup, focusComposed } from "./primitives";
 
 /** The native top layer keeps overlays out of clipped ancestors without losing theme inheritance. */
 export function useFloating(
@@ -20,48 +21,7 @@ export function useFloating(
       p.style.removeProperty("top");
       return;
     }
-    const r = a.getBoundingClientRect(),
-      box = p.getBoundingClientRect(),
-      gap = 8,
-      pad = 12;
-    const viewport = window.visualViewport;
-    const left = viewport?.offsetLeft ?? 0,
-      top = viewport?.offsetTop ?? 0;
-    const vw = left + (viewport?.width ?? document.documentElement.clientWidth),
-      vh = top + (viewport?.height ?? window.innerHeight);
-    let side = placement();
-    if (
-      side === "bottom" &&
-      r.bottom + gap + box.height > vh - pad &&
-      r.top - top > box.height + gap
-    )
-      side = "top";
-    else if (
-      side === "top" &&
-      r.top - gap - box.height < top + pad &&
-      vh - r.bottom > box.height + gap
-    )
-      side = "bottom";
-    else if (side === "right" && r.right + gap + box.width > vw - pad)
-      side = "left";
-    else if (side === "left" && r.left - gap - box.width < left + pad)
-      side = "right";
-    let x =
-      side === "left"
-        ? r.left - box.width - gap
-        : side === "right"
-          ? r.right + gap
-          : r.left;
-    let y =
-      side === "top"
-        ? r.top - box.height - gap
-        : side === "bottom"
-          ? r.bottom + gap
-          : r.top;
-    x = Math.max(left + pad, Math.min(x, vw - box.width - pad));
-    y = Math.max(top + pad, Math.min(y, vh - box.height - pad));
-    p.style.left = `${Math.round(x)}px`;
-    p.style.top = `${Math.round(y)}px`;
+    positionPopup(a, p, { side: placement() });
   }
   function schedule() {
     cancelAnimationFrame(frame);
@@ -113,28 +73,5 @@ export function useFloating(
 
 /** Include slotted content and open custom-element roots when finding a focus target. */
 export function focusFirst(root: HTMLElement) {
-  function find(node: Node): HTMLElement | undefined {
-    if (
-      node instanceof HTMLElement &&
-      node.matches(
-        'button:not(:disabled),input:not(:disabled):not([type=hidden]),select:not(:disabled),textarea:not(:disabled),a[href],[tabindex="0"]',
-      ) &&
-      node.getClientRects().length
-    )
-      return node;
-    const children =
-      node instanceof HTMLSlotElement
-        ? node.assignedNodes({ flatten: true }).length
-          ? node.assignedNodes({ flatten: true })
-          : [...node.childNodes]
-        : node instanceof HTMLElement && node.shadowRoot
-          ? [...node.shadowRoot.childNodes]
-          : [...node.childNodes];
-    for (const child of children) {
-      const target = find(child);
-      if (target) return target;
-    }
-  }
-  const target = [...root.childNodes].map(find).find(Boolean);
-  (target || root).focus();
+  focusComposed(root);
 }

@@ -13,6 +13,30 @@ import {
   HSelect,
   HSwitch,
   HCard,
+  HSurface,
+  HStack,
+  HGrid,
+  HContainer,
+  HText,
+  HHeading,
+  HLink,
+  HScrollArea,
+  HAspectRatio,
+  HVisuallyHidden,
+  HFieldset,
+  HToolbar,
+  HFilterBar,
+  HMessage,
+  HCollapsible,
+  HToggleGroup,
+  HAlertDialog,
+  HPane,
+  HListbox,
+  HContextMenu,
+  HVirtualList,
+  HTreeView,
+  HResizablePane,
+  HListSpacer,
   HAppCard,
   HStatCard,
   HAlert,
@@ -76,6 +100,8 @@ import {
   HFirstRunSetup,
 } from "./index";
 export * from "./themes";
+export * from "./primitives";
+export { iconNames } from "./icons";
 
 type NativeControl =
   | HTMLInputElement
@@ -117,7 +143,10 @@ function element(
 ): VueElementConstructor<unknown> {
   const Base: VueElementConstructor<unknown> = defineCustomElement(component, {
     styles: [
-      `:host{display:${inline ? "inline-block" : "block"};min-width:0;font-family:var(--h-font,system-ui);font-size:var(--h-font-size,14px);color:var(--h-text,#f7f8fb)}:host([hidden]){display:none!important}`,
+      ...(component === HText
+        ? [':host([as="p"]),:host([as="div"]){display:block}']
+        : []),
+      `:host{display:${component === HVisuallyHidden ? "contents" : inline ? "inline-block" : "block"};min-width:0;font-family:var(--h-font,system-ui);font-size:var(--h-font-size,14px);color:var(--h-text,#f7f8fb)}:host([hidden]){display:none!important}`,
       ...(component.styles || []),
     ],
   });
@@ -427,6 +456,55 @@ export const HearthSwitchElement: FormConstructor<typeof HSwitch> = element(
   "field",
 );
 export const HearthCardElement: Constructor<typeof HCard> = element(HCard);
+export const HearthSurfaceElement: Constructor<typeof HSurface> =
+  element(HSurface);
+export const HearthStackElement: Constructor<typeof HStack> = element(HStack);
+export const HearthGridElement: Constructor<typeof HGrid> = element(HGrid);
+export const HearthContainerElement: Constructor<typeof HContainer> =
+  element(HContainer);
+export const HearthTextElement: Constructor<typeof HText> = element(
+  HText,
+  true,
+);
+export const HearthHeadingElement: Constructor<typeof HHeading> =
+  element(HHeading);
+export const HearthLinkElement: Constructor<typeof HLink> = element(
+  HLink,
+  true,
+);
+export const HearthScrollAreaElement: Constructor<typeof HScrollArea> =
+  element(HScrollArea);
+export const HearthAspectRatioElement: Constructor<typeof HAspectRatio> =
+  element(HAspectRatio);
+export const HearthVisuallyHiddenElement: Constructor<typeof HVisuallyHidden> =
+  element(HVisuallyHidden, true);
+export const HearthFieldsetElement: Constructor<typeof HFieldset> =
+  element(HFieldset);
+export const HearthToolbarElement: Constructor<typeof HToolbar> =
+  element(HToolbar);
+export const HearthFilterBarElement: Constructor<typeof HFilterBar> =
+  element(HFilterBar);
+export const HearthMessageElement: Constructor<typeof HMessage> =
+  element(HMessage);
+export const HearthCollapsibleElement: Constructor<typeof HCollapsible> =
+  element(HCollapsible);
+export const HearthToggleGroupElement: Constructor<typeof HToggleGroup> =
+  element(HToggleGroup);
+export const HearthAlertDialogElement: Constructor<typeof HAlertDialog> =
+  element(HAlertDialog);
+export const HearthPaneElement: Constructor<typeof HPane> = element(HPane);
+export const HearthListboxElement: Constructor<typeof HListbox> =
+  element(HListbox);
+export const HearthContextMenuElement: Constructor<typeof HContextMenu> =
+  element(HContextMenu);
+export const HearthVirtualListElement: Constructor<typeof HVirtualList> =
+  element(HVirtualList);
+export const HearthTreeViewElement: Constructor<typeof HTreeView> =
+  element(HTreeView);
+export const HearthResizablePaneElement: Constructor<typeof HResizablePane> =
+  element(HResizablePane);
+export const HearthListSpacerElement: Constructor<typeof HListSpacer> =
+  element(HListSpacer);
 export const HearthAppCardElement: Constructor<typeof HAppCard> =
   element(HAppCard);
 export const HearthStatCardElement: Constructor<typeof HStatCard> =
@@ -580,6 +658,30 @@ const elements: Record<string, VueElementConstructor<unknown>> = {
   select: HearthSelectElement,
   switch: HearthSwitchElement,
   card: HearthCardElement,
+  surface: HearthSurfaceElement,
+  stack: HearthStackElement,
+  grid: HearthGridElement,
+  container: HearthContainerElement,
+  text: HearthTextElement,
+  heading: HearthHeadingElement,
+  link: HearthLinkElement,
+  "scroll-area": HearthScrollAreaElement,
+  "aspect-ratio": HearthAspectRatioElement,
+  "visually-hidden": HearthVisuallyHiddenElement,
+  fieldset: HearthFieldsetElement,
+  toolbar: HearthToolbarElement,
+  "filter-bar": HearthFilterBarElement,
+  message: HearthMessageElement,
+  collapsible: HearthCollapsibleElement,
+  "toggle-group": HearthToggleGroupElement,
+  "alert-dialog": HearthAlertDialogElement,
+  pane: HearthPaneElement,
+  listbox: HearthListboxElement,
+  "context-menu": HearthContextMenuElement,
+  "virtual-list": HearthVirtualListElement,
+  "tree-view": HearthTreeViewElement,
+  "resizable-pane": HearthResizablePaneElement,
+  "list-spacer": HearthListSpacerElement,
   "app-card": HearthAppCardElement,
   "stat-card": HearthStatCardElement,
   alert: HearthAlertElement,

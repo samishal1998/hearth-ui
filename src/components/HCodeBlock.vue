@@ -10,6 +10,8 @@ withDefaults(
     wrap?: boolean;
     lineNumbers?: boolean;
     copyable?: boolean;
+    maxHeight?: string;
+    bare?: boolean;
   }>(),
   { language: "text", copyable: true },
 );
@@ -33,8 +35,13 @@ async function copy(code: string) {
 onBeforeUnmount(() => clearTimeout(timer));
 </script>
 <template>
-  <figure class="h-code-block" part="base">
-    <figcaption part="header">
+  <figure
+    class="h-code-block"
+    :class="{ bare }"
+    :style="{ '--h-code-max-height': maxHeight }"
+    part="base"
+  >
+    <figcaption v-if="!bare || copyable" part="header">
       <span>{{ title || language }}</span
       ><HButton
         v-if="copyable"
@@ -79,15 +86,19 @@ figcaption {
   padding: 5px 14px;
   background: var(--h-surface);
   border-bottom: 1px solid var(--h-border);
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
 }
 pre {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
   margin: 0;
   max-height: var(--h-code-max-height, 360px);
   overflow: auto;
   padding: 18px;
-  font: 12px/1.9 var(--h-font-mono);
+  font: max(var(--h-font-min-size, 12px), 12px)/1.9 var(--h-font-mono);
   tab-size: 2;
   white-space: pre;
 }
@@ -112,5 +123,18 @@ pre {
   padding: 12px;
   font-size: 12px;
   color: var(--h-danger);
+}
+.bare {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.bare figcaption {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.bare pre {
+  padding: 0;
 }
 </style>

@@ -2,7 +2,7 @@
 
 > A nonmodal top-layer panel, anchored on desktop and docked at the bottom on mobile, with viewport-aware positioning and focus handling.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -21,7 +21,7 @@
 
 ## Public API
 
-open, disabled, iconOnly: boolean · label, title, panelLabel, icon: string · placement: top | bottom | left | right · variant: primary | secondary | ghost · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
+open, disabled, iconOnly: boolean · label, title, panelLabel: string · icon: IconValue · placement: top | bottom | left | right · variant: primary | secondary | ghost · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -30,7 +30,7 @@ type Props = {
     open?: boolean;
     label?: string;
     title?: string;
-    icon?: string;
+    icon?: IconValue;
     iconOnly?: boolean;
     panelLabel?: string;
     placement?: "top" | "bottom" | "left" | "right";
@@ -73,6 +73,20 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 base, panel, title, header, body, footer
 
 Use `hearth-popover::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
+}
+```
 
 ## Vue example
 

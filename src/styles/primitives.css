@@ -1,0 +1,59 @@
+/* Opt-in utilities for consumer-owned native markup, including markup inside your own shadow root. */
+.h-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.h-focus-ring:focus-visible {
+  outline: var(--h-focus-width, 2px) solid var(--h-focus, #ffb15c);
+  outline-offset: 3px;
+}
+.h-field-layout {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  font-family: var(--h-font, system-ui);
+  color: var(--h-text);
+}
+.h-field-label {
+  font-size: max(var(--h-font-min-size, 12px), 12px);
+  font-weight: 500;
+}
+.h-field-description {
+  font-size: max(var(--h-font-min-size, 12px), 12px);
+  color: var(--h-muted);
+  line-height: 1.8;
+  margin: 0;
+}
+.h-field-error {
+  color: var(--h-danger);
+}
+.h-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  border: 1px solid var(--h-border);
+  border-radius: var(--h-radius-control);
+  padding: 4px 12px;
+  background: var(--h-bg);
+}
+.h-input-group > input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--h-control-height, 44px);
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+.h-input-group:focus-within {
+  outline: var(--h-focus-width, 2px) solid var(--h-focus);
+  outline-offset: 3px;
+}

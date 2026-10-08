@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import HIcon from "./HIcon.vue";
+import type { IconValue } from "../themes";
 withDefaults(
-  defineProps<{ title?: string; description?: string; icon?: string }>(),
+  defineProps<{ title?: string; description?: string; icon?: IconValue }>(),
   { title: "Your next chapter starts here.", icon: "apps" },
 );
 </script>
 <template>
   <section class="h-empty" part="base">
-    <span class="h-empty-icon" part="icon"
-      ><HIcon :name="icon" :size="27"
-    /></span>
+    <span class="h-empty-icon" part="icon" aria-hidden="true"
+      ><slot name="icon"><HIcon :name="icon" :size="27" /></slot
+    ></span>
     <h2 part="title">{{ title }}</h2>
     <p v-if="description" part="description">{{ description }}</p>
     <div class="h-empty-actions"><slot /></div>
@@ -55,5 +56,10 @@ p {
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 25px;
+}
+.h-empty-icon :deep(svg),
+.h-empty-icon :slotted(svg) {
+  max-width: 32px;
+  max-height: 32px;
 }
 </style>

@@ -2,7 +2,7 @@
 
 > A compact selectable or removable label with distinct toggle and remove actions.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -19,7 +19,7 @@
 
 ## Public API
 
-label, value: string · selected, selectable, removable, disabled: boolean · tone: Tone
+label, value: string · selected, selectable, removable, disabled: boolean · tone: Tone · icon: IconValue · count: number
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -32,6 +32,8 @@ type Props = {
     removable?: boolean;
     disabled?: boolean;
     tone?: Tone;
+    icon?: IconValue;
+    count?: number;
 };
 ```
 
@@ -74,6 +76,16 @@ Use `hearth-chip::part(part-name)` for an exposed part or inherited `--h-*` toke
 
 ```ts
 export type Tone = "neutral" | "accent" | "success" | "warning" | "danger" | "info";
+
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
+}
 ```
 
 ## Vue example

@@ -73,9 +73,7 @@ async function preview() {
     if (token !== generation || !host.value) return;
     registerElements();
     const example = recipe.value;
-    const element = document.createElement(
-      example.mountTag || selected.value.tag,
-    );
+    const element = document.createElement(selected.value.tag);
     Object.assign(element, example.props || {});
     if (example.children) element.innerHTML = example.children;
     for (const event of [
@@ -99,11 +97,17 @@ async function preview() {
           Object.assign(element, { open: false });
         if (event === "submit") e.preventDefault();
       });
-    host.value.append(element);
+    if (example.mountTag) {
+      const mount = document.createElement(example.mountTag);
+      mount.append(element);
+      host.value.append(mount);
+    } else host.value.append(element);
     const opener: Record<string, string> = {
       HDialog: "Open dialog",
       HSheet: "Open sheet",
       HCommandPalette: "Open command palette",
+      HAlertDialog: "Open confirmation",
+      HPane: "Open inspector",
     };
     if (opener[selected.value.name]) {
       const trigger = document.createElement("hearth-button");
@@ -142,7 +146,10 @@ const vueCode = computed(() =>
     <template v-if="selected"
       ><nav class="registry-back" aria-label="Component breadcrumb">
         <HButton href="#components" variant="ghost">← All components</HButton
-        ><HBadge :label="selected.category" />
+        ><HBadge :label="selected.category" /><HBadge
+          label="Hearth UI 0.7"
+          tone="accent"
+        />
       </nav>
       <HPageHeader
         :title="selected.name"
@@ -241,7 +248,7 @@ const vueCode = computed(() =>
         eyebrow="Component registry"
         ><HButton href="#examples" trailing-icon="arrow"
           >Browse composed examples</HButton
-        ></HPageHeader
+        ><HButton href="#foundation">Explore primitives</HButton></HPageHeader
       >
       <p v-if="props.selected" role="status">
         That component was not found. Browse the registry below.
@@ -424,6 +431,7 @@ const vueCode = computed(() =>
 }
 .registry-back {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   align-items: center;
   margin-bottom: 24px;

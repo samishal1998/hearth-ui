@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import HIcon from "./HIcon.vue";
+import { ref } from "vue";
+import type { IconValue } from "../themes";
+import { useSlotPresence } from "../slots";
 import { controlSync, safeHref } from "../internal";
 defineOptions({ inheritAttrs: false });
 withDefaults(
@@ -9,8 +12,8 @@ withDefaults(
     type?: "button" | "submit" | "reset";
     disabled?: boolean;
     loading?: boolean;
-    icon?: string;
-    trailingIcon?: string;
+    icon?: IconValue;
+    trailingIcon?: IconValue;
     label?: string;
     iconOnly?: boolean;
     href?: string;
@@ -19,10 +22,13 @@ withDefaults(
   { variant: "secondary", size: "regular", type: "button" },
 );
 const emit = defineEmits<{ "control-sync": [] }>();
+const root = ref<HTMLElement>();
+const hasSlot = useSlotPresence(() => root.value);
 controlSync(emit);
 </script>
 <template>
   <component
+    ref="root"
     :is="safeHref(href) ? 'a' : 'button'"
     v-bind="$attrs"
     class="h-button"
@@ -45,13 +51,34 @@ controlSync(emit);
         }
       }
     "
-    ><span v-if="loading" class="h-spinner" aria-hidden="true" /><HIcon
-      v-else-if="icon"
-      :name="icon"
-      :size="18" /><span v-if="!iconOnly" part="label"
+    ><span v-if="loading" class="h-spinner" aria-hidden="true" />
+    <span
+      v-else-if="iconOnly"
+      class="h-button-icon"
+      part="icon"
+      aria-hidden="true"
+      ><slot name="icon"
+        ><HIcon v-if="icon" :name="icon" :size="18" /><slot v-else /></slot
+    ></span>
+    <span
+      v-else-if="icon || hasSlot('icon')"
+      class="h-button-icon"
+      part="icon"
+      aria-hidden="true"
+      ><slot name="icon"><HIcon :name="icon" :size="18" /></slot
+    ></span>
+    <span v-if="!iconOnly" part="label"
       ><slot>{{ label }}</slot></span
-    ><HIcon v-if="trailingIcon && !iconOnly" :name="trailingIcon" :size="18"
-  /></component>
+    >
+    <span
+      v-if="!iconOnly && (trailingIcon || hasSlot('trailing-icon'))"
+      class="h-button-icon"
+      part="trailing-icon"
+      aria-hidden="true"
+      ><slot name="trailing-icon"
+        ><HIcon :name="trailingIcon" :size="18" /></slot
+    ></span>
+  </component>
 </template>
 <style scoped>
 @import "../styles/base.css";
@@ -126,6 +153,18 @@ controlSync(emit);
   cursor: not-allowed;
   transform: none;
 }
+.h-button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  line-height: 0;
+}
+.h-button-icon :deep(svg),
+.h-button-icon :slotted(svg) {
+  max-width: 24px;
+  max-height: 24px;
+}
 .h-spinner {
   width: 16px;
   height: 16px;
@@ -133,6 +172,13 @@ controlSync(emit);
   border-right-color: transparent;
   border-radius: 50%;
   animation: h-spin 0.7s linear infinite;
+}
+@media (pointer: coarse) {
+  .h-button.compact,
+  .h-button.icon-only {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 @keyframes h-spin {
   to {

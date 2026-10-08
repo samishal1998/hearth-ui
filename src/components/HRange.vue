@@ -214,11 +214,11 @@ input:focus-visible + .h-range-thumb {
   justify-content: space-between;
   padding-inline: 12px;
   color: var(--h-faint);
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   font-variant-numeric: tabular-nums;
 }
 p {
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   line-height: 1.8;
   color: var(--h-muted);
 }

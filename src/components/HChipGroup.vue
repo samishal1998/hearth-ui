@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import HChip from "./HChip.vue";
-import type { SelectOption } from "../themes";
+import type { ChipOption } from "../themes";
 const props = withDefaults(
   defineProps<{
-    options: SelectOption[];
+    options: ChipOption[];
     modelValue?: string[];
     label?: string;
     removable?: boolean;
@@ -40,6 +40,9 @@ function update(value: string, remove = false) {
       )"
       :key="option.value"
       :label="option.label"
+      :icon="option.icon"
+      :count="option.count"
+      :title="option.title"
       :value="option.value"
       :selected="selected.includes(option.value)"
       :selectable="!removable"

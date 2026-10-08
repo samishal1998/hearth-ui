@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import HIcon from "./HIcon.vue";
-import type { Tone } from "../themes";
+import type { Tone, IconValue } from "../themes";
 withDefaults(
   defineProps<{
     label: string;
@@ -10,6 +10,8 @@ withDefaults(
     removable?: boolean;
     disabled?: boolean;
     tone?: Tone;
+    icon?: IconValue;
+    count?: number;
   }>(),
   { tone: "neutral" },
 );
@@ -29,8 +31,15 @@ const emit = defineEmits<{
       part="label"
       @click="emit('select', value ?? label)"
     >
-      {{ label }}</button
-    ><span v-else class="h-chip-label" part="label">{{ label }}</span
+      <HIcon v-if="icon" :name="icon" :size="14" />{{ label
+      }}<span v-if="count !== undefined" class="h-chip-count">{{
+        count
+      }}</span></button
+    ><span v-else class="h-chip-label" part="label"
+      ><HIcon v-if="icon" :name="icon" :size="14" />{{ label
+      }}<span v-if="count !== undefined" class="h-chip-count">{{
+        count
+      }}</span></span
     ><button
       v-if="removable"
       type="button"
@@ -54,7 +63,7 @@ const emit = defineEmits<{
   border-radius: var(--h-radius-pill);
   background: var(--h-surface);
   color: var(--chip-color);
-  font: 12px var(--h-font);
+  font: max(var(--h-font-min-size, 12px), 12px) var(--h-font);
 }
 .accent,
 .selected {
@@ -75,6 +84,9 @@ const emit = defineEmits<{
   --chip-color: var(--h-info);
 }
 .h-chip-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 9px 13px;
   min-height: 38px;
   border: 0;
@@ -83,6 +95,12 @@ const emit = defineEmits<{
   font: inherit;
   border-radius: inherit;
   overflow-wrap: anywhere;
+}
+.h-chip-count {
+  font-variant-numeric: tabular-nums;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--h-bg);
 }
 .h-chip-remove {
   display: grid;

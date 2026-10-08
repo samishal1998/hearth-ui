@@ -2,7 +2,7 @@
 
 **A home for what you build.** Native Vue components for dashboards, public pages, and authentication.
 
-Hearth UI includes **70 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. Version **0.6.0** adds responsive overlays with configurable mobile breakpoints.
+Hearth UI includes **94 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. Version **0.7.0** adds a composable foundation of layout, typography, workspace, collection, and behavior primitives.
 
 [Component registry](https://hearth-ui.samyx.net/#components) · [Page recipes](https://hearth-ui.samyx.net/#recipes) · [Theme studio](https://hearth-ui.samyx.net/#themes) · [GitHub](https://github.com/samishal1998/hearth-ui)
 
@@ -48,6 +48,8 @@ const date = ref("");
 Date, time, and local date-time fields use Hearth popovers rather than native browser picker dropdowns. Their values remain ISO-formatted strings.
 
 ## Components
+
+New in v0.7.0: layout/typography primitives, `HSurface`, mode-aware profiles, rich field/list/table composition, responsive inspector panes, messages, virtual lists, trees, and reusable DOM-only behavior helpers. See the included `docs/primitives/llms.txt` for behavior and native-markup composition; `primitives.css` is an optional utility stylesheet. Tables now default to mobile cards and compact icon-only row actions; use `mobileLayout="scroll"` and `actionDisplay="label"` for the earlier presentation.
 
 | Family                 | Examples                                                                                                               |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |

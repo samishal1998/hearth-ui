@@ -2,7 +2,7 @@
 
 > A plain page introduction or the signature atmospheric dashboard hero.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -20,7 +20,7 @@
 
 ## Public API
 
-title, accent, description, eyebrow: string · variant: plain | hero · decoration: boolean
+title, accent, description, eyebrow: string · variant: plain | hero · decoration: boolean · level: 1–6 · size: sm | md | lg · actionsPlacement: below | end
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -32,13 +32,16 @@ type Props = {
     eyebrow?: string;
     variant?: "plain" | "hero";
     decoration?: boolean;
+    size?: "sm" | "md" | "lg";
+    level?: 1 | 2 | 3 | 4 | 5 | 6;
+    actionsPlacement?: "below" | "end";
 };
 ```
 
 ### Defaults
 
 ```ts
-{ variant: "plain", decoration: true }
+{ variant: "plain", decoration: true, level: 1, actionsPlacement: "below" }
 ```
 
 ### Events
@@ -49,7 +52,7 @@ Vue-emitted custom-element events expose argument arrays in `event.detail`. List
 
 ### Slots
 
-title, default (actions), aside
+leading, title, actions (fallback default), default, aside
 
 Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 

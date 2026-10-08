@@ -177,7 +177,7 @@ onBeforeUnmount(() => document.removeEventListener("keydown", shortcut));
   margin-top: 16px;
 }
 .h-command-group {
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   letter-spacing: 1px;
   color: var(--h-muted);
   text-transform: uppercase;
@@ -210,14 +210,14 @@ strong {
 }
 small {
   display: block;
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   line-height: 1.7;
   color: var(--h-muted);
   margin-top: 3px;
 }
 kbd {
   margin-left: auto;
-  font: 10px var(--h-font-mono);
+  font: max(var(--h-font-min-size, 12px), 10px) var(--h-font-mono);
   color: var(--h-muted);
 }
 .h-command-empty {

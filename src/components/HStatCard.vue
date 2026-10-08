@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import HIcon from "./HIcon.vue";
-import type { Tone } from "../themes";
+import type { Tone, IconValue } from "../themes";
 withDefaults(
   defineProps<{
     label: string;
     value: string | number;
     detail?: string;
-    icon?: string;
+    icon?: IconValue;
     tone?: Tone;
   }>(),
   { icon: "apps", tone: "accent" },
@@ -14,10 +14,15 @@ withDefaults(
 </script>
 <template>
   <div class="h-stat" part="base" :class="tone">
-    <span class="h-stat-icon" part="icon"><HIcon :name="icon" /></span>
+    <span class="h-stat-icon" part="icon" aria-hidden="true"
+      ><slot name="icon"><HIcon :name="icon" /></slot
+    ></span>
     <div>
       <strong part="value"
-        >{{ value }}<small v-if="detail">{{ detail }}</small></strong
+        >{{ value
+        }}<slot name="detail"
+          ><small v-if="detail">{{ detail }}</small></slot
+        ></strong
       ><span class="h-stat-label" part="label">{{ label }}</span>
     </div>
   </div>
@@ -72,14 +77,19 @@ strong {
 }
 small {
   margin-left: 5px;
-  font-size: 12px;
+  font-size: max(var(--h-font-min-size, 12px), 12px);
   color: var(--h-muted);
   font-weight: 400;
 }
 .h-stat-label {
   display: block;
   margin-top: 5px;
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
+}
+.h-stat-icon :deep(svg),
+.h-stat-icon :slotted(svg) {
+  max-width: 24px;
+  max-height: 24px;
 }
 </style>

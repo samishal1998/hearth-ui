@@ -1,6 +1,6 @@
 {
   "name": "@hearth-ui/elements",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Framework-independent web components for self-hosted dashboards, public pages, and authentication.",
   "license": "MIT",
   "type": "module",
@@ -15,6 +15,7 @@
     "dist",
     "llms.txt",
     "docs/components",
+    "docs/primitives",
     "README.md",
     "LICENSE"
   ],
@@ -28,8 +29,10 @@
       "import": "./dist/elements/auto.js"
     },
     "./themes.css": "./dist/themes.css",
+    "./primitives.css": "./dist/primitives.css",
     "./llms.txt": "./llms.txt",
     "./docs/components/*/llms.txt": "./docs/components/*/llms.txt",
+    "./docs/primitives/llms.txt": "./docs/primitives/llms.txt",
     "./package.json": "./package.json"
   },
   "publishConfig": {

@@ -2,7 +2,7 @@
 
 > A labeled input with help/error text and native validation. Web components participate in their owning form.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -14,15 +14,17 @@
 
 ## Choose and use it correctly
 
-- Supply a visible label and a name for form submission. Use type=email/url/password/number/etc. for native input behavior.
+- Supply label and a name for form submission; hideLabel can remove the visual label in a toolbar while preserving its accessible name. Use type=email/url/password/number/etc. for native input behavior.
 - type=date, time, and datetime-local use Hearth picker popovers with text entry instead of native browser dropdowns. Values retain their ISO date/time formats, form submission, and required/bounds validation.
 - The model is a string, including type="number". Use HRange for a numeric slider.
 - hint/error associate explanatory text with the input; native required, pattern, and length constraints control browser validation. Application error text does not replace backend validation.
+- leading and trailing slots accept adornments or separately labeled action buttons. leadingIcon accepts a built-in name or IconDefinition. Search fields have a clear action by default; set clearable=false to suppress it or true to enable it on other field types. Clearing emits an empty string and updates form state before change.
 - mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
+- hideLabel visually hides the label while retaining the accessible name; keep supplying label. size=compact provides dense desktop controls, with larger touch targets on coarse pointers. Without size, controls inherit theme density. --h-font-min-size supplies a 12px default floor for caption/helper text and field typography.
 
 ## Public API
 
-modelValue, value, label, name, placeholder, hint, error, autocomplete, pattern: string · type: text | email | password | url | search | number | tel | date | time | datetime-local · required, disabled, readonly: boolean · minlength, maxlength: number · min, max, step: string | number · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
+modelValue, value, label, name, placeholder, hint, error, autocomplete, pattern: string · type: text | email | password | url | search | number | tel | date | time | datetime-local · required, disabled, readonly, clearable: boolean · leadingIcon: IconValue · minlength, maxlength: number · min, max, step: string | number · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables) · hideLabel: boolean · size: regular | compact (otherwise inherits density)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -47,13 +49,17 @@ type Props = {
     step?: string | number;
     pattern?: string;
     mobileBreakpoint?: number;
+    hideLabel?: boolean;
+    size?: ControlSize;
+    leadingIcon?: IconValue;
+    clearable?: boolean;
 };
 ```
 
 ### Defaults
 
 ```ts
-{ type: "text", value: "" }
+{ type: "text", value: "", clearable: undefined }
 ```
 
 ### Events
@@ -75,15 +81,31 @@ Vue-emitted custom-element events expose argument arrays in `event.detail`. List
 
 ### Slots
 
-None
+leading, trailing
 
 Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 
 ### CSS parts
 
-base, label, control, hint
+base, label, control, hint, frame, leading, adornment
 
 Use `hearth-input::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export type ControlSize = "regular" | "compact";
+
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
+}
+```
 
 ## Vue example
 

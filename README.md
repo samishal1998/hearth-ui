@@ -8,7 +8,7 @@ Hearth carries the visual direction of Apptrail into a standalone library. **Sun
 
 ## Agent references
 
-Start at **[llms.txt](llms.txt)**. It routes agents to focused references for all 70 source components under **`docs/components/<slug>/llms.txt`**, for example:
+Start at **[llms.txt](llms.txt)**. It routes agents to focused references for all 94 source components under **`docs/components/<slug>/llms.txt`**, plus [behavior and native-markup primitives](docs/primitives/llms.txt), for example:
 
 - [Authentication page](docs/components/auth-page/llms.txt)
 - [Dashboard shell](docs/components/dashboard-shell/llms.txt)
@@ -63,7 +63,7 @@ The registry preview exposes a **Mobile breakpoint (px)** control for applicable
 
 ## Install
 
-The current source prepares **0.6.0**. Install the distribution you need:
+The current release is **0.7.0**. Install the distribution you need:
 
 ```sh
 # Native Vue
@@ -160,14 +160,34 @@ Keep the files inside `dist/elements/` together: entry points import a shared ru
 | `HTextarea`       | `HPagination`       |                     |
 | `HRange`          | `HAccordion`        |                     |
 
-The source component catalog includes interactive previews and documents props, events, slots, and CSS parts for all **70 components**. Vue declarations and web-component constructors are included for every component. The [hosted catalog](https://samishal1998.github.io/hearth-ui/#components) reflects the most recent deployed build.
+The source component catalog includes interactive previews and documents props, events, slots, and CSS parts for all **94 components**. Vue declarations and web-component constructors are included for every component. The [hosted catalog](https://samishal1998.github.io/hearth-ui/#components) reflects the most recent deployed build.
 
 The registry provides search, category filters, and 12 results per page. Each component has a shareable route such as `#components/HCalendar`, with a focused preview, usage example, and API reference. Full composed demos are at `#examples`; the seven page recipes, including the authentication page, are at `#recipes`.
 
 Date, time, and local date-time fields now use Hearth picker popovers and formatted text entry instead of native browser dropdowns. Their ISO string values and form submission contracts are preserved; invalid dates, bounds, and time steps participate in form validation.
 
-### Source refinements (unreleased)
+### New in 0.7.0
 
+The foundation release adds 24 public building blocks, bringing the library to 94 components, plus reusable DOM behavior helpers. These additions are included in both v0.7.0 distribution archives.
+
+| Foundation | Public building blocks |
+| --- | --- |
+| Layout | `HSurface`, `HStack`, `HGrid`, `HContainer`, `HToolbar`, `HFilterBar` |
+| Typography/accessibility | `HText`, `HHeading`, `HLink`, `HVisuallyHidden`, `HFieldset` |
+| Overflow/media | `HScrollArea`, `HAspectRatio`, fixed-height `HVirtualList` |
+| Workspace/conversation | `HPane`, `HResizablePane`, `HMessage` |
+| Interaction/collections | `HCollapsible`, `HToggleGroup`, `HAlertDialog`, `HContextMenu`, `HListbox`, `HTreeView`, `HListSpacer` |
+
+Existing components now include rich description/badge/selection list slots, per-row table actions and activation, Vue scoped cell rendering, container-responsive columns, sticky actions, mobile card rows, chip counts/icons, badge outline/dashed variants, inline alerts, compact timelines, rich accordion headers, embedded code blocks, and textarea submit-on-Enter. The shell moves its single sidebar outlet into mobile navigation without losing state, and supports persistent inspector content and bounded inner scrolling.
+
+Table presentation now defaults to mobile cards and compact icon-only row-action triggers. Set `mobileLayout="scroll"` and `actionDisplay="label"` to retain the earlier overflow/text-trigger presentation. Input fields keep their existing value and form contracts. The theme studio migrates saved overrides to shared geometry and separate color-mode maps, with an original-data backup.
+
+The [primitives reference](docs/primitives/llms.txt) documents DOM-only field, overlay, focus, positioning, selection, and typeahead utilities exported by both packages. Optional `primitives.css` supplies styles for consumer-owned native fields and accessibility utilities. Vue scoped slots are conveniences, not native-slot features; named cell/item slots remain available in both distributions. `HFieldset` groups Vue controls natively; for separately slotted custom-element form controls, use an owning native fieldset in the application DOM. `HVirtualList` intentionally requires fixed row heights; conversation messages use native overflow through `HScrollArea`.
+
+- `HSurface` is a headerless, semantic container with default/raised/inset tones and explicit padding. `HCard` builds on it.
+- Theme profiles separate shared `tokens` from dark/light `modeTokens`. The studio edits the resolved mode independently and exports mode-aware CSS or portable JSON, including system-mode rules and web-component `::part(base)` selectors.
+- `HButton` accepts custom icon slots, including default-slot content in icon-only mode. `IconDefinition` objects work throughout icon-bearing controls/navigation, and `iconNames` lists built-ins.
+- `hideLabel` preserves accessible names on fields and choices. Public input leading/trailing slots, search clearing, compact sizing, and the `--h-font-min-size` caption/field text floor support dense custom UI.
 - Sliders use a highlighted value/interval track, clear readouts, focus halos, and 44px handle targets. The interval slider supports continuous track dragging and separating coincident handles.
 - Number inputs use one compact stepper surface, hide duplicate native spinner arrows, and support press-and-hold without opening a mobile keyboard.
 - Time pickers use step-aware hour/minute/second columns and persistent mobile actions. Date/time picker buttons are inset into their fields.
@@ -308,7 +328,35 @@ document.querySelector("hearth-theme").tokens = {
 };
 ```
 
-The complete token reference is [`src/styles/themes.css`](src/styles/themes.css). Tokens cover surfaces, text, branding, semantic status colors, focus, typography, geometry, density, spacing, content width, shadows, motion, and the auth-page scenery. `themeStyle()` filters an object to Hearth custom properties; `themeCSS()` serializes those trusted, application-authored values as CSS.
+The complete token reference is [`src/styles/themes.css`](src/styles/themes.css). Tokens cover surfaces, text, branding, semantic status colors, focus, typography, geometry, density, spacing, content width, shadows, motion, and the auth-page scenery. `themeStyle()` filters an object to Hearth custom properties; `themeCSS()` preserves the flat snapshot API. Use `themeProfileCSS()` for separate color modes:
+
+```ts
+const profile = {
+  tokens: { '--h-radius-card': '12px' },
+  modeTokens: {
+    dark: { '--h-bg': '#101820', '--h-text': '#f4f7fb' },
+    light: { '--h-bg': '#f4f7fb', '--h-text': '#101820' },
+  },
+};
+// Native Vue / attributed HTML owners: theme="custom", mode="dark|light|system".
+themeProfileCSS(profile);
+// Native custom-element hosts use their exposed theme base part.
+themeProfileCSS(profile, { target: 'elements' });
+```
+
+Bind `profile.tokens` and `profile.modeTokens` to the same props on `HTheme`, or assign the profile properties to `<hearth-theme>`. Effective-mode overrides take precedence over shared tokens, and system mode follows OS changes. Explicit-mode profiles also render on the server; system-mode profiles use base CSS initially and apply their mode overrides after mounting. Nested theme islands retain their own presets. The studio keeps dark/light edits separately, backs up legacy saved data under `hearth-playground-v1`, and imports old color edits into the currently resolved mode.
+
+### Custom rows and dense controls
+
+```vue
+<HSurface as="section" aria-label="Session filters" tone="inset" padding="sm">
+  <HInput label="Find sessions" type="search" hide-label size="compact" leading-icon="search" />
+</HSurface>
+```
+
+`size="compact"` gives text inputs, selects, and comboboxes a 32px desktop control; compact checkbox/switch rows use 32px hit areas. Touchscreen targets expand to at least 44px. Omit `size` to inherit theme density. Hidden labels stay available to assistive technology, so `label` is still required. `--h-font-min-size` defaults to 12px for caption/helper text and field typography; no `!important` override is needed.
+
+Input `leading` and `trailing` slots accept custom adornments and separately named action buttons; picker fields retain their own picker button. Search inputs show a clear action by default, while other field types can opt in with `clearable`. Use `icon`/`trailing-icon` slots on buttons for decorative custom SVGs, or pass a portable `IconDefinition` (`paths`, optional `viewBox`, `fill`, `fillRule`, `strokeWidth`) through an icon property. Icon-only buttons still need `label` or `aria-label`.
 
 Theme islands can coexist. CSS custom properties inherit through native slots and shadow roots. Use the [theme studio](https://samishal1998.github.io/hearth-ui/#themes) to preview a palette, tune colors and geometry, rename the demo brand, and export a resolved stylesheet.
 

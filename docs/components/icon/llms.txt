@@ -2,7 +2,7 @@
 
 > A small, consistent supporting icon set. Decorative by default; put the accessible label on its control.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -16,16 +16,17 @@
 
 - Icons are decorative and aria-hidden. Name the containing button or link; an icon is not an accessible control on its own.
 - Use a supported icon name. Unknown names fall back to apps.
+- iconNames exports the supported names. The name property also accepts a portable IconDefinition: {paths,viewBox?,fill?,fillRule?,strokeWidth?}. Definitions contain SVG path data, not Vue components or HTML, and work through icon properties on buttons, list items, stat cards, empty states, menus, and shell navigation.
 
 ## Public API
 
-name: string · size: number = 20
+name: IconValue (built-in name or SVG definition) · size: number = 20
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
 ```ts
 type Props = {
-    name?: string;
+    name?: IconValue;
     size?: number;
 };
 ```
@@ -56,6 +57,20 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 icon
 
 Use `hearth-icon::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
+}
+```
 
 ## Vue example
 
@@ -98,7 +113,7 @@ mount.append(element);
 
 ## Available icon names
 
-`apps`, `home`, `search`, `plus`, `minus`, `left`, `right`, `clock`, `calendar`, `close`, `arrow`, `launch`, `check`, `star`, `lock`, `globe`, `server`, `providers`, `health`, `settings`, `menu`, `logout`, `moon`, `sun`, `down`, `up`, `info`, `layout`, `code`, `copy`.
+`apps`, `home`, `search`, `plus`, `minus`, `left`, `right`, `clock`, `calendar`, `close`, `arrow`, `launch`, `check`, `star`, `lock`, `globe`, `server`, `providers`, `health`, `settings`, `menu`, `more`, `logout`, `moon`, `sun`, `down`, `up`, `info`, `layout`, `code`, `copy`.
 
 ## Related components
 

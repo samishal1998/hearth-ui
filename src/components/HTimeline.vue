@@ -9,6 +9,7 @@ withDefaults(
     loading?: boolean;
     loadingText?: string;
     emptyText?: string;
+    compact?: boolean;
   }>(),
   {
     items: () => [],
@@ -20,7 +21,12 @@ withDefaults(
 </script>
 
 <template>
-  <div class="h-timeline" part="base" :aria-busy="loading || undefined">
+  <div
+    class="h-timeline"
+    :class="{ compact }"
+    part="base"
+    :aria-busy="loading || undefined"
+  >
     <ol v-if="items.length" :aria-label="label" role="list" part="list">
       <li
         v-for="item in items"
@@ -131,7 +137,7 @@ a {
 }
 time {
   color: var(--h-muted);
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
@@ -149,5 +155,14 @@ time {
 }
 ol + .h-timeline-message {
   margin-block-start: 20px;
+}
+.compact li {
+  padding-block-end: 12px;
+}
+.compact li:last-child {
+  padding-block-end: 0;
+}
+.compact .h-timeline-detail p {
+  margin-top: 1px;
 }
 </style>

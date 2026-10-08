@@ -5,7 +5,13 @@ withDefaults(defineProps<{ label?: string; divided?: boolean }>(), {
 });
 </script>
 <template>
-  <ul class="h-list" :class="{ divided }" :aria-label="label" part="base">
+  <ul
+    class="h-list"
+    role="list"
+    :class="{ divided }"
+    :aria-label="label"
+    part="base"
+  >
     <slot />
   </ul>
 </template>

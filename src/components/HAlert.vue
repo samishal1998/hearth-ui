@@ -7,6 +7,8 @@ withDefaults(
     description?: string;
     tone?: Tone;
     dismissible?: boolean;
+    compact?: boolean;
+    variant?: "surface" | "inline";
   }>(),
   { tone: "info" },
 );
@@ -15,7 +17,7 @@ const emit = defineEmits<{ dismiss: [] }>();
 <template>
   <div
     class="h-alert"
-    :class="tone"
+    :class="[tone, variant, { compact }]"
     :role="tone === 'danger' ? 'alert' : 'status'"
     part="base"
   >
@@ -93,5 +95,29 @@ button {
   border-radius: var(--h-radius-control);
   margin: -9px -10px -9px 0;
   flex-shrink: 0;
+}
+.compact {
+  padding: 8px 10px;
+  gap: 8px;
+}
+.inline {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.inline .h-alert-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: baseline;
+}
+.inline p {
+  margin: 0;
+}
+.compact button,
+.inline button {
+  margin: 0;
+  width: 32px;
+  height: 32px;
 }
 </style>

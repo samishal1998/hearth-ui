@@ -17,6 +17,261 @@ export const mobileOverlayComponents = new Set([
   "HDataTable",
 ]);
 const components = [
+  ...(
+    [
+      [
+        "HStack",
+        "stack",
+        "Foundation",
+        "Flexible stacks and wrapping rows using the theme spacing scale.",
+        "as, direction, gap, align, justify, wrap",
+        "None",
+        "default",
+        "base",
+      ],
+      [
+        "HGrid",
+        "grid",
+        "Foundation",
+        "Responsive grids with explicit columns or auto-fit minimum widths.",
+        "columns, minColumnWidth, gap, align",
+        "None",
+        "default",
+        "base",
+      ],
+      [
+        "HContainer",
+        "container",
+        "Foundation",
+        "A constrained, centered structural container.",
+        "as, maxWidth, padding",
+        "None",
+        "default",
+        "base",
+      ],
+      [
+        "HText",
+        "text",
+        "Foundation",
+        "Semantic body text with token-driven size, weight, and tone.",
+        "as, size, weight, tone",
+        "None",
+        "default",
+        "base",
+      ],
+      [
+        "HHeading",
+        "heading",
+        "Foundation",
+        "Heading semantics independent of visual size.",
+        "level, size",
+        "None",
+        "default",
+        "base",
+      ],
+      [
+        "HLink",
+        "link",
+        "Foundation",
+        "Native inline navigation with safe URLs and visible focus.",
+        "href, target, disabled",
+        "Native click",
+        "default",
+        "base",
+      ],
+      [
+        "HScrollArea",
+        "scroll-area",
+        "Foundation",
+        "Keyboard-accessible native overflow viewport.",
+        "label, maxHeight, axis",
+        "Native scroll",
+        "default",
+        "viewport",
+      ],
+      [
+        "HAspectRatio",
+        "aspect-ratio",
+        "Foundation",
+        "A ratio-constrained media container.",
+        "ratio",
+        "None",
+        "default",
+        "base",
+      ],
+      [
+        "HVisuallyHidden",
+        "visually-hidden",
+        "Foundation",
+        "Content retained for assistive technology without visible layout.",
+        "as",
+        "None",
+        "default",
+        "base",
+      ],
+      [
+        "HFieldset",
+        "fieldset",
+        "Foundation",
+        "Native grouped-control semantics and a legend.",
+        "label, description, disabled",
+        "None",
+        "default",
+        "base, label, description, body",
+      ],
+      [
+        "HToolbar",
+        "toolbar",
+        "Layouts",
+        "Wrapping controls with consistent gap and alignment.",
+        "label, gap",
+        "None",
+        "default",
+        "base",
+      ],
+      [
+        "HFilterBar",
+        "filter-bar",
+        "Controls",
+        "Wrapping filters with an application-owned clear request.",
+        "label, activeCount, disabled",
+        "clear()",
+        "default",
+        "base",
+      ],
+      [
+        "HMessage",
+        "message",
+        "Surfaces",
+        "Conversation messages with author, role, timestamp, and rich body.",
+        "roleLabel, author, timestamp, dateTime, tone",
+        "None",
+        "default, actions, footer",
+        "base, header, body",
+      ],
+      [
+        "HCollapsible",
+        "collapsible",
+        "Controls",
+        "Independent native disclosure with controlled or default-open state.",
+        "open, defaultOpen, label, disabled",
+        "update:open(boolean), change(boolean)",
+        "trigger, default",
+        "base, trigger, body",
+      ],
+      [
+        "HToggleGroup",
+        "toggle-group",
+        "Controls",
+        "Single or multiple pressed-button selection.",
+        "options, modelValue, multiple, label, disabled",
+        "update:modelValue(string[]), change(string[])",
+        "option:<value>",
+        "base",
+      ],
+      [
+        "HAlertDialog",
+        "alert-dialog",
+        "Feedback",
+        "Confirmation dialog with a safe initial cancel action and responsive bottom-sheet layout.",
+        "open, title, description, confirmLabel, cancelLabel, danger, busy, mobileBreakpoint",
+        "update:open(boolean), confirm(), cancel()",
+        "default",
+        "dialog, header, body, footer",
+      ],
+      [
+        "HPane",
+        "pane",
+        "Layouts",
+        "Persistent desktop inspector that moves into a full-screen mobile dialog without remounting content.",
+        "open, title, description, width, mobileBreakpoint",
+        "update:open(boolean), close()",
+        "default, footer",
+        "base, header, body, footer",
+      ],
+      [
+        "HListbox",
+        "listbox",
+        "Controls",
+        "Rich owner-rendered choice list with typeahead and active-descendant navigation.",
+        "options, modelValue, value, label, multiple, disabled",
+        "update:modelValue(string | string[]), change(string | string[])",
+        "option:<value>",
+        "base, option",
+      ],
+      [
+        "HContextMenu",
+        "context-menu",
+        "Controls",
+        "Contextual commands with right-click, Shift+F10, and an explicit touch/keyboard trigger.",
+        "items, label, disabled, mobileBreakpoint",
+        "select(id), update:open(boolean)",
+        "default",
+        "base, panel",
+      ],
+      [
+        "HVirtualList",
+        "virtual-list",
+        "Surfaces",
+        "Bounded fixed-height list window with overscan and focused-row retention.",
+        "items, label, height, rowHeight, overscan, activeId",
+        "range-change({start,end})",
+        "item (Vue scoped), item:<id>",
+        "base, item",
+      ],
+      [
+        "HTreeView",
+        "tree-view",
+        "Controls",
+        "Expandable hierarchical navigation with roving focus and typeahead.",
+        "items, modelValue, expanded, defaultExpanded, label, disabled",
+        "update:modelValue(id), change(id), update:expanded(ids), activate(id)",
+        "item:<id>",
+        "base, item",
+      ],
+      [
+        "HResizablePane",
+        "resizable-pane",
+        "Layouts",
+        "Resizable inspector layout with keyboard and non-dragging pointer alternatives.",
+        "modelValue, value, min, max, step, label, mobileBreakpoint",
+        "update:modelValue(number), change(number)",
+        "default, pane",
+        "base, content, handle, pane",
+      ],
+      [
+        "HListSpacer",
+        "list-spacer",
+        "Foundation",
+        "Presentation-only spacing inside a semantic list.",
+        "height",
+        "None",
+        "None",
+        "base",
+      ],
+    ] as const
+  ).map(([name, slug, category, description, props, events, slots, parts]) => ({
+    name,
+    tag: `hearth-${slug}`,
+    category,
+    description,
+    props,
+    events,
+    slots,
+    parts,
+  })),
+  {
+    name: "HSurface",
+    tag: "hearth-surface",
+    category: "Foundation",
+    description:
+      "A neutral, themeable container for custom rows, toolbars, panels, and messages.",
+    props:
+      "as: div | section | article | aside · tone: default | raised | inset · padding: none | sm | md | lg · bordered: boolean",
+    events: "None",
+    slots: "default",
+    parts: "base",
+  },
   {
     name: "HThemeSwitcher",
     tag: "hearth-theme-switcher",
@@ -132,7 +387,7 @@ const components = [
     description:
       "A nonmodal top-layer panel, anchored on desktop and docked at the bottom on mobile, with viewport-aware positioning and focus handling.",
     props:
-      "open, disabled, iconOnly: boolean · label, title, panelLabel, icon: string · placement: top | bottom | left | right · variant: primary | secondary | ghost",
+      "open, disabled, iconOnly: boolean · label, title, panelLabel: string · icon: IconValue · placement: top | bottom | left | right · variant: primary | secondary | ghost",
     events: "update:open(boolean), close()",
     slots: "default, footer",
     parts: "base, panel, title, header, body, footer",
@@ -144,7 +399,7 @@ const components = [
     description:
       "Hoverable, keyboard-accessible help text with a configurable delay and Escape dismissal.",
     props:
-      "text, label, icon: string · placement: top | bottom | left | right · delay: number · disabled: boolean",
+      "text, label: string · icon: IconValue · placement: top | bottom | left | right · delay: number · disabled: boolean",
     events: "None",
     slots: "default (focusable trigger; an info button is provided otherwise)",
     parts: "base, trigger, content",
@@ -156,7 +411,7 @@ const components = [
     description:
       "A keyboard-operated command menu with a touch-friendly bottom panel on mobile.",
     props:
-      "items: MenuAction[] · label, icon: string · open, disabled: boolean · placement: top | bottom | left | right",
+      "items: MenuAction[] · label: string · icon: IconValue · open, disabled, iconOnly: boolean · placement: top | bottom | left | right",
     events: "select(id), update:open(boolean)",
     slots: "None",
     parts: "base, menu, item, header",
@@ -239,7 +494,7 @@ const components = [
     description:
       "A readable row with icon, description, badge, and separate action content.",
     props:
-      "title, description, icon, badge, href: string · tone: Tone · interactive, disabled, selected: boolean",
+      "title, description, badge, href: string · icon: IconValue · tone: Tone · interactive, disabled, selected: boolean",
     events: "activate()",
     slots: "leading, trailing, actions",
     parts: "base, content, title, description",
@@ -634,7 +889,7 @@ const components = [
     description:
       "A scoped theme island. CSS variables flow through Vue trees, native slots, and shadow roots.",
     props:
-      "theme: string = sunset · mode: dark | light | system · density: comfortable | compact · tokens: ThemeTokens",
+      "theme: string = sunset · mode: dark | light | system · density: comfortable | compact · tokens: ThemeTokens · modeTokens: ThemeModeTokens",
     events: "None",
     slots: "default",
     parts: "base",
@@ -645,7 +900,8 @@ const components = [
     category: "Foundation",
     description:
       "A small, consistent supporting icon set. Decorative by default; put the accessible label on its control.",
-    props: "name: string · size: number = 20",
+    props:
+      "name: IconValue (built-in name or SVG definition) · size: number = 20",
     events: "None",
     slots: "None",
     parts: "icon",
@@ -668,10 +924,10 @@ const components = [
     description:
       "Native button or link behavior, clear focus, icon-only labels, and restrained press feedback.",
     props:
-      "variant: primary | secondary | ghost | danger · size: regular | compact · type: button | submit | reset · disabled, loading, iconOnly: boolean · icon, trailingIcon, label, href, target: string",
+      "variant: primary | secondary | ghost | danger · size: regular | compact · type: button | submit | reset · disabled, loading, iconOnly: boolean · icon, trailingIcon: IconValue · label, href, target: string",
     events: "Native click",
-    slots: "default",
-    parts: "control, label",
+    slots: "default, icon, trailing-icon (decorative content)",
+    parts: "control, label, icon, trailing-icon",
   },
   {
     name: "HInput",
@@ -680,10 +936,10 @@ const components = [
     description:
       "A labeled input with help/error text and native validation. Web components participate in their owning form.",
     props:
-      "modelValue, value, label, name, placeholder, hint, error, autocomplete, pattern: string · type: text | email | password | url | search | number | tel | date | time | datetime-local · required, disabled, readonly: boolean · minlength, maxlength: number · min, max, step: string | number",
+      "modelValue, value, label, name, placeholder, hint, error, autocomplete, pattern: string · type: text | email | password | url | search | number | tel | date | time | datetime-local · required, disabled, readonly, clearable: boolean · leadingIcon: IconValue · minlength, maxlength: number · min, max, step: string | number",
     events: "update:modelValue(value), change(value)",
-    slots: "None",
-    parts: "base, label, control, hint",
+    slots: "leading, trailing",
+    parts: "base, label, control, hint, frame, leading, adornment",
   },
   {
     name: "HSelect",
@@ -738,7 +994,7 @@ const components = [
     category: "Feedback",
     description:
       "An inviting first-run or no-results state, with room for a useful next action.",
-    props: "title, description, icon: string",
+    props: "title, description: string · icon: IconValue",
     events: "None",
     slots: "default (actions)",
     parts: "base, icon, title, description",
@@ -796,7 +1052,7 @@ const components = [
     description:
       "A quiet overview metric with tabular numbers, an icon, and a supporting label.",
     props:
-      "label: string · value: string | number · detail, icon: string · tone: Tone",
+      "label: string · value: string | number · detail: string · icon: IconValue · tone: Tone",
     events: "None",
     slots: "None",
     parts: "base, icon, value, label",
@@ -852,11 +1108,80 @@ const components = [
     parts: "base, story, panel, title",
   },
 ];
-export const catalog = components.map((component) =>
-  mobileOverlayComponents.has(component.name)
-    ? {
-        ...component,
-        props: `${component.props} · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)`,
-      }
-    : component,
-);
+const sizedFields = new Set([
+  "HInput",
+  "HTextarea",
+  "HCheckbox",
+  "HSwitch",
+  "HSelect",
+  "HCombobox",
+  "HMultiSelect",
+  "HDatePicker",
+  "HTimePicker",
+]);
+const richSlots: Record<string, string> = {
+  HListItem:
+    "before, selection (fallback for before), leading, description, trailing, badge, actions",
+  HStatCard: "icon, detail",
+  HBadge: "default, icon",
+  HConnectionState: "detail",
+  HAccordion: "header:<id> (Vue scope: item/open), <id>",
+  HDataTable:
+    "cell (Vue scoped: row/column/value), cell:<encoded-row>:<encoded-column> (portable)",
+  HPageHeader: "leading, title, actions (fallback default), default, aside",
+  HDashboardShell:
+    "brand, workspace, workspace-icon, navigation, page-title, header-actions, sidebar-footer (single responsive outlet), side-pane, default, footer",
+};
+const extraProps: Record<string, string> = {
+  HListItem: "aria-label/title and other attributes forward to the row action",
+  HStatCard: "detail slot for rich supporting values",
+  HBadge: "icon: IconValue · size: sm | md · variant: soft | outline | dashed",
+  HChip: "icon: IconValue · count: number",
+  HChipGroup: "options: ChipOption[] (count/icon/title metadata)",
+  HConnectionState: "showState: boolean",
+  HAccordion:
+    "defaultOpen: string[] · items[].defaultOpen: boolean · compact: boolean · variant: surface | flat",
+  HDescriptionList:
+    "columns: 1 | 2 | 3 | auto · minColumnWidth: string · dense: boolean · variant: stacked | inline",
+  HDataTable:
+    "rowActions: Record<string, MenuAction[]> · getRowActions(row): MenuAction[] · rowActivatable, stickyActions: boolean · actionDisplay: icon | label · mobileLayout: cards | scroll · column minWidth/truncate/hideBelow (container CSS px)",
+  HPageHeader:
+    "level: 1–6 · size: sm | md | lg · actionsPlacement: below | end",
+  HDashboardShell:
+    "showWorkspace, showWorkspaceIcon, innerScroll, titleAsHeading: boolean · workspaceIcon: IconValue · navigationLabel, navLabel, contentMaxWidth: string",
+  HCodeBlock: "maxHeight: string · bare: boolean",
+  HTextarea: "submitOnEnter: boolean",
+  HTimeline: "compact: boolean",
+  HAlert: "compact: boolean · variant: surface | inline",
+  HTooltip: "focusable: boolean (keyboard-reachable explanation wrapper)",
+};
+export const catalog = components.map((component) => ({
+  ...component,
+  props:
+    component.props +
+    (extraProps[component.name] ? ` · ${extraProps[component.name]}` : "") +
+    (mobileOverlayComponents.has(component.name)
+      ? " · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)"
+      : "") +
+    (sizedFields.has(component.name)
+      ? " · hideLabel: boolean · size: regular | compact (otherwise inherits density)"
+      : ""),
+  slots:
+    richSlots[component.name] ||
+    (["HStatCard", "HEmptyState"].includes(component.name)
+      ? component.slots === "None"
+        ? "icon"
+        : `${component.slots}, icon`
+      : ["HDatePicker", "HTimePicker"].includes(component.name)
+        ? "leading, trailing"
+        : component.name === "HDropdownMenu"
+          ? "icon, trigger-label"
+          : component.slots),
+  events:
+    component.events +
+    (component.name === "HDataTable"
+      ? ", row-activate(row)"
+      : component.name === "HTextarea"
+        ? ", submit(value)"
+        : ""),
+}));

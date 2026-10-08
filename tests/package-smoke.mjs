@@ -50,8 +50,10 @@ try {
     for (const file of [
       "dist/types/index.d.ts",
       "dist/themes.css",
+      "dist/primitives.css",
       "llms.txt",
       "docs/components/multi-select/llms.txt",
+      "docs/primitives/llms.txt",
       "LICENSE",
       "README.md",
     ])
@@ -79,6 +81,16 @@ h(HTheme, {tokens:themeStyle({'--h-accent':'#ff7a2f'})});
 h(HNumberInput,{label:'Count',modelValue:null});
 h(HDateRangePicker,{label:'Window',modelValue:['2024-02-28','2024-03-02']});
 h(HCalendar,{month:'2024-02'});h(HRangeSlider,{label:'Interval',modelValue:[20,80]});
+import { HSurface, HButton, iconNames, themeProfileCSS, type ThemeProfile, type IconDefinition } from '@hearth-ui/vue';
+const profile:ThemeProfile={tokens:{'--h-radius-card':'9px'},modeTokens:{dark:{'--h-bg':'#111111'},light:{'--h-bg':'#eeeeee'}}};
+const glyph:IconDefinition={viewBox:'0 0 24 24',paths:['M3 3h18v18H3z']};
+h(HTheme,profile);h(HSurface,{as:'section',tone:'inset',padding:'sm'});h(HButton,{icon:glyph,iconOnly:true,label:'Inspect'});
+h(HInput,{label:'Search',hideLabel:true,size:'compact',type:'search',leadingIcon:glyph,clearable:true});
+const exported:string=themeProfileCSS(profile);const names:readonly string[]=iconNames;
+import {HStack,HGrid,HHeading,HPane,HMessage,HListbox,HTreeView,HVirtualList,HResizablePane,bindField,nextCollectionId,type TreeItem} from '@hearth-ui/vue';
+h(HStack,{direction:'row',wrap:true});h(HGrid,{minColumnWidth:'240px'});h(HHeading,{level:3,size:'lg'});h(HPane,{title:'Inspector',open:true});h(HMessage,{roleLabel:'Assistant'});
+const nodes:TreeItem[]=[{id:'one',label:'First',children:[{id:'child',label:'Child'}]}];h(HTreeView,{label:'Tree',items:nodes});h(HListbox,{label:'Choose',options:[{value:'one',label:'First'}]});h(HVirtualList,{label:'Window',items:[{id:'one',label:'First'}]});h(HResizablePane,{modelValue:320});
+const next:string|undefined=nextCollectionId([{id:'one'},{id:'two'}],'one','ArrowDown');
 `,
       );
       execFileSync(
@@ -102,6 +114,8 @@ h(HCalendar,{month:'2024-02'});h(HRangeSlider,{label:'Interval',modelValue:[20,8
       assert.equal(existsSync(join(installed, "dist/types/components")), false);
       assert.ok(existsSync(join(installed, "dist/elements/auto.js")));
       assert.ok(existsSync(join(installed, "dist/VUE-LICENSE")));
+      assert.ok(existsSync(join(installed,'dist/primitives.css')));
+      assert.ok(existsSync(join(installed,'docs/primitives/llms.txt')));
       for (const file of readdirSync(join(installed, "dist/types")))
         assert.doesNotMatch(
           readFileSync(join(installed, "dist/types", file), "utf8"),
@@ -127,6 +141,21 @@ theme.mobileBreakpoint=768;
 // @ts-expect-error breakpoint properties use numbers, not CSS length strings
 theme.mobileBreakpoint='768px';
 const credentials:AuthCredentials={username:'owner',password:'test-only'};
+import {HearthSurfaceElement,iconNames,themeProfileCSS,type ThemeProfile,type IconDefinition} from '@hearth-ui/elements';
+const profile:ThemeProfile={tokens:{'--h-radius-card':'9px'},modeTokens:{dark:{'--h-bg':'#111111'},light:{'--h-bg':'#eeeeee'}}};
+theme.modeTokens=profile.modeTokens;const css:string=themeProfileCSS(profile,{target:'elements'});
+const glyph:IconDefinition={paths:['M3 3h18v18H3z']};button.icon=glyph;field.leadingIcon=glyph;field.hideLabel=true;field.size='compact';field.clearable=true;
+const surface=new HearthSurfaceElement({as:'section',tone:'inset',padding:'sm'});const names:readonly string[]=iconNames;
+// @ts-expect-error structural surfaces do not turn into arbitrary interactive tags
+surface.as='button';
+import {HearthPaneElement,HearthMessageElement,HearthStackElement,HearthTreeViewElement,HearthVirtualListElement,HearthListboxElement,HearthResizablePaneElement,bindField,observePopup,createOverlayController,nextCollectionId,type TreeItem} from '@hearth-ui/elements';
+const nodes:TreeItem[]=[{id:'one',label:'First',children:[{id:'child',label:'Child'}]}];new HearthTreeViewElement({label:'Tree',items:nodes}).addEventListener('activate',event=>{const id:string=event.detail[0]});
+new HearthVirtualListElement({label:'Window',items:[{id:'one',label:'First'}],rowHeight:48});new HearthPaneElement({title:'Inspector',open:true}).addEventListener('update:open',event=>{const open:boolean=event.detail[0]});
+new HearthStackElement({direction:'row',wrap:true});new HearthMessageElement({roleLabel:'Assistant'});new HearthListboxElement({label:'Choose',options:[{value:'one',label:'First'}]});new HearthResizablePaneElement({modelValue:320});
+const native=document.createElement('input'),label=document.createElement('label');const binding=bindField(native,{label});binding.update({validationMessage:'Required'});binding.dispose();
+const popup=document.createElement('div'),placement=observePopup(()=>new DOMRect(0,0,1,1),popup);placement.update();placement.dispose();const overlay=createOverlayController(document.createElement('dialog'));overlay.dispose();
+import {createFormControlController} from '@hearth-ui/elements';
+const internals={} as ElementInternals;const custom=createFormControlController(internals,{getValue:()=>new FormData(),onRestore:(value,mode)=>{const restoreMode:'restore'|'autocomplete'|undefined=mode;}});custom.setCustomValidity('Invalid');custom.sync();custom.dispose();
 import {HearthFileUploadElement,HearthDataTableElement,HearthToasterElement,tableCellSlot,type TableRow,type ToastItem} from '@hearth-ui/elements';
 const upload=new HearthFileUploadElement({multiple:true});upload.checkValidity();upload.modelValue=[new File(['{}'],'config.json')];
 upload.addEventListener('change',event=>{const files:File[]=event.detail[0]});
@@ -158,7 +187,7 @@ customElements.define('sample-input',HearthInputElement);registerElements();
         [
           "--input-type=module",
           "-e",
-          `const ui=await import('@hearth-ui/elements');ui.registerElements();await import('@hearth-ui/elements/auto');if(!ui.HearthAuthPageElement||!ui.themeStyle)throw new Error('Missing elements exports');try{await import('vue');throw new Error('Unexpected Vue host dependency')}catch(e){if(e.code!=='ERR_MODULE_NOT_FOUND')throw e}console.log('Installed elements package imports without Vue or a browser.');`,
+          `const ui=await import('@hearth-ui/elements');ui.registerElements();await import('@hearth-ui/elements/auto');if(!ui.HearthAuthPageElement||!ui.HearthSurfaceElement||!ui.themeProfileCSS||!ui.iconNames.includes('search'))throw new Error('Missing elements exports');try{await import('vue');throw new Error('Unexpected Vue host dependency')}catch(e){if(e.code!=='ERR_MODULE_NOT_FOUND')throw e}console.log('Installed elements package imports without Vue or a browser.');`,
         ],
         { cwd: consumer, stdio: "inherit" },
       );

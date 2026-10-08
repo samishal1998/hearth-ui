@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, useId, watch } from "vue";
 import HIcon from "./HIcon.vue";
+import type { IconValue } from "../themes";
 import { useFloating } from "../floating";
 import { useMobileLayout } from "../mobile";
 const props = withDefaults(
   defineProps<{
     text: string;
     label?: string;
-    icon?: string;
+    icon?: IconValue;
     placement?: "top" | "bottom" | "left" | "right";
     delay?: number;
     disabled?: boolean;
     mobileBreakpoint?: number;
+    focusable?: boolean;
   }>(),
   { icon: "info", placement: "top", delay: 350 },
 );
@@ -123,6 +125,8 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
     class="h-tooltip"
     :class="{ 'h-mobile': mobile }"
     part="base"
+    :tabindex="focusable && !disabled ? 0 : undefined"
+    :aria-label="focusable ? label || text : undefined"
     @pointerenter="enter"
     @pointerleave="leave"
     @focusin="focus"

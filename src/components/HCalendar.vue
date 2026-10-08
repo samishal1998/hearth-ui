@@ -601,7 +601,7 @@ table {
 }
 th {
   color: var(--h-muted);
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   font-weight: 500;
   letter-spacing: 0.03em;
   padding-block: 4px 8px;
@@ -668,7 +668,7 @@ button:disabled {
   min-width: 0;
   margin-inline-end: auto;
   color: var(--h-muted);
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   overflow-wrap: anywhere;
 }
 .h-calendar-footer button {
@@ -715,7 +715,7 @@ button:disabled {
 .h-calendar-year-hint {
   margin: 8px 0 12px;
   color: var(--h-muted);
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   text-align: center;
 }
 .h-calendar-months {

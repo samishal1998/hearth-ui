@@ -1,15 +1,33 @@
 <script setup lang="ts">
 import { safeHref } from "../internal";
 import type { DescriptionItem } from "../themes";
-withDefaults(defineProps<{ items: DescriptionItem[]; columns?: 1 | 2 | 3 }>(), {
-  items: () => [],
-  columns: 1,
-});
+withDefaults(
+  defineProps<{
+    items: DescriptionItem[];
+    columns?: 1 | 2 | 3 | "auto";
+    dense?: boolean;
+    variant?: "stacked" | "inline";
+    minColumnWidth?: string;
+  }>(),
+  {
+    items: () => [],
+    columns: 1,
+    variant: "stacked",
+    minColumnWidth: "200px",
+  },
+);
 </script>
 <template>
   <dl
     class="h-description-list"
-    :style="{ '--h-description-columns': columns }"
+    :class="[variant, { dense }]"
+    :style="{
+      '--h-description-columns': columns,
+      gridTemplateColumns:
+        columns === 'auto'
+          ? `repeat(auto-fit,minmax(min(100%,${minColumnWidth}),1fr))`
+          : undefined,
+    }"
     part="base"
   >
     <div v-for="item in items" :key="item.key" part="item">
@@ -41,7 +59,7 @@ withDefaults(defineProps<{ items: DescriptionItem[]; columns?: 1 | 2 | 3 }>(), {
   min-width: 0;
 }
 dt {
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
   margin-bottom: 5px;
 }
@@ -53,6 +71,18 @@ dd {
 }
 a {
   color: var(--h-accent-text);
+}
+.dense > div {
+  padding-block: 8px;
+}
+.inline > div {
+  display: grid;
+  grid-template-columns: minmax(80px, 0.6fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+}
+.inline dt {
+  margin: 0;
 }
 @media (max-width: 550px) {
   .h-description-list {

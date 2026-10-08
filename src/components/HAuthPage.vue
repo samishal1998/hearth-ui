@@ -165,7 +165,7 @@ function submit(e: SubmitEvent) {
   max-width: 540px;
 }
 .h-eyebrow {
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   font-weight: 600;
   letter-spacing: 1.8px;
   text-transform: uppercase;
@@ -281,7 +281,7 @@ form > .h-button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
   margin-top: 27px;
 }

@@ -2,7 +2,7 @@
 
 > Native details/summary disclosures with single or multiple expansion.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -20,7 +20,7 @@
 
 ## Public API
 
-items: {id, title, description?, disabled?}[] · modelValue, value: string[] · multiple: boolean
+items: {id, title, description?, disabled?}[] · modelValue, value: string[] · multiple: boolean · defaultOpen: string[] · items[].defaultOpen: boolean · compact: boolean · variant: surface | flat
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -30,13 +30,16 @@ type Props = {
     modelValue?: string[];
     value?: string[];
     multiple?: boolean;
+    defaultOpen?: string[];
+    compact?: boolean;
+    variant?: "surface" | "flat";
 };
 ```
 
 ### Defaults
 
 ```ts
-{ items: () => [], value: () => [] }
+{ items: () => [], value: undefined, variant: "surface" }
 ```
 
 ### Events
@@ -58,7 +61,7 @@ Vue-emitted custom-element events expose argument arrays in `event.detail`. List
 
 ### Slots
 
-One named slot per item.id
+header:<id> (Vue scope: item/open), <id>
 
 Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 
@@ -76,6 +79,7 @@ export interface AccordionItem {
     title: string;
     description?: string;
     disabled?: boolean;
+    defaultOpen?: boolean;
 }
 ```
 

@@ -9,7 +9,7 @@ import { renderAgentDocs, root } from "../scripts/agent-docs.mjs";
 test("agent references cover all public components, resolve links, and contain valid examples", async () => {
   const { files, catalog } = await renderAgentDocs();
   const index = files.get("llms.txt");
-  assert.equal(files.size, catalog.length + 1);
+  assert.equal(files.size, catalog.length + 2);
   const exports = readFileSync(resolve(root, "src/index.ts"), "utf8");
   const publicNames = [...exports.matchAll(/default as (H\w+)/g)].map(
     (m) => m[1],
@@ -28,6 +28,11 @@ test("agent references cover all public components, resolve links, and contain v
     }
     if (path === "llms.txt") continue;
     assert.ok(index.includes(`](${path})`), `Index omits ${path}`);
+    if (path === "docs/primitives/llms.txt") {
+      assert.match(text, /bindField/);
+      assert.match(text, /dispose/);
+      continue;
+    }
     assert.match(text, /## Public API/);
     assert.match(text, /### Defaults/);
     assert.match(text, /### Events/);

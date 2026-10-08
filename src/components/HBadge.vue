@@ -1,12 +1,27 @@
 <script setup lang="ts">
-import type { Tone } from "../themes";
-withDefaults(defineProps<{ tone?: Tone; dot?: boolean; label?: string }>(), {
-  tone: "neutral",
-});
+import type { Tone, IconValue } from "../themes";
+import HIcon from "./HIcon.vue";
+withDefaults(
+  defineProps<{
+    tone?: Tone;
+    dot?: boolean;
+    label?: string;
+    icon?: IconValue;
+    size?: "sm" | "md";
+    variant?: "soft" | "outline" | "dashed";
+  }>(),
+  {
+    tone: "neutral",
+    size: "sm",
+    variant: "soft",
+  },
+);
 </script>
 <template>
-  <span class="h-badge" part="base" :class="tone"
-    ><i v-if="dot" aria-hidden="true" /><slot>{{ label }}</slot></span
+  <span class="h-badge" part="base" :class="[tone, size, variant]"
+    ><i v-if="dot" aria-hidden="true" /><slot name="icon"
+      ><HIcon v-if="icon" :name="icon" :size="14" /></slot
+    ><slot>{{ label }}</slot></span
   >
 </template>
 <style scoped>
@@ -19,7 +34,7 @@ withDefaults(defineProps<{ tone?: Tone; dot?: boolean; label?: string }>(), {
   border-radius: 6px;
   background: color-mix(in srgb, var(--badge-color) 10%, transparent);
   color: var(--badge-color);
-  font: 500 11px/1.5 var(--h-font);
+  font: 500 max(var(--h-font-min-size, 12px), 11px)/1.5 var(--h-font);
   white-space: nowrap;
 }
 .accent {
@@ -43,5 +58,17 @@ i {
   flex-shrink: 0;
   border-radius: 50%;
   background: currentColor;
+}
+.outline,
+.dashed {
+  background: transparent;
+  border: 1px solid var(--badge-color);
+}
+.dashed {
+  border-style: dashed;
+}
+.md {
+  padding: 5px 10px;
+  font-size: max(var(--h-font-min-size, 12px), 13px);
 }
 </style>

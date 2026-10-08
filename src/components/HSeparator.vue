@@ -26,7 +26,7 @@ withDefaults(
   align-items: center;
   gap: 12px;
   color: var(--h-muted);
-  font: 11px var(--h-font);
+  font: max(var(--h-font-min-size, 12px), 11px) var(--h-font);
   min-width: 0;
 }
 .horizontal {

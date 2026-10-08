@@ -23,10 +23,12 @@ import {
   themes,
   themeStyle,
   themeCSS,
+  themeProfileCSS,
   type Theme,
   type Mode,
   type Density,
   type ThemeTokens,
+  type ThemeModeTokens,
   type AuthCredentials,
 } from "../src";
 import { catalog } from "./catalog";
@@ -34,6 +36,13 @@ import ExpandedExamples from "./ExpandedExamples.vue";
 import DashboardExamples from "./DashboardExamples.vue";
 import RecipeExamples from "./RecipeExamples.vue";
 import ComponentRegistry from "./ComponentRegistry.vue";
+import FoundationExamples from "./FoundationExamples.vue";
+import WorkspaceExamples from "./WorkspaceExamples.vue";
+import {
+  restoreThemeProfile,
+  resolvedProfile,
+  contrastRatio,
+} from "./theme-profile";
 const document = window.document;
 
 const route = ref(location.hash.slice(1) || "home");
@@ -62,47 +71,91 @@ const density = ref<Density>(
   saved.density === "compact" ? "compact" : "comfortable",
 );
 const brand = ref(typeof saved.brand === "string" ? saved.brand : "hearth");
-const overrides = ref<ThemeTokens>(
-  saved.tokens && typeof saved.tokens === "object"
-    ? themeStyle(saved.tokens as ThemeTokens)
-    : {},
-);
-const themeRoot = ref<InstanceType<typeof HTheme>>();
-const resolved = ref<ThemeTokens>({});
-async function readTokens() {
-  await nextTick();
-  const el = themeRoot.value?.$el;
-  if (!(el instanceof HTMLElement)) return;
-  const css = getComputedStyle(el);
-  resolved.value = Object.fromEntries(
-    Array.from(css)
-      .filter((k) => k.startsWith("--h-"))
-      .map((k) => [k, css.getPropertyValue(k).trim()]),
-  );
-}
-watch(
-  [theme, mode, density, brand, overrides],
-  () => {
-    localStorage.setItem(
-      "hearth-playground",
-      JSON.stringify({
-        theme: theme.value,
-        mode: mode.value,
-        density: density.value,
-        brand: brand.value,
-        tokens: overrides.value,
-      }),
-    );
-    readTokens();
-  },
-  { deep: true },
-);
-onMounted(readTokens);
 const colorPreference = window.matchMedia("(prefers-color-scheme: dark)");
 const systemDark = ref(colorPreference.matches);
 const isDark = computed(() =>
   mode.value === "system" ? systemDark.value : mode.value === "dark",
 );
+const restored = restoreThemeProfile(saved, isDark.value ? "dark" : "light");
+const overrides = ref<ThemeTokens>(restored.tokens || {});
+const modeOverrides = ref<ThemeModeTokens>(restored.modeTokens || {});
+const migratedTheme = ref(
+  saved.version !== 2 &&
+    Object.keys(themeStyle(saved.tokens as ThemeTokens)).length
+    ? `Previous color edits were kept in the ${isDark.value ? "dark" : "light"} palette. The other mode starts with its preset colors.`
+    : "",
+);
+if (migratedTheme.value) {
+  try {
+    if (!localStorage.getItem("hearth-playground-v1"))
+      localStorage.setItem("hearth-playground-v1", JSON.stringify(saved));
+  } catch {}
+}
+const themeRoot = ref<InstanceType<typeof HTheme>>();
+const darkProbe = ref<InstanceType<typeof HTheme>>(),
+  lightProbe = ref<InstanceType<typeof HTheme>>();
+const resolved = ref<ThemeTokens>({});
+const resolvedModes = ref<ThemeModeTokens>({});
+const modeContrast = computed(
+  () =>
+    Object.fromEntries(
+      (["dark", "light"] as const).map((mode) => [
+        mode,
+        {
+          text: contrastRatio(
+            resolvedModes.value[mode]?.["--h-text"],
+            resolvedModes.value[mode]?.["--h-bg"],
+          ),
+          muted: contrastRatio(
+            resolvedModes.value[mode]?.["--h-muted"],
+            resolvedModes.value[mode]?.["--h-bg"],
+          ),
+        },
+      ]),
+    ) as Record<"dark" | "light", { text?: number; muted?: number }>,
+);
+function snapshot(
+  instance: InstanceType<typeof HTheme> | undefined,
+): ThemeTokens {
+  const el = instance?.$el;
+  if (!(el instanceof HTMLElement)) return {};
+  const css = getComputedStyle(el);
+  return Object.fromEntries(
+    Array.from(css)
+      .filter((key) => key.startsWith("--h-"))
+      .map((key) => [key, css.getPropertyValue(key).trim()]),
+  );
+}
+async function readTokens() {
+  await nextTick();
+  resolved.value = snapshot(themeRoot.value);
+  resolvedModes.value = {
+    dark: snapshot(darkProbe.value),
+    light: snapshot(lightProbe.value),
+  };
+}
+watch(
+  [theme, mode, density, brand, overrides, modeOverrides],
+  () => {
+    try {
+      localStorage.setItem(
+        "hearth-playground",
+        JSON.stringify({
+          version: 2,
+          theme: theme.value,
+          mode: mode.value,
+          density: density.value,
+          brand: brand.value,
+          tokens: overrides.value,
+          modeTokens: modeOverrides.value,
+        }),
+      );
+    } catch {}
+    readTokens();
+  },
+  { deep: true },
+);
+onMounted(readTokens);
 function systemChanged() {
   systemDark.value = colorPreference.matches;
   readTokens();
@@ -139,9 +192,15 @@ const modeOptions = [
 function selectTheme(value: string) {
   theme.value = value as Theme;
   overrides.value = {};
+  modeOverrides.value = {};
+  migratedTheme.value = "";
 }
 function setToken(key: `--h-${string}`, value: string) {
-  overrides.value = { ...overrides.value, [key]: value };
+  const target = isDark.value ? "dark" : "light";
+  modeOverrides.value = {
+    ...modeOverrides.value,
+    [target]: { ...modeOverrides.value[target], [key]: value },
+  };
 }
 function resetTheme() {
   theme.value = "sunset";
@@ -149,9 +208,26 @@ function resetTheme() {
   density.value = "comfortable";
   brand.value = "hearth";
   overrides.value = {};
+  modeOverrides.value = {};
+  migratedTheme.value = "";
 }
 const exportOpen = ref(false);
-const exportCode = computed(() => themeCSS(resolved.value));
+const exportFormat = ref("vue-css");
+const exportProfile = computed(() =>
+  resolvedProfile(
+    resolvedModes.value.dark || {},
+    resolvedModes.value.light || {},
+  ),
+);
+const exportCode = computed(() =>
+  exportFormat.value === "profile"
+    ? JSON.stringify(exportProfile.value, null, 2)
+    : exportFormat.value === "snapshot"
+      ? themeCSS(resolved.value)
+      : themeProfileCSS(exportProfile.value, {
+          target: exportFormat.value === "elements-css" ? "elements" : "vue",
+        }),
+);
 async function copy(value: string) {
   try {
     await navigator.clipboard.writeText(value);
@@ -247,6 +323,7 @@ const shownApps = computed(() =>
   ),
 );
 const publicNav = [
+  { id: "foundation", label: "Primitives", href: "#foundation" },
   { id: "components", label: "Components", href: "#components" },
   { id: "themes", label: "Themes", href: "#themes" },
   { id: "guide", label: "Get started", href: "#guide" },
@@ -292,6 +369,7 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
     :mode="mode"
     :density="density"
     :tokens="overrides"
+    :mode-tokens="modeOverrides"
   >
     <div v-if="notice" class="site-toast">
       <HAlert
@@ -521,7 +599,9 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
         v-if="
           route === 'home' ||
           (!route.startsWith('components') &&
-            !['examples', 'themes', 'guide', 'recipes'].includes(route))
+            !['examples', 'foundation', 'themes', 'guide', 'recipes'].includes(
+              route,
+            ))
         "
       >
         <section class="landing-hero">
@@ -680,6 +760,16 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
         v-else-if="route === 'components' || route.startsWith('components/')"
         :selected="route.split('/')[1] || ''"
       />
+      <template v-else-if="route === 'foundation'"
+        ><section class="page-intro">
+          <HPageHeader
+            title="Build the UI your application needs."
+            description="New in 0.7: styled primitives, rich composition, and reusable behavior for building your own interfaces."
+            eyebrow="Foundations first"
+          />
+        </section>
+        <FoundationExamples /><WorkspaceExamples
+      /></template>
       <template v-else-if="route === 'examples'">
         <section class="page-intro">
           <HPageHeader
@@ -851,6 +941,8 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
             >Reset filters</HButton
           ></HEmptyState
         >
+        <FoundationExamples />
+        <WorkspaceExamples />
         <ExpandedExamples id="expanded-components" @notice="notify" />
         <DashboardExamples @notice="notify" />
         <section class="api-section">
@@ -923,11 +1015,15 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
               /><HSwitch
                 :model-value="density === 'compact'"
                 label="Compact density"
-                description="A little more room for information. Controls retain a 40px minimum."
+                description="Compact desktop fields and choice rows. Touch targets expand on touchscreens."
                 @update:model-value="
                   density = $event ? 'compact' : 'comfortable'
                 "
-              /><label class="range-label"
+              />
+              <p v-if="migratedTheme" class="muted" role="status">
+                {{ migratedTheme }}
+              </p>
+              <label class="range-label"
                 >Corner radius
                 <input
                   type="range"
@@ -970,9 +1066,76 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
                       )
                     "
                 /></label>
-              </div></div
-          ></HCard>
+              </div>
+              <p class="muted">
+                Editing {{ isDark ? "dark" : "light" }} colors{{
+                  mode === "system" ? " (resolved from your system)" : ""
+                }}. Geometry is shared across modes.
+              </p>
+              <HButton
+                variant="ghost"
+                @click="
+                  modeOverrides = {
+                    ...modeOverrides,
+                    [isDark ? 'dark' : 'light']: {},
+                  }
+                "
+                >Reset {{ isDark ? "dark" : "light" }} colors</HButton
+              >
+            </div></HCard
+          >
           <div class="theme-preview-stack">
+            <div class="theme-mode-previews">
+              <HTheme
+                v-for="previewMode in ['dark', 'light'] as const"
+                :key="previewMode"
+                :theme="theme"
+                :mode="previewMode"
+                :density="density"
+                :tokens="overrides"
+                :mode-tokens="modeOverrides"
+                :data-preview-mode="previewMode"
+                ><HCard
+                  :title="`${previewMode === 'dark' ? 'Dark' : 'Light'} palette`"
+                  ><p>Primary text on your selected surface.</p>
+                  <p class="muted">
+                    Secondary text stays specific to this mode.
+                  </p>
+                  <HButton variant="primary"
+                    >{{ previewMode === "dark" ? "Dark" : "Light" }} accent
+                    preview</HButton
+                  >
+                  <p class="muted">
+                    Text / background:
+                    {{
+                      modeContrast[previewMode].text?.toFixed(2) ||
+                      "Check palette"
+                    }}{{ modeContrast[previewMode].text ? ":1" : "" }} ·
+                    Secondary:
+                    {{
+                      modeContrast[previewMode].muted?.toFixed(2) ||
+                      "Check palette"
+                    }}{{ modeContrast[previewMode].muted ? ":1" : "" }}
+                  </p>
+                  <HBadge
+                    v-if="
+                      modeContrast[previewMode].text !== undefined &&
+                      modeContrast[previewMode].muted !== undefined
+                    "
+                    :tone="
+                      modeContrast[previewMode].text! >= 4.5 &&
+                      modeContrast[previewMode].muted! >= 4.5
+                        ? 'success'
+                        : 'warning'
+                    "
+                    :label="
+                      modeContrast[previewMode].text! >= 4.5 &&
+                      modeContrast[previewMode].muted! >= 4.5
+                        ? 'Both text pairs meet 4.5:1'
+                        : 'Review text contrast'
+                    " /></HCard
+              ></HTheme>
+            </div>
             <HPageHeader
               title="Your apps."
               accent="A little closer."
@@ -1333,15 +1496,34 @@ select.options = [{ value: 'media', label: 'Media' }]</code></pre>
     <HDialog
       :open="exportOpen"
       title="Take the atmosphere with you."
-      description="A resolved snapshot of the current theme. Apply it to your app's root or a scoped container."
+      description="Export both color modes with shared layout tokens, or take a portable theme profile."
       @close="exportOpen = false"
     >
+      <HSelect
+        v-model="exportFormat"
+        label="Export format"
+        :options="[
+          { value: 'vue-css', label: 'Mode-aware CSS · Vue / HTML' },
+          { value: 'elements-css', label: 'Mode-aware CSS · web components' },
+          { value: 'profile', label: 'Portable profile · JSON' },
+          { value: 'snapshot', label: 'Current mode snapshot · legacy' },
+        ]"
+      />
+      <p class="muted">
+        {{
+          exportFormat === "profile"
+            ? "Assign tokens and modeTokens from this profile to HTheme or hearth-theme."
+            : exportFormat === "snapshot"
+              ? "This legacy snapshot is for one resolved mode only."
+              : 'Use theme="custom" and mode="dark", "light", or "system". Load the exported CSS after Hearth styles.'
+        }}
+      </p>
       <pre class="theme-export"><code>{{exportCode}}</code></pre>
       <template #footer
         ><div class="dialog-actions">
           <HButton @click="exportOpen = false">Done</HButton
           ><HButton variant="primary" icon="copy" @click="copy(exportCode)"
-            >Copy CSS</HButton
+            >Copy {{ exportFormat === "profile" ? "JSON" : "CSS" }}</HButton
           >
         </div></template
       ></HDialog
@@ -1378,4 +1560,26 @@ select.options = [{ value: 'media', label: 'Media' }]</code></pre>
       ></HDialog
     >
   </HTheme>
+  <HTheme
+    ref="darkProbe"
+    class="theme-probe"
+    :theme="theme"
+    mode="dark"
+    :density="density"
+    :tokens="overrides"
+    :mode-tokens="modeOverrides"
+    aria-hidden="true"
+    inert
+  />
+  <HTheme
+    ref="lightProbe"
+    class="theme-probe"
+    :theme="theme"
+    mode="light"
+    :density="density"
+    :tokens="overrides"
+    :mode-tokens="modeOverrides"
+    aria-hidden="true"
+    inert
+  />
 </template>

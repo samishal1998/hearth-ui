@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, useId, watch, nextTick } from "vue";
+import { ref, useId, watch, nextTick, onMounted } from "vue";
+import { useSlotPresence } from "../slots";
 import { useMobileLayout } from "../mobile";
 import HBrand from "./HBrand.vue";
 import HIcon from "./HIcon.vue";
 import HButton from "./HButton.vue";
 import HNavList from "./HNavList.vue";
-import type { NavItem } from "../themes";
+import type { NavItem, IconValue } from "../themes";
 const props = withDefaults(
   defineProps<{
     brand?: string;
@@ -19,6 +20,15 @@ const props = withDefaults(
     userRole?: string;
     footerNote?: string;
     mobileBreakpoint?: number;
+    showWorkspace?: boolean;
+    showWorkspaceIcon?: boolean;
+    workspaceIcon?: IconValue;
+    navigationLabel?: string;
+    navLabel?: string;
+    contentMaxWidth?: string;
+    innerScroll?: boolean;
+    titleAsHeading?: boolean;
+    contentTag?: "main" | "div";
   }>(),
   {
     brand: "hearth",
@@ -28,12 +38,35 @@ const props = withDefaults(
     pageTitle: "Overview",
     userRole: "Workspace owner",
     footerNote: "Hosted by you. Right where it belongs.",
+    showWorkspace: true,
+    showWorkspaceIcon: true,
+    workspaceIcon: "lock",
+    navigationLabel: "Your space",
+    navLabel: "Main navigation",
+    contentTag: "main",
   },
 );
 const emit = defineEmits<{ navigate: [id: string]; logout: [] }>();
 const drawer = ref<HTMLDialogElement>();
 const mobile = useMobileLayout(drawer, () => props.mobileBreakpoint);
 const main = ref<HTMLElement>();
+const sidebar = ref<HTMLElement>(),
+  sidebarContent = ref<HTMLElement>(),
+  drawerBody = ref<HTMLElement>(),
+  root = ref<HTMLElement>();
+const hasSlot = useSlotPresence(() => root.value);
+async function moveSidebar() {
+  await nextTick();
+  const target = mobile.value ? drawerBody.value : sidebar.value;
+  if (
+    target &&
+    sidebarContent.value &&
+    sidebarContent.value.parentElement !== target
+  )
+    target.append(sidebarContent.value);
+}
+watch(mobile, moveSidebar, { flush: "post" });
+onMounted(moveSidebar);
 const id = useId();
 watch(mobile, async (value) => {
   if (!value && drawer.value?.open) {
@@ -48,44 +81,63 @@ function navigate(id: string) {
 }
 </script>
 <template>
-  <div class="h-dashboard" :class="{ 'h-mobile': mobile }" part="base">
+  <div
+    ref="root"
+    class="h-dashboard"
+    :class="{ 'h-mobile': mobile, 'inner-scroll': innerScroll }"
+    :style="{ '--h-content-max': contentMaxWidth }"
+    part="base"
+  >
     <a class="h-skip" :href="`#${id}-main`" @click.prevent="main?.focus()"
       >Skip to content</a
     >
-    <aside class="h-sidebar" part="sidebar">
-      <div class="h-sidebar-brand">
-        <slot name="brand"><HBrand :name="brand" :logo="logo" /></slot>
-      </div>
-      <div class="h-workspace">
-        <span class="h-workspace-icon"><HIcon name="lock" :size="18" /></span>
-        <div>
-          <strong>{{ workspace }}</strong
-          ><small>{{ workspaceDescription }}</small>
+    <aside ref="sidebar" class="h-sidebar" part="sidebar">
+      <div ref="sidebarContent" class="h-sidebar-content">
+        <div class="h-sidebar-brand">
+          <slot name="brand"><HBrand :name="brand" :logo="logo" /></slot>
         </div>
-      </div>
-      <span class="h-nav-label">Your space</span
-      ><slot name="navigation"
-        ><HNavList :items="items" :active="active" @navigate="navigate"
-      /></slot>
-      <div class="h-sidebar-end">
-        <slot name="sidebar-footer"
-          ><p class="h-host-note"><i />{{ footerNote }}</p>
-          <div v-if="username" class="h-account">
-            <span class="h-avatar">{{
-              username.slice(0, 1).toUpperCase()
-            }}</span>
+        <slot name="workspace"
+          ><div v-if="showWorkspace" class="h-workspace">
+            <span v-if="showWorkspaceIcon" class="h-workspace-icon"
+              ><slot name="workspace-icon"
+                ><HIcon :name="workspaceIcon" :size="18" /></slot
+            ></span>
             <div>
-              <strong>{{ username }}</strong
-              ><small>{{ userRole }}</small>
+              <strong>{{ workspace }}</strong
+              ><small>{{ workspaceDescription }}</small>
             </div>
-            <HButton
-              variant="ghost"
-              icon="logout"
-              icon-only
-              label="Sign out"
-              @click="emit('logout')"
-            /></div
-        ></slot>
+          </div></slot
+        >
+        <span v-if="navigationLabel" class="h-nav-label">{{
+          navigationLabel
+        }}</span
+        ><slot name="navigation"
+          ><HNavList
+            :items="items"
+            :active="active"
+            :label="navLabel"
+            @navigate="navigate"
+        /></slot>
+        <div class="h-sidebar-end">
+          <slot name="sidebar-footer"
+            ><p class="h-host-note"><i />{{ footerNote }}</p>
+            <div v-if="username" class="h-account">
+              <span class="h-avatar">{{
+                username.slice(0, 1).toUpperCase()
+              }}</span>
+              <div>
+                <strong>{{ username }}</strong
+                ><small>{{ userRole }}</small>
+              </div>
+              <HButton
+                variant="ghost"
+                icon="logout"
+                icon-only
+                label="Sign out"
+                @click="emit('logout')"
+              /></div
+          ></slot>
+        </div>
       </div>
     </aside>
     <div class="h-dashboard-main">
@@ -98,20 +150,36 @@ function navigate(id: string) {
           label="Open navigation"
           @click="drawer?.showModal()"
         />
-        <div class="h-breadcrumb">
-          <HIcon name="home" :size="15" /><span>/</span>{{ pageTitle }}
-        </div>
+        <component :is="titleAsHeading ? 'h1' : 'div'" class="h-breadcrumb">
+          <slot name="page-title"
+            ><template v-if="!titleAsHeading"
+              ><HIcon name="home" :size="15" /><span>/</span></template
+            >{{ pageTitle }}</slot
+          >
+        </component>
         <div class="h-top-actions"><slot name="header-actions" /></div>
       </header>
-      <main
-        :id="`${id}-main`"
-        ref="main"
-        tabindex="-1"
-        class="h-main-content"
-        part="content"
-      >
-        <slot />
-      </main>
+      <div class="h-work-area">
+        <component
+          :is="contentTag"
+          :role="contentTag === 'div' ? 'region' : undefined"
+          :aria-label="contentTag === 'div' ? pageTitle : undefined"
+          :id="`${id}-main`"
+          ref="main"
+          tabindex="-1"
+          class="h-main-content"
+          part="content"
+        >
+          <slot />
+        </component>
+        <aside
+          v-if="hasSlot('side-pane')"
+          class="h-shell-pane"
+          part="side-pane"
+        >
+          <slot name="side-pane" />
+        </aside>
+      </div>
       <footer class="h-shell-footer" part="footer">
         <slot name="footer"
           ><HBrand :name="brand" /><span
@@ -124,7 +192,7 @@ function navigate(id: string) {
       ref="drawer"
       class="h-drawer h-mobile-overlay"
       :class="{ 'h-mobile': mobile }"
-      aria-label="Main navigation"
+      :aria-label="navLabel"
       part="mobile-navigation"
     >
       <div class="h-drawer-head h-overlay-header">
@@ -136,20 +204,7 @@ function navigate(id: string) {
           @click="drawer?.close()"
         />
       </div>
-      <div class="h-overlay-body">
-        <HNavList :items="items" :active="active" @navigate="navigate" />
-        <div v-if="username" class="h-mobile-user">
-          <span>{{ username }} · {{ userRole }}</span
-          ><HButton
-            icon="logout"
-            label="Sign out"
-            @click="
-              emit('logout');
-              drawer?.close();
-            "
-          />
-        </div>
-      </div>
+      <div ref="drawerBody" class="h-overlay-body" />
     </dialog>
   </div>
 </template>
@@ -206,12 +261,12 @@ function navigate(id: string) {
 }
 .h-workspace small {
   display: block;
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   color: var(--h-muted);
   margin-top: 4px;
 }
 .h-nav-label {
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   letter-spacing: 1.4px;
   color: var(--h-muted);
   text-transform: uppercase;
@@ -221,11 +276,52 @@ function navigate(id: string) {
 .h-sidebar-end {
   margin-top: auto;
 }
+.h-sidebar-content {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+.h-work-area {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+.h-shell-pane {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+}
+.inner-scroll {
+  height: 100dvh;
+  overflow: hidden;
+}
+.inner-scroll .h-main-content {
+  overflow: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+.inner-scroll .h-shell-footer {
+  flex-shrink: 0;
+}
+.h-breadcrumb {
+  margin: 0;
+  font-weight: 500;
+}
+.h-drawer .h-sidebar-brand {
+  display: none;
+}
+.h-drawer .h-sidebar-content {
+  min-height: 0;
+}
 .h-host-note {
   display: flex;
   gap: 8px;
   align-items: flex-start;
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   line-height: 1.8;
   color: var(--h-muted);
   margin: 30px 10px 22px;
@@ -270,7 +366,7 @@ function navigate(id: string) {
 }
 .h-account small {
   display: block;
-  font-size: 10px;
+  font-size: max(var(--h-font-min-size, 12px), 10px);
   color: var(--h-muted);
   margin-top: 3px;
 }
@@ -322,7 +418,7 @@ function navigate(id: string) {
   gap: 20px;
   border-top: 1px solid var(--h-border);
   padding: 24px var(--h-page-padding);
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
 }
 .h-shell-footer :deep(.h-wordmark) {

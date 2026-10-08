@@ -73,7 +73,7 @@ test("native Vue: themes, scoped islands, dialogs, login template, and dashboard
   await page.getByRole("link", { name: "Themes", exact: true }).click();
   await page.getByLabel("Palette", { exact: true }).selectOption("ocean");
   await expect(
-    page.locator(".theme-preview-stack .h-button.primary").first(),
+    page.getByRole("button", { name: "Primary action", exact: true }),
   ).toHaveCSS("background-color", "rgb(112, 186, 255)");
   await expect(
     page.locator(".theme-islands .h-theme").last().locator(".h-button"),
@@ -85,7 +85,7 @@ test("native Vue: themes, scoped islands, dialogs, login template, and dashboard
   );
   await page.getByRole("switch", { name: "Compact density" }).check();
   await expect(
-    page.locator(".theme-preview-stack .h-button.primary").first(),
+    page.getByRole("button", { name: "Primary action", exact: true }),
   ).toHaveCSS("min-height", "40px");
   await page
     .getByLabel("Accent", { exact: true })
@@ -94,7 +94,7 @@ test("native Vue: themes, scoped islands, dialogs, login template, and dashboard
       el.dispatchEvent(new Event("input", { bubbles: true }));
     });
   await expect(
-    page.locator(".theme-preview-stack .h-button.primary").first(),
+    page.getByRole("button", { name: "Primary action", exact: true }),
   ).toHaveCSS("background-color", "rgb(182, 102, 243)");
   await page.getByRole("button", { name: "Export your theme" }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
@@ -111,7 +111,7 @@ test("native Vue: themes, scoped islands, dialogs, login template, and dashboard
   );
   await page.getByRole("button", { name: "Reset to Sunset" }).click();
   await page.getByRole("link", { name: "Components", exact: true }).click();
-  await page.getByRole('link', {name:'Browse composed examples'}).click();
+  await page.getByRole("link", { name: "Browse composed examples" }).click();
   await page.getByRole("button", { name: "Open a real dialog" }).click();
   await page
     .getByRole("dialog")

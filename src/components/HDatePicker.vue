@@ -4,6 +4,8 @@ import HInput from "./HTextInput.vue";
 import { parseDate } from "../dates";
 import HPopover from "./HPopover.vue";
 import HCalendar from "./HCalendar.vue";
+import type { ControlSize, IconValue } from "../themes";
+import { useSlotPresence } from "../slots";
 const props = withDefaults(
   defineProps<{
     modelValue?: string;
@@ -21,6 +23,10 @@ const props = withDefaults(
     locale?: string;
     weekStartsOn?: 0 | 1;
     mobileBreakpoint?: number;
+    hideLabel?: boolean;
+    size?: ControlSize;
+    leadingIcon?: IconValue;
+    clearable?: boolean;
   }>(),
   { value: "" },
 );
@@ -32,6 +38,8 @@ const emit = defineEmits<{
 const local = ref(props.modelValue ?? props.value);
 const open = ref(false);
 const input = ref<InstanceType<typeof HInput>>();
+const root = ref<HTMLElement>();
+const hasSlot = useSlotPresence(() => root.value);
 const calendar = ref<InstanceType<typeof HCalendar>>();
 const popover = ref<InstanceType<typeof HPopover>>();
 watch(
@@ -81,7 +89,7 @@ onMounted(sync);
 onUpdated(sync);
 </script>
 <template>
-  <div class="h-date-picker" part="base">
+  <div ref="root" class="h-date-picker" part="base">
     <HInput
       ref="input"
       :model-value="local"
@@ -90,6 +98,10 @@ onUpdated(sync);
       placeholder="YYYY-MM-DD"
       autocomplete="off"
       :label="label"
+      :hide-label="hideLabel"
+      :size="size"
+      :leading-icon="leadingIcon"
+      :clearable="clearable"
       :name="name"
       :min="min"
       :max="max"
@@ -101,8 +113,10 @@ onUpdated(sync);
       @update:model-value="update"
       @change="emit('change', $event)"
       @control-sync="sync"
+      ><template v-if="hasSlot('leading')" #leading
+        ><slot name="leading" /></template
       ><template #trailing
-        ><HPopover
+        ><slot v-if="hasSlot('trailing')" name="trailing" /><HPopover
           ref="popover"
           v-model:open="open"
           :mobile-breakpoint="mobileBreakpoint"

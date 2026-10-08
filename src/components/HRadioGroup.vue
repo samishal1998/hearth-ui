@@ -2,6 +2,7 @@
 import { ref, watch, useId, nextTick, computed } from "vue";
 import { controlSync } from "../internal";
 import type { ChoiceOption } from "../themes";
+import { nextCollectionId } from "../primitives";
 const props = withDefaults(
   defineProps<{
     modelValue?: string;
@@ -60,16 +61,21 @@ function key(e: KeyboardEvent) {
   if (!radios.length) return;
   e.preventDefault();
   e.stopPropagation();
-  const at = radios.indexOf(e.target as HTMLInputElement);
-  const index =
-    e.key === "Home"
-      ? 0
-      : e.key === "End"
-        ? radios.length - 1
-        : (at +
-            (["ArrowDown", "ArrowRight"].includes(e.key) ? 1 : -1) +
-            radios.length) %
-          radios.length;
+  const next = nextCollectionId(
+    radios.map((_, index) => ({ id: String(index) })),
+    String(radios.indexOf(e.target as HTMLInputElement)),
+    e.key,
+    {
+      orientation: ["ArrowLeft", "ArrowRight"].includes(e.key)
+        ? "horizontal"
+        : "vertical",
+      direction:
+        getComputedStyle(root.value!).direction === "rtl" ? "rtl" : "ltr",
+      wrap: true,
+    },
+  );
+  if (next === undefined) return;
+  const index = Number(next);
   radios[index].focus();
   radios[index].click();
 }
@@ -138,7 +144,7 @@ legend {
   padding: 0;
 }
 .h-radio-help {
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   line-height: 1.8;
   color: var(--h-muted);
   margin-bottom: 10px;
@@ -177,7 +183,7 @@ strong {
 }
 small {
   display: block;
-  font-size: 11px;
+  font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
   line-height: 1.8;
   margin-top: 3px;

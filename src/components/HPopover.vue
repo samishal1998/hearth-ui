@@ -1,22 +1,16 @@
 <script setup lang="ts">
-import {
-  ref,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-  nextTick,
-  useId,
-  useSlots,
-} from "vue";
+import { ref, watch, onMounted, onBeforeUnmount, nextTick, useId } from "vue";
 import HButton from "./HButton.vue";
+import type { IconValue } from "../themes";
 import { useFloating, focusFirst } from "../floating";
 import { useMobileLayout } from "../mobile";
+import { useSlotPresence } from "../slots";
 const props = withDefaults(
   defineProps<{
     open?: boolean;
     label?: string;
     title?: string;
-    icon?: string;
+    icon?: IconValue;
     iconOnly?: boolean;
     panelLabel?: string;
     placement?: "top" | "bottom" | "left" | "right";
@@ -34,29 +28,7 @@ const body = ref<HTMLElement>();
 const mobile = useMobileLayout(panel, () => props.mobileBreakpoint);
 const visible = ref(false);
 const id = useId();
-const slots = useSlots();
-const webFooter = ref(false);
-let footerObserver: MutationObserver | undefined;
-onMounted(() => {
-  if (slots.footer) return;
-  const tree = panel.value?.getRootNode();
-  if (!(tree instanceof ShadowRoot)) return;
-  const host = tree.host;
-  const syncFooter = () => {
-    webFooter.value = [...host.children].some(
-      (child) => child.getAttribute("slot") === "footer",
-    );
-  };
-  footerObserver = new MutationObserver(syncFooter);
-  footerObserver.observe(host, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ["slot"],
-  });
-  syncFooter();
-});
-onBeforeUnmount(() => footerObserver?.disconnect());
+const hasSlot = useSlotPresence(() => panel.value?.parentElement ?? undefined);
 useFloating(
   anchor,
   panel,
@@ -140,11 +112,7 @@ function toggle() {
       <div ref="body" class="h-overlay-body" tabindex="-1" part="body">
         <slot />
       </div>
-      <div
-        v-if="$slots.footer || webFooter"
-        class="h-overlay-footer"
-        part="footer"
-      >
+      <div v-if="hasSlot('footer')" class="h-overlay-footer" part="footer">
         <slot name="footer" />
       </div></div
   ></span>

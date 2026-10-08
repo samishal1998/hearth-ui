@@ -2,7 +2,7 @@
 
 > A labeled multiline field with native constraints and form reset support.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -14,12 +14,13 @@
 
 ## Choose and use it correctly
 
-- Enter inserts a newline. The form adapter does not turn textarea Enter into form submission.
+- Enter inserts a newline by default. submitOnEnter emits submit(value) instead; Shift+Enter still inserts a newline, IME/composition and modified shortcuts are left alone. Submission requests respect native validity and do not automatically send requests or submit the owning form.
 - The model and submitted value are strings. Choose vertical, none, or both for resize.
+- hideLabel visually hides the label while retaining the accessible name; keep supplying label. size=compact provides dense desktop controls, with larger touch targets on coarse pointers. Without size, controls inherit theme density. --h-font-min-size supplies a 12px default floor for caption/helper text and field typography.
 
 ## Public API
 
-label, name, modelValue, value, placeholder, hint, error: string · rows, minlength, maxlength: number · required, disabled, readonly: boolean · resize: vertical | none | both
+label, name, modelValue, value, placeholder, hint, error: string · rows, minlength, maxlength: number · required, disabled, readonly: boolean · resize: vertical | none | both · submitOnEnter: boolean · hideLabel: boolean · size: regular | compact (otherwise inherits density)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -39,6 +40,9 @@ type Props = {
     minlength?: number;
     maxlength?: number;
     resize?: "vertical" | "none" | "both";
+    hideLabel?: boolean;
+    size?: ControlSize;
+    submitOnEnter?: boolean;
 };
 ```
 
@@ -50,7 +54,7 @@ type Props = {
 
 ### Events
 
-update:modelValue(value), change(value)
+update:modelValue(value), change(value), submit(value)
 
 ```ts
 type Emits = {
@@ -58,6 +62,9 @@ type Emits = {
         value: string
     ];
     change: [
+        value: string
+    ];
+    submit: [
         value: string
     ];
 };
@@ -76,6 +83,12 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 base, label, control, hint
 
 Use `hearth-textarea::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export type ControlSize = "regular" | "compact";
+```
 
 ## Vue example
 

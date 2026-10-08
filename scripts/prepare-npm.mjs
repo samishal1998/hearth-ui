@@ -1,10 +1,4 @@
-import {
-  cpSync,
-  mkdirSync,
-  writeFileSync,
-  rmSync,
-  existsSync,
-} from "node:fs";
+import { cpSync, mkdirSync, writeFileSync, rmSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import ts from "typescript";
 import {
@@ -65,7 +59,7 @@ async function elementDeclarations() {
   if (!formAPI) throw new Error("Missing form-control API");
   const declarations = [
     "// Generated from the same Vue source; this public API depends only on DOM types.",
-    `import type { ${sharedNames.join(", ")} } from './themes.js';\nexport * from './themes.js';`,
+    `import type { ${sharedNames.join(", ")} } from './themes.js';\nexport * from './themes.js';\nexport * from './primitives.js';\nexport { iconNames } from './icons.js';`,
     `export interface HearthEventTarget<Events extends Record<string, unknown[]>> {
   addEventListener<K extends keyof Events & string>(type: K, listener: ((event: CustomEvent<Events[K]>) => void) | null, options?: boolean | AddEventListenerOptions): void;
   removeEventListener<K extends keyof Events & string>(type: K, listener: ((event: CustomEvent<Events[K]>) => void) | null, options?: boolean | EventListenerOptions): void;
@@ -102,6 +96,11 @@ export async function preparePackages() {
       { recursive: true },
     );
     cpSync(
+      resolve(root, "docs/primitives"),
+      resolve(target, "docs/primitives"),
+      { recursive: true },
+    );
+    cpSync(
       resolve(root, "dist/themes.css"),
       resolve(target, "dist/themes.css"),
     );
@@ -116,8 +115,27 @@ export async function preparePackages() {
     resolve(vue, "dist/types/components"),
     { recursive: true },
   );
-  for (const name of ["index.d.ts", "themes.d.ts", "internal.d.ts"])
+  for (const name of [
+    "index.d.ts",
+    "themes.d.ts",
+    "internal.d.ts",
+    "icons.d.ts",
+    "primitives.d.ts",
+  ])
     cpSync(resolve(root, "dist/types", name), resolve(vue, "dist/types", name));
+  cpSync(
+    resolve(root, "dist/types/icons.d.ts"),
+    resolve(elements, "dist/types/icons.d.ts"),
+  );
+  cpSync(
+    resolve(root, "dist/types/primitives.d.ts"),
+    resolve(elements, "dist/types/primitives.d.ts"),
+  );
+  for (const directory of packageDirectories)
+    cpSync(
+      resolve(root, "src/styles/primitives.css"),
+      resolve(root, directory, "dist/primitives.css"),
+    );
   cpSync(resolve(root, "dist/elements"), resolve(elements, "dist/elements"), {
     recursive: true,
   });

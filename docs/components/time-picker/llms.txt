@@ -2,7 +2,7 @@
 
 > Time entry with an inset clock button and step-aware hour, minute, and second columns.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -17,10 +17,11 @@
 - Text entry with a Hearth popover for hour, minute, and optional second selection; no native browser time popup. Values are HH:mm or HH:mm:ss, or empty. Step is in seconds; min/max and step are checked through the form validity API. Bounds can cross midnight. No time zone conversion is performed.
 - Hour, minute, and second columns offer valid combinations for the configured bounds and step. Arrow keys, Home/End, PageUp/PageDown, and numeric typeahead change the draft. Left/Right moves between columns; Enter applies. Cancel leaves the committed value unchanged. Apply and Cancel return focus to the clock button, avoiding a mobile keyboard reopening.
 - mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
+- hideLabel visually hides the label while retaining the accessible name; keep supplying label. size=compact provides dense desktop controls, with larger touch targets on coarse pointers. Without size, controls inherit theme density. --h-font-min-size supplies a 12px default floor for caption/helper text and field typography.
 
 ## Public API
 
-modelValue, value, label, name, min, max, hint, error: string · step: number · required, disabled, readonly: boolean · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
+modelValue, value, label, name, min, max, hint, error: string · step: number · required, disabled, readonly: boolean · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables) · hideLabel: boolean · size: regular | compact (otherwise inherits density)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -39,6 +40,10 @@ type Props = {
     hint?: string;
     error?: string;
     mobileBreakpoint?: number;
+    hideLabel?: boolean;
+    size?: ControlSize;
+    leadingIcon?: IconValue;
+    clearable?: boolean;
 };
 ```
 
@@ -67,7 +72,7 @@ Vue-emitted custom-element events expose argument arrays in `event.detail`. List
 
 ### Slots
 
-None
+leading, trailing
 
 Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 
@@ -76,6 +81,22 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 base, label, control, hint, adornment, preview, column, option, footer
 
 Use `hearth-time-picker::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export type ControlSize = "regular" | "compact";
+
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
+}
+```
 
 ## Vue example
 

@@ -6,6 +6,7 @@ import { catalog } from "./site/catalog.ts";
 
 const agentFiles = [
   "llms.txt",
+  "docs/primitives/llms.txt",
   ...catalog.map(
     (c) => `docs/components/${c.tag.slice("hearth-".length)}/llms.txt`,
   ),

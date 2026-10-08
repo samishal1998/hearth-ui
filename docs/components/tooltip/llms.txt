@@ -2,7 +2,7 @@
 
 > Hoverable, keyboard-accessible help text with a configurable delay and Escape dismissal.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -21,7 +21,7 @@
 
 ## Public API
 
-text, label, icon: string · placement: top | bottom | left | right · delay: number · disabled: boolean · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
+text, label: string · icon: IconValue · placement: top | bottom | left | right · delay: number · disabled: boolean · focusable: boolean (keyboard-reachable explanation wrapper) · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -29,11 +29,12 @@ A `?` marks optional source props. Props with defaults may be omitted. Internal 
 type Props = {
     text: string;
     label?: string;
-    icon?: string;
+    icon?: IconValue;
     placement?: "top" | "bottom" | "left" | "right";
     delay?: number;
     disabled?: boolean;
     mobileBreakpoint?: number;
+    focusable?: boolean;
 };
 ```
 
@@ -60,6 +61,20 @@ Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. We
 base, trigger, content
 
 Use `hearth-tooltip::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
+}
+```
 
 ## Vue example
 

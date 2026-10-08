@@ -2,7 +2,7 @@
 
 > A dashboard frame with desktop sidebar, configurable mobile navigation bottom sheet, account controls, and content area.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.6.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -15,13 +15,15 @@
 ## Choose and use it correctly
 
 - Use as the authenticated workspace frame. It supplies desktop/sidebar and mobile-drawer presentation, not authentication or authorization.
-- The desktop navigation slot can replace the default list, but the mobile drawer uses items. Keep items populated even when customizing desktop navigation.
+- The sidebar content frame, including navigation and sidebar-footer, moves into the mobile drawer without duplicating slots or remounting controls. Navigation customizations apply on both sizes.
 - header-actions, sidebar-footer, brand, and footer support application composition. The default slot is the content region.
+- showWorkspace/showWorkspaceIcon and workspace/workspace-icon slots remove or replace the account-specific tile. navigationLabel controls the visible label, navLabel the navigation name. page-title can replace the breadcrumb; titleAsHeading opts into an h1 when the shell owns the page title.
+- side-pane accepts HPane or another inspector. innerScroll bounds the shell to the viewport and keeps the topbar/footer outside the scrolling content. contentMaxWidth maps to the existing --h-content-max token. Use application CSS to size nested demos; standalone shell defaults remain viewport-sized.
 - mobileBreakpoint sets the mobile viewport threshold in CSS pixels. Per-component props override the inherited --h-mobile-breakpoint value from HTheme; the fallback is 640px. Set 0 to keep desktop presentation. The breakpoint updates live across Vue and custom-element shadow roots.
 
 ## Public API
 
-brand, logo, workspace, workspaceDescription, active, pageTitle, username, userRole, footerNote: string · items: NavItem[] · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
+brand, logo, workspace, workspaceDescription, active, pageTitle, username, userRole, footerNote: string · items: NavItem[] · showWorkspace, showWorkspaceIcon, innerScroll, titleAsHeading: boolean · workspaceIcon: IconValue · navigationLabel, navLabel, contentMaxWidth: string · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -38,6 +40,15 @@ type Props = {
     userRole?: string;
     footerNote?: string;
     mobileBreakpoint?: number;
+    showWorkspace?: boolean;
+    showWorkspaceIcon?: boolean;
+    workspaceIcon?: IconValue;
+    navigationLabel?: string;
+    navLabel?: string;
+    contentMaxWidth?: string;
+    innerScroll?: boolean;
+    titleAsHeading?: boolean;
+    contentTag?: "main" | "div";
 };
 ```
 
@@ -52,6 +63,12 @@ type Props = {
     pageTitle: "Overview",
     userRole: "Workspace owner",
     footerNote: "Hosted by you. Right where it belongs.",
+    showWorkspace: true,
+    showWorkspaceIcon: true,
+    workspaceIcon: "lock",
+    navigationLabel: "Your space",
+    navLabel: "Main navigation",
+    contentTag: "main",
   }
 ```
 
@@ -73,7 +90,7 @@ Vue-emitted custom-element events expose argument arrays in `event.detail`. List
 
 ### Slots
 
-brand, navigation (desktop), header-actions, sidebar-footer, default, footer
+brand, workspace, workspace-icon, navigation, page-title, header-actions, sidebar-footer (single responsive outlet), side-pane, default, footer
 
 Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
 
@@ -89,10 +106,20 @@ Use `hearth-dashboard-shell::part(part-name)` for an exposed part or inherited `
 export interface NavItem {
     id: string;
     label: string;
-    icon?: string;
+    icon?: IconValue;
     href?: string;
     badge?: string | number;
     disabled?: boolean;
+}
+
+export type IconValue = string | IconDefinition;
+
+export interface IconDefinition {
+    paths: readonly string[];
+    viewBox?: string;
+    fill?: "none" | "currentColor";
+    fillRule?: "nonzero" | "evenodd";
+    strokeWidth?: number;
 }
 ```
 
