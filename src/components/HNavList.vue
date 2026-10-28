@@ -68,8 +68,8 @@ button {
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 12px 15px;
-  min-height: 46px;
+  padding: var(--h-row-padding) var(--h-control-padding);
+  min-height: var(--h-row-height);
   border: 1px solid transparent;
   border-radius: var(--h-radius-control);
   color: var(--h-muted);
@@ -107,8 +107,8 @@ small {
 .collapsed a,
 .collapsed button {
   justify-content: center;
-  padding: 10px;
-  min-height: 44px;
+  padding: var(--h-row-padding);
+  min-height: var(--h-row-height);
 }
 .collapsed a > span,
 .collapsed button > span,

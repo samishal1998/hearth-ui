@@ -176,7 +176,7 @@ onUpdated(sync);
 <style scoped>
 .h-date-time {
   display: grid;
-  gap: 8px;
+  gap: calc(var(--h-space) * 2);
   min-width: 0;
 }
 .h-date-time :deep(.h-popover) {

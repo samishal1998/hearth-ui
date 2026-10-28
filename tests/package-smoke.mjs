@@ -78,6 +78,7 @@ import { HInput, HTheme, HMultiSelect, HCalendar, HDateRangePicker, HNumberInput
 h(HInput, { label: 'Name', modelValue: 'Home' });
 h(HMultiSelect, { label: 'Providers', modelValue: ['media'], options: [{value:'media',label:'Media'}] });
 h(HTheme, {tokens:themeStyle({'--h-accent':'#ff7a2f'})});
+h(HTheme, {density:'high'});h(HTheme, {density:'low'});h(HTheme, {density:'medium'});h(HTheme, {density:'comfortable'});h(HTheme, {density:'compact'});
 h(HNumberInput,{label:'Count',modelValue:null});
 h(HDateRangePicker,{label:'Window',modelValue:['2024-02-28','2024-03-02']});
 h(HCalendar,{month:'2024-02'});h(HRangeSlider,{label:'Interval',modelValue:[20,80]});
@@ -114,8 +115,8 @@ const next:string|undefined=nextCollectionId([{id:'one'},{id:'two'}],'one','Arro
       assert.equal(existsSync(join(installed, "dist/types/components")), false);
       assert.ok(existsSync(join(installed, "dist/elements/auto.js")));
       assert.ok(existsSync(join(installed, "dist/VUE-LICENSE")));
-      assert.ok(existsSync(join(installed,'dist/primitives.css')));
-      assert.ok(existsSync(join(installed,'docs/primitives/llms.txt')));
+      assert.ok(existsSync(join(installed, "dist/primitives.css")));
+      assert.ok(existsSync(join(installed, "docs/primitives/llms.txt")));
       for (const file of readdirSync(join(installed, "dist/types")))
         assert.doesNotMatch(
           readFileSync(join(installed, "dist/types", file), "utf8"),
@@ -137,6 +138,9 @@ multi.modelValue='media';
 multi.addEventListener('change',event=>{const values:string[]=event.detail[0]});
 const button=new HearthButtonElement();button.addEventListener('click',event=>{const x:number=event.clientX;const detail:number=event.detail});
 const theme=new HearthThemeElement();theme.tokens=themeStyle({'--h-accent':'#ff7a2f'});
+theme.density='low';theme.density='medium';theme.density='high';theme.density='comfortable';theme.density='compact';
+// @ts-expect-error density is a named level, not an arbitrary string
+theme.density='extra-dense';
 theme.mobileBreakpoint=768;
 // @ts-expect-error breakpoint properties use numbers, not CSS length strings
 theme.mobileBreakpoint='768px';

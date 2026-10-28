@@ -121,7 +121,7 @@ const color = computed(
   padding: var(--h-card-padding) var(--h-card-padding) 0;
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-card);
-  background: var(--h-panel);
+  background: var(--h-surface);
   font-family: var(--h-font);
   color: var(--h-text);
   box-shadow: var(--h-shadow-soft);
@@ -178,8 +178,8 @@ img {
 .h-app-actions > button {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: var(--h-control-height);
+  height: var(--h-control-height);
   border: 0;
   border-radius: var(--h-radius-control);
   background: none;
@@ -235,7 +235,7 @@ footer {
   justify-content: space-between;
   gap: 8px;
   border-top: 1px solid var(--h-border);
-  min-height: 50px;
+  min-height: calc(var(--h-control-height) + var(--h-space));
 }
 .h-source {
   display: inline-flex;
@@ -246,7 +246,7 @@ footer {
   background: none;
   border: 0;
   padding: 0;
-  min-height: 44px;
+  min-height: var(--h-control-height);
 }
 button.h-source:hover {
   color: var(--h-accent-text);

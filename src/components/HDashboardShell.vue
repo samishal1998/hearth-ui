@@ -226,7 +226,7 @@ function navigate(id: string) {
   top: 0;
   display: flex;
   flex-direction: column;
-  padding: 35px 20px 0;
+  padding: calc(var(--h-card-padding) + var(--h-gap)) var(--h-card-padding) 0;
   border-right: 1px solid var(--h-border);
   background: var(--h-bg);
   overflow: auto;
@@ -238,8 +238,8 @@ function navigate(id: string) {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 32px 0 28px;
-  padding: 13px 10px;
+  margin: calc(var(--h-space) * 8) 0 calc(var(--h-space) * 7);
+  padding: var(--h-row-padding) var(--h-control-padding);
   border: 1px solid var(--h-border);
   border-radius: calc(var(--h-radius-control) + 2px);
   background: var(--h-surface);
@@ -379,10 +379,10 @@ function navigate(id: string) {
 .h-topbar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  height: 76px;
+  gap: var(--h-gap);
+  min-height: calc(var(--h-control-height) + var(--h-gap) * 2);
   flex-shrink: 0;
-  padding: 0 var(--h-page-padding);
+  padding: var(--h-gap) var(--h-page-padding);
   border-bottom: 1px solid var(--h-border);
 }
 .h-breadcrumb {
@@ -399,7 +399,7 @@ function navigate(id: string) {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--h-gap);
   min-width: 0;
   flex-wrap: wrap;
 }

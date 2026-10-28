@@ -101,14 +101,14 @@ nav {
 }
 nav a,
 nav button {
-  padding: 10px 12px;
+  padding: var(--h-row-padding) var(--h-control-padding);
   border: 0;
   border-radius: var(--h-radius-control);
   background: none;
   color: var(--h-muted);
   font-size: 13px;
   text-decoration: none;
-  min-height: 44px;
+  min-height: var(--h-row-height);
   display: inline-flex;
   align-items: center;
 }

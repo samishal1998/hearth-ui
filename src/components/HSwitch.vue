@@ -79,7 +79,7 @@ function change(e: Event) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: calc(var(--h-gap) * 2);
   min-height: var(--h-choice-height, 44px);
   font-family: var(--h-font);
   color: var(--h-text);

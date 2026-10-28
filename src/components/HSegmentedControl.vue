@@ -38,8 +38,8 @@ const emit = defineEmits<{
 }
 .h-segmented :deep(.h-radio-option) {
   position: relative;
-  padding: 9px 15px;
-  min-height: 40px;
+  padding: var(--h-control-padding-y) var(--h-control-padding);
+  min-height: var(--h-control-height);
   border-radius: calc(var(--h-radius-control) - 4px);
   color: var(--h-muted);
   text-align: center;

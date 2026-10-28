@@ -78,7 +78,7 @@ function change(e: Event) {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--h-gap);
   min-height: var(--h-choice-height, 44px);
   font-family: var(--h-font);
   color: var(--h-text);

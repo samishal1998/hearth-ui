@@ -1,5 +1,6 @@
 .h-size-compact {
   --h-control-height: 32px;
+  --h-field-height: 32px;
   --h-choice-height: 32px;
   --h-field-padding-y: 5px;
   --h-input-padding-x: 10px;
@@ -9,6 +10,7 @@
 }
 .h-size-regular {
   --h-control-height: 44px;
+  --h-field-height: 44px;
   --h-choice-height: 44px;
   --h-field-padding-y: 10px;
   --h-input-padding-x: 12px;
@@ -19,6 +21,7 @@
 @media (pointer: coarse) {
   .h-size-compact {
     --h-control-height: 44px;
+    --h-field-height: 44px;
     --h-choice-height: 44px;
     --h-adornment-size: 44px;
     --h-field-padding-y: 10px;

@@ -88,8 +88,8 @@ button {
   border: 0;
   background: transparent;
   color: var(--alert-color);
-  width: 40px;
-  height: 40px;
+  width: var(--h-control-height);
+  height: var(--h-control-height);
   display: grid;
   place-items: center;
   border-radius: var(--h-radius-control);
@@ -117,7 +117,7 @@ button {
 .compact button,
 .inline button {
   margin: 0;
-  width: 32px;
-  height: 32px;
+  width: var(--h-compact-control-height);
+  height: var(--h-compact-control-height);
 }
 </style>

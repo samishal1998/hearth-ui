@@ -889,7 +889,7 @@ const components = [
     description:
       "A scoped theme island. CSS variables flow through Vue trees, native slots, and shadow roots.",
     props:
-      "theme: string = sunset · mode: dark | light | system · density: comfortable | compact · tokens: ThemeTokens · modeTokens: ThemeModeTokens",
+      "theme: string = sunset · mode: dark | light | system · density: low | medium (default) | high (comfortable/compact aliases) · tokens: ThemeTokens · modeTokens: ThemeModeTokens",
     events: "None",
     slots: "default",
     parts: "base",

@@ -176,14 +176,15 @@ controlSync(emit);
 label {
   display: block;
   font-size: 12px;
-  margin-bottom: 7px;
+  margin-bottom: calc(var(--h-space) * 2);
 }
 .h-number-controls {
   display: flex;
   align-items: center;
   width: 100%;
   max-width: var(--h-number-width, 280px);
-  padding: 3px;
+  padding: 0;
+  min-height: var(--h-field-height);
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-control);
   background: var(--h-bg);
@@ -198,8 +199,8 @@ input {
   color: inherit;
   border: 0;
   border-radius: 0;
-  padding: 8px 4px;
-  min-height: 44px;
+  padding: 0 4px;
+  min-height: calc(var(--h-field-height) - 2px);
   text-align: center;
   font-weight: 550;
   appearance: textfield;
@@ -224,8 +225,8 @@ input::placeholder {
   font-weight: 400;
 }
 button {
-  flex: 0 0 44px;
-  min-height: 44px;
+  flex: 0 0 var(--h-control-height);
+  min-height: var(--h-control-height);
   display: grid;
   place-items: center;
   border: 0;

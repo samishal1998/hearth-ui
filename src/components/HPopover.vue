@@ -131,7 +131,7 @@ function toggle() {
   max-width: calc(var(--h-overlay-width, 100vw) - 24px);
   max-height: calc(100dvh - 24px);
   overflow: auto;
-  padding: 20px;
+  padding: var(--h-card-padding);
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-card);
   background: var(--h-raised);

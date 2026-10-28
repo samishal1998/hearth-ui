@@ -97,7 +97,8 @@ function toggle() {
   gap: 26px;
   width: var(--h-sidebar-width);
   min-height: var(--h-sidebar-height, 420px);
-  padding: 24px 16px 16px;
+  padding: var(--h-card-padding) var(--h-control-padding)
+    var(--h-control-padding);
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-panel);
   background: var(--h-bg);
@@ -113,7 +114,7 @@ function toggle() {
 }
 .h-sidebar-lists {
   display: grid;
-  gap: 24px;
+  gap: calc(var(--h-gap) * 2);
 }
 .h-sidebar-lists h2 {
   font-size: max(var(--h-font-min-size, 12px), 10px);

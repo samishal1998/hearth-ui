@@ -74,19 +74,21 @@ test("native Vue: themes, scoped islands, dialogs, login template, and dashboard
   await page.getByLabel("Palette", { exact: true }).selectOption("ocean");
   await expect(
     page.getByRole("button", { name: "Primary action", exact: true }),
-  ).toHaveCSS("background-color", "rgb(112, 186, 255)");
+  ).toHaveCSS("background-color", "rgb(232, 212, 154)");
   await expect(
     page.locator(".theme-islands .h-theme").last().locator(".h-button"),
-  ).toHaveCSS("background-color", "rgb(139, 215, 164)");
+  ).toHaveCSS("background-color", "rgb(232, 189, 108)");
   await page.getByLabel("Color mode", { exact: true }).selectOption("light");
   await expect(page.locator(".h-theme").first()).toHaveCSS(
     "color-scheme",
     "light",
   );
-  await page.getByRole("switch", { name: "Compact density" }).check();
+  await page
+    .getByRole("combobox", { name: "Density", exact: true })
+    .selectOption("high");
   await expect(
     page.getByRole("button", { name: "Primary action", exact: true }),
-  ).toHaveCSS("min-height", "40px");
+  ).toHaveCSS("min-height", "32px");
   await page
     .getByLabel("Accent", { exact: true })
     .evaluate((el: HTMLInputElement) => {
@@ -286,14 +288,14 @@ test("web components: native form ownership, validation, reset, disabled fieldse
   await page.getByRole("button", { name: "Use Ocean" }).click();
   await expect(
     page.getByRole("button", { name: "Save workspace", exact: true }),
-  ).toHaveCSS("background-color", "rgb(112, 186, 255)");
+  ).toHaveCSS("background-color", "rgb(232, 212, 154)");
   await expect(
     page.getByRole("button", { name: "Forest primary action" }),
-  ).toHaveCSS("background-color", "rgb(139, 215, 164)");
+  ).toHaveCSS("background-color", "rgb(232, 189, 108)");
   await page.getByRole("button", { name: "Use light mode" }).click();
   await expect(page.getByLabel(/^Workspace name/)).toHaveCSS(
     "background-color",
-    "rgb(242, 247, 251)",
+    "rgb(245, 246, 248)",
   );
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
@@ -468,6 +470,6 @@ test("React 19 consumes bundled web components and their event payloads", async 
   await page.getByRole("button", { name: "Toggle React theme" }).click();
   await expect(
     page.getByRole("button", { name: "Sign in", exact: true }),
-  ).toHaveCSS("background-color", "rgb(112, 186, 255)");
+  ).toHaveCSS("background-color", "rgb(232, 212, 154)");
   expect(errors).toEqual([]);
 });

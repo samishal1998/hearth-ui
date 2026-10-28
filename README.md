@@ -63,7 +63,7 @@ The registry preview exposes a **Mobile breakpoint (px)** control for applicable
 
 ## Install
 
-The current release is **0.7.1**. Install the distribution you need:
+This source prepares **0.8.0** for release. Install the distribution you need after publication, or use the prepared package archives:
 
 ```sh
 # Native Vue
@@ -165,6 +165,14 @@ The source component catalog includes interactive previews and documents props, 
 The registry provides search, category filters, and 12 results per page. Each component has a shareable route such as `#components/HCalendar`, with a focused preview, usage example, and API reference. Full composed demos are at `#examples`; the seven page recipes, including the authentication page, are at `#recipes`.
 
 Date, time, and local date-time fields now use Hearth picker popovers and formatted text entry instead of native browser dropdowns. Their ISO string values and form submission contracts are preserved; invalid dates, bounds, and time steps participate in form validation.
+
+### New in 0.8.0
+
+- All five palettes share neutral page/card surfaces in both modes. Raised panels and selected states carry subtle accent tints. Ocean uses coastal sand, Forest honey gold, Dusk mint, and Rose lavender accents; the studio previews and exports the same surface system. Addresses [#3](https://github.com/samishal1998/hearth-ui/issues/3).
+- Three token-driven densities: `low` (44px controls/fields), `medium` (40px controls/fields), and `high` (32px controls, 34px fields). Row/card/page padding, spacing, font size, and radii scale together across fields, choices, navigation, tables, menus, and pickers. Coarse-pointer targets stay at least 44px. Addresses [#4](https://github.com/samishal1998/hearth-ui/issues/4).
+- **Default change:** density is now `medium`. Choose `low` or its legacy alias `comfortable` to retain roomy 44px controls. `compact` remains an alias for `medium`; explicit `size="compact"` remains available. `--h-field-height` controls fields independently of `--h-control-height`, and explicit virtual-list `rowHeight` values are preserved.
+- The studio offers a three-level density selector and restores saved legacy density names. Form values and native control identity survive density changes.
+- Build tooling uses patched Vite 8.3.5. The plain-HTML example initializes its code block before connection to avoid an initial render error.
 
 ### Fixed in 0.7.1
 
@@ -295,7 +303,9 @@ Use `HRadioGroup` for a complete radio field. Its native radio inputs share a DO
 
 - Palettes in this source: `sunset`, `ocean`, `forest`, `dusk`, `rose`.
 - Modes: `dark`, `light`, `system` (CSS follows OS preference).
-- Densities: `comfortable` (44px controls) and `compact` (40px controls).
+- Densities: `low` (roomy, 44px controls/fields), `medium` (default, 40px controls/fields), and `high` (dense, 32px controls and 34px fields). `comfortable` remains an alias for `low`, and `compact` for `medium`. Coarse-pointer targets expand to at least 44px.
+- Main page/card surfaces share neutral colors across palettes. Raised panels use a 3–5% accent tint; the accent carries the palette's color. Explicit custom surface tokens are still supported.
+- Density also controls `--h-row-padding` (12/10/6px), `--h-card-padding` (24/18/14px), page padding, `--h-gap`, `--h-space`, font size (14/13/13px), and control/card/panel radii. `--h-field-height` controls fields separately from `--h-control-height`. Explicit component sizes and virtual-list `rowHeight` remain intentional overrides.
 
 Without a wrapper, apply `data-hearth-theme`, `data-hearth-mode`, and `data-hearth-density` to an HTML ancestor and load the stylesheet. Vue component consumers need `styles.css`; custom-element consumers need `themes.css` because component styles are already injected into shadow roots.
 

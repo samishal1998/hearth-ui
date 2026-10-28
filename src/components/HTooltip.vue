@@ -166,8 +166,8 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
 .h-tooltip-trigger {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: var(--h-control-height);
+  height: var(--h-control-height);
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-control);
   background: var(--h-surface);

@@ -2,7 +2,7 @@
 
 **A home for what you build.** Framework-independent web components for dashboards, public pages, and authentication.
 
-Hearth UI includes **94 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. Version **0.7.1** includes the 0.7 foundation release and a mobile dashboard toolbar layout fix.
+Hearth UI includes **94 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. Version **0.8.0** adds neutral main surfaces, contrasting palette accents, and three token-driven density levels. Density now defaults to `medium`; use `low` or `comfortable` for roomy 44px controls.
 
 [Component registry](https://hearth-ui.samyx.net/#components) · [HTML example](https://hearth-ui.samyx.net/elements.html) · [React example](https://hearth-ui.samyx.net/react.html) · [GitHub](https://github.com/samishal1998/hearth-ui)
 
@@ -64,11 +64,11 @@ Use a pinned CDN version:
     <title>Hearth UI</title>
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.7.1/dist/themes.css"
+      href="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.8.0/dist/themes.css"
     />
     <script
       type="module"
-      src="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.7.1/dist/elements/auto.js"
+      src="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.8.0/dist/elements/auto.js"
     ></script>
   </head>
   <body>
@@ -126,7 +126,7 @@ Wrap an application or section in `<hearth-theme>`:
 
 - Palettes: **Sunset**, **Ocean**, **Forest**, **Dusk**, and **Rose**.
 - Modes: `light`, `dark`, and `system` (follows the operating system).
-- Density: `comfortable` or `compact`.
+- Density: `low` (roomy), `medium` (default), or `high` (dense). Legacy `comfortable`/`compact` alias `low`/`medium`. Controls are 44/40/32px, fields 44/40/34px; coarse-pointer targets stay at least 44px. Main surfaces are neutral across palettes, with subtle accent tints on secondary surfaces.
 - Customize through the `tokens` property, inherited `--h-*` CSS variables, or exposed CSS parts.
 
 ```html

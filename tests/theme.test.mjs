@@ -55,6 +55,7 @@ test("theme exports filter unrelated properties and the native Vue build renders
     }),
   );
   assert.match(html, /data-hearth-theme="sunset"/);
+  assert.match(html, /data-hearth-density="medium"/);
   assert.match(html, /--h-accent:#abcdef/);
   assert.match(html, /&lt;script&gt;literal label&lt;\/script&gt;/);
   const auth = await renderToString(

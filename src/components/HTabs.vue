@@ -144,8 +144,8 @@ function key(e: KeyboardEvent) {
 button {
   border: 0;
   border-radius: calc(var(--h-radius-control) - 4px);
-  padding: 9px 15px;
-  min-height: 40px;
+  padding: var(--h-control-padding-y) var(--h-control-padding);
+  min-height: var(--h-control-height);
   background: none;
   color: var(--h-muted);
   font-size: 12px;

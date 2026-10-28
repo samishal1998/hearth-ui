@@ -122,9 +122,9 @@ onBeforeUnmount(() => dialog.value?.close());
 header {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: var(--h-gap);
   justify-content: space-between;
-  padding: 20px;
+  padding: var(--h-card-padding);
   border-bottom: 1px solid var(--h-border);
   flex-shrink: 0;
 }
@@ -144,10 +144,10 @@ header p {
   overscroll-behavior: contain;
   min-height: 0;
   flex: 1;
-  padding: 20px;
+  padding: var(--h-card-padding);
 }
 footer {
-  padding: 16px 20px;
+  padding: var(--h-row-padding) var(--h-card-padding);
   border-top: 1px solid var(--h-border);
 }
 footer:empty {

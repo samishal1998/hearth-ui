@@ -110,8 +110,8 @@ summary {
   justify-content: space-between;
   gap: 20px;
   list-style: none;
-  min-height: 54px;
-  padding: 15px 18px;
+  min-height: var(--h-row-height);
+  padding: var(--h-row-padding) var(--h-card-padding);
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
@@ -132,7 +132,7 @@ summary[aria-disabled="true"] {
   cursor: not-allowed;
 }
 [role="region"] {
-  padding: 0 18px 18px;
+  padding: 0 var(--h-card-padding) var(--h-card-padding);
   color: var(--h-muted);
   font-size: 13px;
   line-height: 1.85;
@@ -147,10 +147,10 @@ summary[aria-disabled="true"] {
   border-radius: 0;
 }
 .compact summary {
-  min-height: 40px;
-  padding: 8px 12px;
+  min-height: var(--h-compact-control-height);
+  padding: calc(var(--h-space) * 2) var(--h-control-padding);
 }
 .compact [role="region"] {
-  padding: 0 12px 12px;
+  padding: 0 var(--h-control-padding) var(--h-control-padding);
 }
 </style>

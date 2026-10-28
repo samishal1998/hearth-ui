@@ -434,7 +434,7 @@ watch(
 .h-data-table {
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-card);
-  background: var(--h-panel);
+  background: var(--h-surface);
   color: var(--h-text);
   font-family: var(--h-font);
   min-width: 0;
@@ -458,7 +458,7 @@ caption {
 }
 th,
 td {
-  padding: 13px 16px;
+  padding: var(--h-row-padding) var(--h-control-padding);
   text-align: start;
   line-height: 1.7;
   border-bottom: 1px solid var(--h-border);
@@ -475,13 +475,17 @@ th button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 32px;
+  min-height: var(--h-control-height);
   border: 0;
   background: none;
   color: inherit;
   font-size: inherit;
   padding: 0;
   font-weight: inherit;
+}
+th:has(button),
+.h-table-actions {
+  padding-block: 0;
 }
 .sticky {
   position: sticky;
@@ -495,8 +499,8 @@ th button {
 .h-table-select label {
   display: grid;
   place-items: center;
-  min-height: 44px;
-  min-width: 40px;
+  min-height: var(--h-choice-height);
+  min-width: var(--h-choice-height);
   cursor: pointer;
 }
 .h-table-select input {
@@ -522,7 +526,7 @@ footer {
   justify-content: space-between;
   gap: 15px;
   flex-wrap: wrap;
-  padding: 16px;
+  padding: var(--h-card-padding);
   border-top: 1px solid var(--h-border);
 }
 footer > span {
@@ -589,10 +593,10 @@ footer > span {
 .cards tbody tr {
   display: grid;
   margin: 12px;
-  padding: 16px;
+  padding: var(--h-card-padding);
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-control);
-  gap: 12px;
+  gap: var(--h-gap);
 }
 .cards td {
   display: block;
@@ -604,7 +608,7 @@ footer > span {
 .cards .h-table-select label {
   justify-content: start;
   place-items: start;
-  min-height: 24px;
+  min-height: var(--h-choice-height);
 }
 .cards .h-table-card-label {
   display: block;

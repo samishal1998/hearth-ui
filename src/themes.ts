@@ -1,7 +1,7 @@
 export const themes = ["sunset", "ocean", "forest", "dusk", "rose"] as const;
 export type Theme = (typeof themes)[number];
 export type Mode = "dark" | "light" | "system";
-export type Density = "comfortable" | "compact";
+export type Density = "low" | "medium" | "high" | "comfortable" | "compact";
 export type ControlSize = "regular" | "compact";
 export interface IconDefinition {
   paths: readonly string[];

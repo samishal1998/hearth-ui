@@ -14,7 +14,7 @@ defineProps<{ label: string; description?: string; disabled?: boolean }>();
   padding: 0;
   margin: 0;
   min-width: 0;
-  font: 14px/1.8 var(--h-font);
+  font: var(--h-font-size)/1.8 var(--h-font);
   color: var(--h-text);
 }
 legend {

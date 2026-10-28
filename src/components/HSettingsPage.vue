@@ -71,7 +71,7 @@ footer {
   justify-content: space-between;
   gap: 15px;
   flex-wrap: wrap;
-  padding: 18px;
+  padding: var(--h-card-padding);
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-card);
   background: var(--h-raised);

@@ -427,7 +427,7 @@ label {
   display: block;
   font-size: max(var(--h-font-min-size, 12px), 12px);
   font-weight: 500;
-  margin-bottom: 7px;
+  margin-bottom: calc(var(--h-space) * 2);
 }
 label > span {
   color: var(--h-accent-text);
@@ -452,16 +452,16 @@ label > span {
 .h-combo-line {
   display: flex;
   align-items: center;
-  min-height: var(--h-control-height);
-  padding: var(--h-combo-line-padding, 4px) 6px;
-  padding-inline-start: 12px;
+  min-height: calc(var(--h-field-height) - 2px);
+  padding: var(--h-combo-line-padding, 0px) 4px;
+  padding-inline-start: var(--h-input-padding-x);
   gap: 4px;
 }
 input[role="combobox"] {
   min-width: 0;
   flex: 1;
   width: 100%;
-  min-height: calc(var(--h-control-height) - 8px);
+  min-height: 0;
   border: 0;
   background: none;
   color: var(--h-text);
@@ -513,8 +513,8 @@ input::placeholder {
 .h-chip button {
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: var(--h-compact-control-height);
+  height: var(--h-compact-control-height);
   border: 0;
   background: none;
   color: inherit;
@@ -527,7 +527,7 @@ input::placeholder {
   z-index: 20;
   inset-inline: 0;
   top: 100%;
-  margin-top: 7px;
+  margin-top: calc(var(--h-space) * 2);
   max-height: 260px;
   overflow: auto;
   padding: 5px;
@@ -541,9 +541,9 @@ input::placeholder {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 44px;
+  min-height: var(--h-row-height);
   width: 100%;
-  padding: 10px;
+  padding: var(--h-row-padding) var(--h-control-padding);
   border: 0;
   border-radius: calc(var(--h-radius-control) - 4px);
   background: transparent;

@@ -26,7 +26,7 @@ withDefaults(
   padding: var(--h-surface-padding, calc(var(--h-space, 4px) * 4));
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-card);
-  background: var(--h-panel);
+  background: var(--h-surface);
   color: var(--h-text);
   font-family: var(--h-font);
 }

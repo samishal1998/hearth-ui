@@ -105,9 +105,9 @@ function go(page: number) {
 button {
   display: grid;
   place-items: center;
-  min-width: 40px;
-  min-height: 40px;
-  padding: 8px 10px;
+  min-width: var(--h-control-height);
+  min-height: var(--h-control-height);
+  padding: var(--h-control-padding-y) var(--h-control-padding);
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-control);
   background: var(--h-surface);

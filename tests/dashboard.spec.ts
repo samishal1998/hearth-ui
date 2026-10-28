@@ -194,6 +194,11 @@ test("code, copy fields, bounded logs, sparklines, and forwarded resource slots 
   page,
   context,
 }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+  page.on("pageerror", (error) => errors.push(error.message));
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/elements.html");
   const code = page.locator("hearth-code-block#code");
@@ -249,6 +254,7 @@ test("code, copy fields, bounded logs, sparklines, and forwarded resource slots 
   await expect(
     page.getByText("Forwarded overview slot.", { exact: true }),
   ).not.toBeVisible();
+  expect(errors).toEqual([]);
 });
 
 test("Vue page recipes expose settings, provider, status, error, and setup behavior", async ({

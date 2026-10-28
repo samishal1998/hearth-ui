@@ -323,14 +323,14 @@ output small {
 }
 .h-range-track {
   position: relative;
-  height: 44px;
+  height: var(--h-control-height);
   touch-action: pan-y;
   cursor: pointer;
 }
 .h-range-rail {
   position: absolute;
   inset-inline: 22px;
-  top: 19px;
+  top: calc((var(--h-control-height) - 6px) / 2);
   height: 6px;
   border-radius: 999px;
   background: var(--h-border-strong);
@@ -345,7 +345,7 @@ output small {
 }
 .h-range-thumb {
   position: absolute;
-  top: 11px;
+  top: calc((var(--h-control-height) - 22px) / 2);
   width: 22px;
   height: 22px;
   border: 2px solid var(--h-accent);
@@ -369,7 +369,7 @@ input {
   position: absolute;
   inset: 0;
   width: 100%;
-  height: 44px;
+  height: var(--h-control-height);
   padding: 0;
   margin: 0;
   background: none;
@@ -379,7 +379,7 @@ input {
 input::-webkit-slider-thumb {
   appearance: none;
   width: 44px;
-  height: 44px;
+  height: var(--h-control-height);
   border: 0;
   background: transparent;
   pointer-events: auto;
@@ -387,7 +387,7 @@ input::-webkit-slider-thumb {
 }
 input::-moz-range-thumb {
   width: 44px;
-  height: 44px;
+  height: var(--h-control-height);
   border: 0;
   background: transparent;
   pointer-events: auto;

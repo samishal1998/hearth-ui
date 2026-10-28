@@ -26,8 +26,8 @@ withDefaults(
 .h-message {
   min-width: 0;
   color: var(--h-text);
-  font: 14px/1.85 var(--h-font);
-  padding: 20px;
+  font: var(--h-font-size)/1.85 var(--h-font);
+  padding: var(--h-card-padding);
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-card);
   background: var(--h-panel);

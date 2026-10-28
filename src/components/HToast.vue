@@ -173,8 +173,8 @@ p {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  width: var(--h-control-height);
+  height: var(--h-control-height);
   margin: -8px -8px -8px 0;
   border: 0;
   border-radius: 8px;
@@ -182,8 +182,8 @@ p {
   color: var(--h-muted);
 }
 .h-toast-action {
-  min-height: 36px;
-  padding: 7px 0;
+  min-height: var(--h-control-height);
+  padding: var(--h-control-padding-y) 0;
   border: 0;
   background: none;
   color: var(--h-accent-text);

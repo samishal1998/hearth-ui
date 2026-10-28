@@ -51,7 +51,7 @@ li {
   align-items: center;
   gap: 12px;
   min-width: 0;
-  min-height: 40px;
+  min-height: var(--h-control-height);
   color: var(--h-text);
 }
 a,

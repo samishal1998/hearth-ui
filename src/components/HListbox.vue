@@ -142,9 +142,9 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  min-height: 44px;
-  padding: 10px;
+  gap: var(--h-gap);
+  min-height: var(--h-row-height);
+  padding: var(--h-row-padding) var(--h-control-padding);
   width: 100%;
   text-align: start;
   background: none;

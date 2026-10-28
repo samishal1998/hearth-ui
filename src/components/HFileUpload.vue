@@ -249,9 +249,9 @@ input {
   color: var(--h-muted);
 }
 input::file-selector-button {
-  min-height: 40px;
+  min-height: var(--h-control-height);
   margin-right: 12px;
-  padding: 8px 12px;
+  padding: var(--h-control-padding-y) var(--h-control-padding);
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-control);
   background: var(--h-surface);

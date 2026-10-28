@@ -513,7 +513,7 @@ onBeforeUnmount(() => resize?.disconnect());
   justify-content: center;
   position: relative;
   width: 100%;
-  min-height: 44px;
+  min-height: var(--h-row-height);
   border: 0;
   border-radius: max(4px, calc(var(--h-radius-control) - 5px));
   background: transparent;

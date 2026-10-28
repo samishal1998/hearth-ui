@@ -165,7 +165,7 @@ async function copy() {
   min-width: 0;
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-card);
-  background: var(--h-panel);
+  background: var(--h-surface);
   font-family: var(--h-font);
   color: var(--h-text);
   overflow: hidden;
@@ -176,7 +176,7 @@ header {
   justify-content: space-between;
   gap: 14px;
   flex-wrap: wrap;
-  padding: 16px;
+  padding: var(--h-card-padding);
 }
 strong {
   font-size: 14px;
@@ -190,7 +190,7 @@ strong {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 160px;
   gap: 15px;
-  padding: 0 16px 16px;
+  padding: 0 var(--h-card-padding) var(--h-card-padding);
 }
 .h-log-viewport {
   height: var(--h-log-height, 300px);

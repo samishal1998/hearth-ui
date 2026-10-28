@@ -117,7 +117,7 @@ input {
   position: absolute;
   inset: 0;
   width: 100%;
-  height: 44px;
+  height: var(--h-control-height);
   margin: 0;
   padding: 0;
   background: transparent;
@@ -134,13 +134,13 @@ input:disabled::-moz-range-thumb {
 }
 .h-range-track {
   position: relative;
-  height: 44px;
+  height: var(--h-control-height);
   min-width: 0;
 }
 .h-range-rail {
   position: absolute;
   inset-inline: 22px;
-  top: 19px;
+  top: calc((var(--h-control-height) - 6px) / 2);
   height: 6px;
   border-radius: 999px;
   background: var(--h-border-strong);
@@ -156,7 +156,7 @@ input:disabled::-moz-range-thumb {
 }
 .h-range-thumb {
   position: absolute;
-  top: 11px;
+  top: calc((var(--h-control-height) - 22px) / 2);
   width: 22px;
   height: 22px;
   border: 2px solid var(--h-accent);
@@ -176,14 +176,14 @@ input:disabled::-moz-range-thumb {
 input::-webkit-slider-thumb {
   appearance: none;
   width: 44px;
-  height: 44px;
+  height: var(--h-control-height);
   border: 0;
   background: transparent;
   cursor: grab;
 }
 input::-moz-range-thumb {
   width: 44px;
-  height: 44px;
+  height: var(--h-control-height);
   border: 0;
   background: transparent;
   cursor: grab;

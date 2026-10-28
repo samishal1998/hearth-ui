@@ -97,7 +97,7 @@ label {
   display: block;
   font-size: max(var(--h-font-min-size, 12px), 12px);
   font-weight: 500;
-  margin-bottom: 7px;
+  margin-bottom: calc(var(--h-space) * 2);
 }
 label span {
   color: var(--h-accent-text);
@@ -105,7 +105,7 @@ label span {
 select {
   appearance: none;
   width: 100%;
-  min-height: var(--h-control-height);
+  min-height: var(--h-field-height);
   padding: var(--h-field-padding-y, 10px) var(--h-input-padding-x, 12px);
   padding-inline-end: 44px;
   border: 1px solid var(--h-border);
@@ -136,7 +136,7 @@ select[aria-invalid="true"] {
 p {
   font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
-  margin-top: 7px;
+  margin-top: calc(var(--h-space) * 2);
   line-height: 1.7;
 }
 .error {

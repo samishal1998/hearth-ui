@@ -212,11 +212,11 @@ watch(mobile, async () => {
   display: flex;
   gap: 10px;
   align-items: center;
-  min-height: 44px;
+  min-height: var(--h-row-height);
   width: 100%;
   border: 0;
   border-radius: 6px;
-  padding: 10px;
+  padding: var(--h-row-padding) var(--h-control-padding);
   text-align: start;
   color: inherit;
   background: none;

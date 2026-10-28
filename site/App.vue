@@ -68,7 +68,13 @@ const mode = ref<Mode>(
     : "dark",
 );
 const density = ref<Density>(
-  saved.density === "compact" ? "compact" : "comfortable",
+  saved.density === "comfortable"
+    ? "low"
+    : saved.density === "compact"
+      ? "medium"
+      : ["low", "medium", "high"].includes(String(saved.density))
+        ? (saved.density as Density)
+        : "medium",
 );
 const brand = ref(typeof saved.brand === "string" ? saved.brand : "hearth");
 const colorPreference = window.matchMedia("(prefers-color-scheme: dark)");
@@ -179,15 +185,20 @@ const themeOptions = themes.map((t) => ({
 }));
 const themeDescriptions: Record<Theme, string> = {
   sunset: "Warm. Familiar. The original.",
-  ocean: "Clear skies. A quieter blue.",
-  forest: "A breath of green. Room to grow.",
-  dusk: "Soft violet. A little evening calm.",
-  rose: "Muted rose. A warmer welcome.",
+  ocean: "Deep blue. Warm coastal sand.",
+  forest: "Woodland green. Honey-gold light.",
+  dusk: "Evening violet. Fresh mint.",
+  rose: "Muted rose. Soft lavender light.",
 };
 const modeOptions = [
   { value: "dark", label: "After sunset · dark" },
   { value: "light", label: "First light · light" },
   { value: "system", label: "Follow your system" },
+];
+const densityOptions = [
+  { value: "low", label: "Low · roomy" },
+  { value: "medium", label: "Medium · balanced" },
+  { value: "high", label: "High · dense" },
 ];
 function selectTheme(value: string) {
   theme.value = value as Theme;
@@ -205,7 +216,7 @@ function setToken(key: `--h-${string}`, value: string) {
 function resetTheme() {
   theme.value = "sunset";
   mode.value = "dark";
-  density.value = "comfortable";
+  density.value = "medium";
   brand.value = "hearth";
   overrides.value = {};
   modeOverrides.value = {};
@@ -1012,13 +1023,12 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
                 v-model="brand"
                 label="Your brand name"
                 hint="Used on the dashboard and login page."
-              /><HSwitch
-                :model-value="density === 'compact'"
-                label="Compact density"
-                description="Compact desktop fields and choice rows. Touch targets expand on touchscreens."
-                @update:model-value="
-                  density = $event ? 'compact' : 'comfortable'
-                "
+              /><HSelect
+                :model-value="density"
+                label="Density"
+                :options="densityOptions"
+                hint="Roomy, balanced, or dense desktop layouts. Touch targets stay at least 44px."
+                @update:model-value="density = $event as Density"
               />
               <p v-if="migratedTheme" class="muted" role="status">
                 {{ migratedTheme }}
@@ -1068,7 +1078,8 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
                 /></label>
               </div>
               <p class="muted">
-                Editing {{ isDark ? "dark" : "light" }} colors{{
+                Main surfaces start neutral; raised panels carry a subtle accent
+                tint. Editing {{ isDark ? "dark" : "light" }} colors{{
                   mode === "system" ? " (resolved from your system)" : ""
                 }}. Geometry is shared across modes.
               </p>

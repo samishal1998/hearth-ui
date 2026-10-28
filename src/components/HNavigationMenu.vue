@@ -165,8 +165,8 @@ summary {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 44px;
-  padding: 10px 13px;
+  min-height: var(--h-row-height);
+  padding: var(--h-row-padding) var(--h-control-padding);
   color: var(--h-muted);
   font-size: 13px;
   font-weight: 500;

@@ -2,7 +2,7 @@
 
 > A scoped theme island. CSS variables flow through Vue trees, native slots, and shadow roots.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.7.1. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.8.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -15,7 +15,7 @@
 ## Choose and use it correctly
 
 - Use one theme island around an application or a deliberately different section. Do not wrap every component in another theme: a new island establishes its own preset values.
-- Modes are dark, light, or system; system follows CSS media preferences. Comfortable and compact densities use 44px and 40px main controls.
+- Modes are dark, light, or system; system follows CSS media preferences. Main surfaces are neutral across palettes, and secondary surfaces carry a subtle accent tint. Densities low/medium/high use 44/40/32px controls and 44/40/34px fields; medium is the default. Comfortable/compact remain aliases for low/medium. Density scales row/card/page padding, spacing, font size, and radii. Coarse-pointer targets stay at least 44px. Explicit component sizes and virtual-list rowHeight override inherited sizing.
 - Set mobileBreakpoint on the theme island to configure descendant overlays, including custom elements. Dialogs, sheets, command palettes, and dashboard navigation become bottom sheets; popovers and action menus dock at the bottom. Native dialog focus trapping and modal scroll locking remain intact. Popovers remain nonmodal, with native light dismissal. Navigation menus expand inline, and tooltips stay anchored and support touch dismissal.
 - CSS custom properties inherit across shadow roots and native slots. Override --h-* tokens through the tokens property, an ancestor, or a host style. Use themeStyle() to filter a token object and themeCSS() to serialize trusted CSS values.
 - modeTokens accepts independent dark/light maps. Precedence is preset, shared tokens, then the effective mode map. system follows OS changes; explicit light/dark modes remain fixed. For system-mode SSR, mode-specific overrides apply after mounting, while the base CSS supplies the initial OS-aware palette.
@@ -24,7 +24,7 @@
 
 ## Public API
 
-theme: string = sunset · mode: dark | light | system · density: comfortable | compact · tokens: ThemeTokens · modeTokens: ThemeModeTokens · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
+theme: string = sunset · mode: dark | light | system · density: low | medium (default) | high (comfortable/compact aliases) · tokens: ThemeTokens · modeTokens: ThemeModeTokens · mobileBreakpoint: number (CSS px; inherited, 640 default; 0 disables)
 
 A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
 
@@ -42,7 +42,7 @@ type Props = {
 ### Defaults
 
 ```ts
-{ theme: "sunset", mode: "dark", density: "comfortable" }
+{ theme: "sunset", mode: "dark", density: "medium" }
 ```
 
 ### Events
@@ -68,7 +68,7 @@ Use `hearth-theme::part(part-name)` for an exposed part or inherited `--h-*` tok
 ```ts
 export type Mode = "dark" | "light" | "system";
 
-export type Density = "comfortable" | "compact";
+export type Density = "low" | "medium" | "high" | "comfortable" | "compact";
 
 export type ThemeTokens = Partial<Record<`--h-${string}`, string>>;
 
@@ -127,14 +127,15 @@ mount.append(element);
 ## Theme token reference
 
 ```css
-/* Sunset is the default. Set these attributes on html or a theme island. */
+/* Sunset is the default. Set these attributes on html or a theme island.
+   Main surfaces are neutral; only secondary surfaces carry a subtle accent tint. */
 :root,
 [data-hearth-theme] {
   color-scheme: dark;
-  --h-bg: #0b1220;
-  --h-surface: #101a2b;
-  --h-raised: #111c2d;
-  --h-panel: rgba(16, 26, 43, 0.84);
+  --h-bg: #101216;
+  --h-surface: #191c22;
+  --h-raised: color-mix(in srgb, var(--h-accent) 5%, var(--h-surface));
+  --h-panel: color-mix(in srgb, var(--h-accent) 3%, var(--h-surface));
   --h-border: rgba(255, 255, 255, 0.09);
   --h-border-strong: #536177;
   --h-text: #f7f8fb;
@@ -144,7 +145,7 @@ mount.append(element);
   --h-accent-hover: #ffb15c;
   --h-accent-text: #ffb15c;
   --h-on-accent: #24160f;
-  --h-accent-subtle: color-mix(in srgb, var(--h-accent) 10%, transparent);
+  --h-accent-subtle: color-mix(in srgb, var(--h-accent) 6%, transparent);
   --h-success: #24c978;
   --h-warning: #f4b21a;
   --h-danger: #ff8290;
@@ -155,7 +156,7 @@ mount.append(element);
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
   --h-font-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
-  --h-font-size: 14px;
+  --h-font-size: 13px;
   --h-font-min-size: 12px;
   --h-text-sm: 12px;
   --h-text-md: 14px;
@@ -164,16 +165,34 @@ mount.append(element);
   --h-heading-md: 24px;
   --h-heading-lg: 32px;
   --h-heading-xl: 40px;
-  --h-choice-height: 44px;
-  --h-radius-control: 10px;
-  --h-radius-card: 16px;
-  --h-radius-panel: 20px;
+  --h-choice-height: var(--h-control-height);
+  --h-radius-control: 8px;
+  --h-radius-card: 14px;
+  --h-radius-panel: 18px;
   --h-radius-pill: 999px;
-  --h-space: 4px;
-  --h-control-height: 44px;
-  --h-control-padding: 16px;
-  --h-card-padding: 24px;
-  --h-page-padding: clamp(20px, 3vw, 40px);
+  --h-space: 3.5px;
+  --h-gap: 10px;
+  --h-control-height: 40px;
+  --h-compact-control-height: min(var(--h-control-height), 40px);
+  --h-control-padding: 12px;
+  --h-control-padding-y: max(
+    0px,
+    calc((var(--h-control-height) - 1.4em - 2px) / 2)
+  );
+  --h-field-height: var(--h-control-height);
+  --h-field-padding-y: max(
+    0px,
+    calc((var(--h-field-height) - 1.4em - 2px) / 2)
+  );
+  --h-field-font-size: var(--h-font-size);
+  --h-input-padding-x: 12px;
+  --h-adornment-size: max(24px, calc(var(--h-field-height) - 8px));
+  --h-combo-line-padding: 0px;
+  --h-combo-input-padding-y: var(--h-field-padding-y);
+  --h-row-height: var(--h-control-height);
+  --h-row-padding: 10px;
+  --h-card-padding: 18px;
+  --h-page-padding: clamp(16px, 3vw, 32px);
   --h-sidebar-width: 232px;
   --h-sidebar-height: 420px;
   --h-progress-height: 8px;
@@ -190,68 +209,52 @@ mount.append(element);
   --h-mountain-front: #0b1424;
 }
 [data-hearth-theme="ocean"] {
-  --h-bg: #0b1620;
-  --h-surface: #102330;
-  --h-raised: #142a38;
-  --h-panel: rgba(16, 35, 48, 0.88);
-  --h-accent: #70baff;
-  --h-accent-hover: #aad8ff;
-  --h-accent-text: #9bd1ff;
-  --h-on-accent: #082438;
-  --h-scene-bg: linear-gradient(145deg, #122b40, #0c1c2b 65%, #194047);
+  --h-accent: #e8d49a;
+  --h-accent-hover: #f4e3b6;
+  --h-accent-text: #f1dfa9;
+  --h-on-accent: #2c2613;
+  --h-warning: #f6a080;
+  --h-scene-bg: linear-gradient(145deg, #122b40, #0c1c2b 65%, #3b3627);
   --h-mountain-back: #355c70;
   --h-mountain-mid: #1d3d51;
   --h-mountain-front: #0c2130;
 }
 [data-hearth-theme="forest"] {
-  --h-bg: #0c1813;
-  --h-surface: #15251d;
-  --h-raised: #1b2e23;
-  --h-panel: rgba(21, 37, 29, 0.88);
-  --h-accent: #8bd7a4;
-  --h-accent-hover: #b8e9c6;
-  --h-accent-text: #a8e2ba;
-  --h-on-accent: #152a1c;
-  --h-scene-bg: linear-gradient(145deg, #1b3026, #101f18 65%, #37412b);
+  --h-accent: #e8bd6c;
+  --h-accent-hover: #f3d393;
+  --h-accent-text: #f0ce8a;
+  --h-on-accent: #2c2210;
+  --h-warning: #f6a080;
+  --h-scene-bg: linear-gradient(145deg, #1b3026, #101f18 65%, #3c3525);
   --h-mountain-back: #4b6151;
   --h-mountain-mid: #2b4737;
   --h-mountain-front: #102319;
 }
 [data-hearth-theme="dusk"] {
-  --h-bg: #151120;
-  --h-surface: #201a30;
-  --h-raised: #29223b;
-  --h-panel: rgba(32, 26, 48, 0.88);
-  --h-accent: #bca7f5;
-  --h-accent-hover: #d7c9fa;
-  --h-accent-text: #cebcf8;
-  --h-on-accent: #261b3d;
-  --h-scene-bg: linear-gradient(145deg, #302443, #1a1429 65%, #44334f);
+  --h-accent: #8bd9cb;
+  --h-accent-hover: #b5eee2;
+  --h-accent-text: #9ce2d4;
+  --h-on-accent: #102b26;
+  --h-scene-bg: linear-gradient(145deg, #302443, #1a1429 65%, #24433d);
   --h-mountain-back: #61516f;
   --h-mountain-mid: #3e3053;
   --h-mountain-front: #1c152b;
 }
 [data-hearth-theme="rose"] {
-  --h-bg: #1d1318;
-  --h-surface: #2b1d24;
-  --h-raised: #35252d;
-  --h-panel: rgba(43, 29, 36, 0.88);
-  --h-accent: #dda0b0;
-  --h-accent-hover: #edc1cc;
-  --h-accent-text: #e8b5c3;
-  --h-on-accent: #351d26;
+  --h-accent: #b8b8ef;
+  --h-accent-hover: #d4d3fa;
+  --h-accent-text: #cccafa;
+  --h-on-accent: #25243a;
   --h-danger: #ff9870;
-  --h-scene-bg: linear-gradient(145deg, #422b35, #241820 65%, #503b38);
+  --h-scene-bg: linear-gradient(145deg, #422b35, #241820 65%, #38364e);
   --h-mountain-back: #76565e;
   --h-mountain-mid: #4d323e;
   --h-mountain-front: #281a22;
 }
 [data-hearth-mode="light"] {
   color-scheme: light;
-  --h-bg: #f4f7fb;
+  --h-bg: #f5f6f8;
   --h-surface: #fff;
-  --h-raised: #fff;
-  --h-panel: rgba(255, 255, 255, 0.9);
   --h-border: rgba(18, 31, 52, 0.13);
   --h-border-strong: #8391a7;
   --h-text: #111827;
@@ -266,31 +269,27 @@ mount.append(element);
   --h-shadow-soft: 0 3px 14px rgb(38 51 77 / 0.05);
 }
 [data-hearth-theme="ocean"][data-hearth-mode="light"] {
-  --h-bg: #f2f7fb;
-  --h-accent-text: #185689;
+  --h-accent-text: #786019;
+  --h-warning: #963f22;
 }
 [data-hearth-theme="forest"][data-hearth-mode="light"] {
-  --h-bg: #f3f7f2;
-  --h-accent-text: #28603c;
+  --h-accent-text: #7e5519;
+  --h-warning: #963f22;
 }
 [data-hearth-theme="dusk"][data-hearth-mode="light"] {
-  --h-bg: #f6f4fb;
   --h-faint: #626f85;
-  --h-accent-text: #61428f;
+  --h-accent-text: #21685c;
 }
 [data-hearth-theme="rose"][data-hearth-mode="light"] {
-  --h-bg: #fbf4f6;
   --h-faint: #626f85;
-  --h-accent-text: #873c55;
+  --h-accent-text: #55569b;
   --h-danger: #a63e16;
 }
 @media (prefers-color-scheme: light) {
   [data-hearth-mode="system"] {
     color-scheme: light;
-    --h-bg: #f4f7fb;
+    --h-bg: #f5f6f8;
     --h-surface: #fff;
-    --h-raised: #fff;
-    --h-panel: rgba(255, 255, 255, 0.9);
     --h-border: rgba(18, 31, 52, 0.13);
     --h-border-strong: #8391a7;
     --h-text: #111827;
@@ -305,37 +304,95 @@ mount.append(element);
     --h-shadow-soft: 0 3px 14px rgb(38 51 77 / 0.05);
   }
   [data-hearth-theme="ocean"][data-hearth-mode="system"] {
-    --h-bg: #f2f7fb;
-    --h-accent-text: #185689;
+    --h-accent-text: #786019;
+    --h-warning: #963f22;
   }
   [data-hearth-theme="forest"][data-hearth-mode="system"] {
-    --h-bg: #f3f7f2;
-    --h-accent-text: #28603c;
+    --h-accent-text: #7e5519;
+    --h-warning: #963f22;
   }
   [data-hearth-theme="dusk"][data-hearth-mode="system"] {
-    --h-bg: #f6f4fb;
     --h-faint: #626f85;
-    --h-accent-text: #61428f;
+    --h-accent-text: #21685c;
   }
   [data-hearth-theme="rose"][data-hearth-mode="system"] {
-    --h-bg: #fbf4f6;
     --h-faint: #626f85;
-    --h-accent-text: #873c55;
+    --h-accent-text: #55569b;
     --h-danger: #a63e16;
   }
 }
+[data-hearth-density] {
+  --h-choice-height: var(--h-control-height);
+  --h-row-height: var(--h-control-height);
+  --h-compact-control-height: min(var(--h-control-height), 40px);
+  --h-control-padding-y: max(
+    0px,
+    calc((var(--h-control-height) - 1.4em - 2px) / 2)
+  );
+  --h-field-padding-y: max(
+    0px,
+    calc((var(--h-field-height) - 1.4em - 2px) / 2)
+  );
+  --h-field-font-size: var(--h-font-size);
+  --h-adornment-size: max(24px, calc(var(--h-field-height) - 8px));
+  --h-combo-input-padding-y: var(--h-field-padding-y);
+}
+[data-hearth-density="low"],
+[data-hearth-density="comfortable"] {
+  --h-control-height: 44px;
+  --h-field-height: var(--h-control-height);
+  --h-control-padding: 16px;
+  --h-input-padding-x: 12px;
+  --h-row-padding: 12px;
+  --h-card-padding: 24px;
+  --h-page-padding: clamp(20px, 3vw, 40px);
+  --h-font-size: 14px;
+  --h-space: 4px;
+  --h-gap: 12px;
+  --h-radius-control: 10px;
+  --h-radius-card: 16px;
+  --h-radius-panel: 20px;
+}
+[data-hearth-density="medium"],
 [data-hearth-density="compact"] {
   --h-control-height: 40px;
+  --h-field-height: var(--h-control-height);
   --h-control-padding: 12px;
+  --h-input-padding-x: 12px;
+  --h-row-padding: 10px;
   --h-card-padding: 18px;
+  --h-page-padding: clamp(16px, 3vw, 32px);
   --h-font-size: 13px;
-  --h-choice-height: 32px;
-  --h-adornment-size: 32px;
+  --h-space: 3.5px;
+  --h-gap: 10px;
+  --h-radius-control: 8px;
+  --h-radius-card: 14px;
+  --h-radius-panel: 18px;
+}
+[data-hearth-density="high"] {
+  --h-control-height: 32px;
+  --h-field-height: 34px;
+  --h-control-padding: 10px;
+  --h-input-padding-x: 10px;
+  --h-row-padding: 6px;
+  --h-card-padding: 14px;
+  --h-page-padding: clamp(12px, 2vw, 24px);
+  --h-font-size: 13px;
+  --h-space: 3px;
+  --h-gap: 8px;
+  --h-radius-control: 6px;
+  --h-radius-card: 10px;
+  --h-radius-panel: 14px;
 }
 @media (pointer: coarse) {
-  [data-hearth-density="compact"] {
+  :root,
+  [data-hearth-theme],
+  [data-hearth-density] {
     --h-control-height: 44px;
+    --h-field-height: 44px;
     --h-choice-height: 44px;
+    --h-row-height: 44px;
+    --h-compact-control-height: 44px;
     --h-adornment-size: 44px;
   }
 }

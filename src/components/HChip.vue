@@ -87,8 +87,8 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 9px 13px;
-  min-height: 38px;
+  padding: var(--h-control-padding-y) var(--h-control-padding);
+  min-height: var(--h-control-height);
   border: 0;
   background: none;
   color: inherit;
@@ -105,8 +105,8 @@ const emit = defineEmits<{
 .h-chip-remove {
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
+  width: var(--h-control-height);
+  height: var(--h-control-height);
   border: 0;
   border-radius: 50%;
   background: none;

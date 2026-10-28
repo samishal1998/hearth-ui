@@ -88,13 +88,13 @@ input {
   flex: 1;
   width: 100%;
   min-width: 0;
-  min-height: var(--h-control-height);
+  min-height: var(--h-field-height);
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-control);
   background: var(--h-bg);
   color: var(--h-text);
-  padding: 10px 12px;
-  font: 12px var(--h-font-mono);
+  padding: var(--h-field-padding-y) var(--h-input-padding-x);
+  font: 12px/1.4 var(--h-font-mono);
 }
 p {
   font-size: max(var(--h-font-min-size, 12px), 11px);

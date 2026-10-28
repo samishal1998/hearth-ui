@@ -100,7 +100,7 @@ function backdrop(e: MouseEvent) {
   display: flex;
   gap: 16px;
   justify-content: space-between;
-  padding: 28px;
+  padding: calc(var(--h-card-padding) + var(--h-space));
   border-bottom: 1px solid var(--h-border);
 }
 h2 {
@@ -119,10 +119,11 @@ p {
   margin: -8px -10px 0 0;
 }
 .h-sheet-body {
-  padding: 28px;
+  padding: calc(var(--h-card-padding) + var(--h-space));
   min-height: 100px;
 }
 .h-sheet-footer {
-  padding: 0 28px 28px;
+  padding: 0 calc(var(--h-card-padding) + var(--h-space))
+    calc(var(--h-card-padding) + var(--h-space));
 }
 </style>

@@ -2,7 +2,7 @@
 
 **A home for what you build.** Native Vue components for dashboards, public pages, and authentication.
 
-Hearth UI includes **94 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. Version **0.7.1** includes the 0.7 foundation release and a mobile dashboard toolbar layout fix.
+Hearth UI includes **94 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. Version **0.8.0** adds neutral main surfaces, contrasting palette accents, and three token-driven density levels. Density now defaults to `medium`; use `low` or `comfortable` for roomy 44px controls.
 
 [Component registry](https://hearth-ui.samyx.net/#components) · [Page recipes](https://hearth-ui.samyx.net/#recipes) · [Theme studio](https://hearth-ui.samyx.net/#themes) · [GitHub](https://github.com/samishal1998/hearth-ui)
 
@@ -69,7 +69,7 @@ Use `HTheme` around your application or a deliberately distinct section:
 
 - Palettes: **Sunset**, **Ocean**, **Forest**, **Dusk**, and **Rose**.
 - Modes: `light`, `dark`, and `system` (follows the operating system).
-- Density: `comfortable` or `compact`.
+- Density: `low` (roomy), `medium` (default), or `high` (dense). Legacy `comfortable`/`compact` alias `low`/`medium`. Controls are 44/40/32px, fields 44/40/34px; coarse-pointer targets stay at least 44px. Main surfaces are neutral across palettes, with subtle accent tints on secondary surfaces.
 - Customization: pass `tokens`, or override inherited `--h-*` CSS variables.
 - Helpers: `themeStyle()` filters a token object; `themeCSS()` serializes it as CSS.
 

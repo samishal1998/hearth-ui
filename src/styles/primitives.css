@@ -41,17 +41,19 @@
   min-width: 0;
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-control);
-  padding: 4px 12px;
+  padding: 0 var(--h-input-padding-x, 12px);
   background: var(--h-bg);
 }
 .h-input-group > input {
   flex: 1;
   min-width: 0;
-  min-height: var(--h-control-height, 44px);
+  min-height: calc(var(--h-field-height, 40px) - 2px);
+  padding-block: var(--h-field-padding-y, 8px);
   border: 0;
   background: none;
   color: inherit;
   font: inherit;
+  line-height: 1.4;
 }
 .h-input-group:focus-within {
   outline: var(--h-focus-width, 2px) solid var(--h-focus);

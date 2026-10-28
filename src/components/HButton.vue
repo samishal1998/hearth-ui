@@ -83,18 +83,20 @@ controlSync(emit);
 <style scoped>
 @import "../styles/base.css";
 .h-button {
+  --h-button-height: var(--h-control-height);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
-  min-height: var(--h-control-height);
-  padding: 9px var(--h-control-padding);
+  gap: calc(var(--h-space) * 2);
+  min-height: var(--h-button-height);
+  padding: max(0px, calc((var(--h-button-height) - 1.4em - 2px) / 2))
+    var(--h-control-padding);
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-control);
   background: var(--h-surface);
   color: var(--h-text);
   font-family: var(--h-font);
-  font-size: 13px;
+  font-size: var(--h-font-size);
   font-weight: 600;
   text-decoration: none;
   line-height: 1.4;
@@ -137,15 +139,13 @@ controlSync(emit);
   border-color: color-mix(in srgb, var(--h-danger) 30%, transparent);
 }
 .compact {
-  min-height: 40px;
+  --h-button-height: var(--h-compact-control-height);
   font-size: 12px;
-  padding: 7px 12px;
 }
 .icon-only {
-  width: var(--h-control-height);
-  min-width: 40px;
-  min-height: 40px;
-  padding: 8px;
+  width: var(--h-button-height);
+  min-width: var(--h-button-height);
+  padding: 0;
 }
 .h-button:disabled,
 .h-button[aria-disabled="true"] {

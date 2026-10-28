@@ -16,7 +16,7 @@ const props = withDefaults(
     modeTokens?: ThemeModeTokens;
     mobileBreakpoint?: number;
   }>(),
-  { theme: "sunset", mode: "dark", density: "comfortable" },
+  { theme: "sunset", mode: "dark", density: "medium" },
 );
 const systemMode = ref<"dark" | "light">();
 let preference: MediaQueryList | undefined;

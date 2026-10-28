@@ -57,7 +57,7 @@ summary {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  min-height: 44px;
+  min-height: var(--h-row-height);
   cursor: pointer;
   list-style: none;
 }

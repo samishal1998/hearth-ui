@@ -6,7 +6,7 @@ html {
 }
 body {
   margin: 0;
-  background: #0b1220;
+  background: #101216;
 }
 button,
 input,
@@ -365,49 +365,25 @@ dd code {
   border-radius: 9px;
   border: 1px solid #ffffff20;
   margin-left: -4px;
-  background: #0b1220;
+  background: #101216;
 }
 .palette-swatches i:nth-child(2) {
-  background: #26354c;
+  background: color-mix(in srgb, var(--palette-accent, #ff7a2f) 5%, #191c22);
 }
 .palette-swatches i:nth-child(3) {
-  background: #ff7a2f;
+  background: var(--palette-accent, #ff7a2f);
 }
-.palette-swatches.ocean i {
-  background: #0b1620;
+.palette-swatches.ocean {
+  --palette-accent: #e8d49a;
 }
-.palette-swatches.ocean i:nth-child(2) {
-  background: #1f455d;
+.palette-swatches.forest {
+  --palette-accent: #e8bd6c;
 }
-.palette-swatches.ocean i:nth-child(3) {
-  background: #70baff;
+.palette-swatches.dusk {
+  --palette-accent: #8bd9cb;
 }
-.palette-swatches.forest i {
-  background: #0c1813;
-}
-.palette-swatches.forest i:nth-child(2) {
-  background: #31503d;
-}
-.palette-swatches.forest i:nth-child(3) {
-  background: #8bd7a4;
-}
-.palette-swatches.dusk i {
-  background: #151120;
-}
-.palette-swatches.dusk i:nth-child(2) {
-  background: #3e3053;
-}
-.palette-swatches.dusk i:nth-child(3) {
-  background: #bca7f5;
-}
-.palette-swatches.rose i {
-  background: #1d1318;
-}
-.palette-swatches.rose i:nth-child(2) {
-  background: #4d323e;
-}
-.palette-swatches.rose i:nth-child(3) {
-  background: #dda0b0;
+.palette-swatches.rose {
+  --palette-accent: #b8b8ef;
 }
 .build-section {
   padding-block: 70px 85px;
@@ -1003,7 +979,17 @@ input[type="range"] {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 16px;
 }
-.theme-mode-previews > .h-theme { border-radius: var(--h-radius-card); overflow: hidden; }
-.theme-mode-previews .h-card-body { display: grid; gap: 12px; }
-.theme-mode-previews p { margin: 0; }
-.theme-mode-previews .h-button { justify-self: start; }
+.theme-mode-previews > .h-theme {
+  border-radius: var(--h-radius-card);
+  overflow: hidden;
+}
+.theme-mode-previews .h-card-body {
+  display: grid;
+  gap: 12px;
+}
+.theme-mode-previews p {
+  margin: 0;
+}
+.theme-mode-previews .h-button {
+  justify-self: start;
+}

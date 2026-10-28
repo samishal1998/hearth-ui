@@ -2,7 +2,7 @@
 
 > Themeable Vue and web components for self-hosted dashboards, public pages, and authentication. Start here, then read only the component references needed for the task.
 
-This index covers 94 public components in source version 0.7.1. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
+This index covers 94 public components in source version 0.8.0. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
 
 ## Agent workflow
 
@@ -33,7 +33,7 @@ This index covers 94 public components in source version 0.7.1. The working tree
 - Named fields join their owning form through ElementInternals. Multi-selects submit repeated values: read `FormData.getAll(name)`.
 - Keep forms and field hosts in one DOM tree. Set initial properties before connection for reset defaults. Do not put unrelated fields into an auth page's non-form slots.
 - `formDisabled` and `control-sync` are internal plumbing, not application APIs.
-- Source palettes: `sunset`, `ocean`, `forest`, `dusk`, `rose`. Sunset is default. Modes: dark, light, system. Densities: comfortable, compact.
+- Source palettes: `sunset`, `ocean`, `forest`, `dusk`, `rose`. Sunset is default. Modes: dark, light, system. Main surfaces are neutral. Densities: low, medium (default), high; comfortable/compact alias low/medium. Coarse-pointer targets stay at least 44px.
 - Prefer inherited `--h-*` variables, then exposed CSS parts. Do not patch shadow-root implementation DOM.
 - Use visible labels, state text, and native keyboard behavior. Verify your custom palette and complete application, not just isolated components.
 

@@ -147,7 +147,7 @@ const vueCode = computed(() =>
       ><nav class="registry-back" aria-label="Component breadcrumb">
         <HButton href="#components" variant="ghost">← All components</HButton
         ><HBadge :label="selected.category" /><HBadge
-          label="Hearth UI 0.7"
+          label="Hearth UI 0.8"
           tone="accent"
         />
       </nav>

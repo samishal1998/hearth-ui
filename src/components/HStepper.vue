@@ -90,8 +90,8 @@ li {
   text-align: start;
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius-control);
-  padding: 10px 12px;
-  min-height: 44px;
+  padding: var(--h-row-padding) var(--h-control-padding);
+  min-height: var(--h-row-height);
   width: 100%;
   background: transparent;
   color: inherit;

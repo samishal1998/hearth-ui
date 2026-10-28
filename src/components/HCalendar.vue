@@ -541,7 +541,9 @@ async function key(event: KeyboardEvent, date: string) {
 }
 .h-calendar-header {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  grid-template-columns: var(--h-control-height) minmax(0, 1fr) var(
+      --h-control-height
+    );
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
@@ -559,8 +561,8 @@ button {
 }
 .h-calendar-nav,
 .h-calendar-nav-space {
-  width: 44px;
-  height: 44px;
+  width: var(--h-control-height);
+  height: var(--h-control-height);
   display: grid;
   place-items: center;
 }
@@ -578,7 +580,7 @@ button {
   align-items: center;
   gap: 7px;
   min-width: 0;
-  min-height: 44px;
+  min-height: var(--h-control-height);
   padding: 4px;
   border-radius: var(--h-radius-control);
   font-weight: 550;
@@ -591,7 +593,9 @@ button {
   color: var(--h-muted);
 }
 .h-calendar-stage {
-  min-height: calc(6 * var(--h-calendar-day-height, 44px) + 36px);
+  min-height: calc(
+    6 * var(--h-calendar-day-height, var(--h-control-height)) + 36px
+  );
 }
 table {
   width: 100%;
@@ -614,8 +618,8 @@ td {
 td button {
   position: relative;
   width: 100%;
-  min-height: var(--h-calendar-day-height, 44px);
-  border-radius: 9px;
+  min-height: var(--h-calendar-day-height, var(--h-control-height));
+  border-radius: var(--h-radius-control);
   font-variant-numeric: tabular-nums;
 }
 td button:focus-visible {
@@ -672,15 +676,17 @@ button:disabled {
   overflow-wrap: anywhere;
 }
 .h-calendar-footer button {
-  padding: 8px 10px;
-  min-height: 44px;
+  padding: var(--h-control-padding-y) var(--h-control-padding);
+  min-height: var(--h-control-height);
   border-radius: var(--h-radius-control);
   font-size: 12px;
   color: var(--h-accent-text);
 }
 .h-calendar-year {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  grid-template-columns: var(--h-control-height) minmax(0, 1fr) var(
+      --h-control-height
+    );
   gap: 4px;
   align-items: center;
   padding: 3px;
@@ -689,7 +695,7 @@ button:disabled {
   background: var(--h-bg);
 }
 .h-calendar-year button {
-  height: 44px;
+  height: var(--h-control-height);
   display: grid;
   place-items: center;
   border-radius: max(4px, calc(var(--h-radius-control) - 4px));
@@ -699,7 +705,8 @@ button:disabled {
   appearance: textfield;
   min-width: 0;
   width: 100%;
-  padding: 8px 2px;
+  padding: 0 2px;
+  min-height: var(--h-field-height);
   border: 0;
   background: transparent;
   color: var(--h-text);
@@ -724,7 +731,7 @@ button:disabled {
   gap: 6px;
 }
 .h-calendar-months button {
-  min-height: 44px;
+  min-height: var(--h-control-height);
   border-radius: var(--h-radius-control);
   border: 1px solid var(--h-border);
 }

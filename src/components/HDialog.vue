@@ -66,7 +66,7 @@ function backdrop(e: MouseEvent) {
   width: 560px;
   max-width: calc(100% - 28px);
   max-height: calc(100dvh - 40px);
-  padding: 28px;
+  padding: calc(var(--h-card-padding) + var(--h-space));
   color: var(--h-text);
   background: var(--h-raised);
   font-family: var(--h-font);

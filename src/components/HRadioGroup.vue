@@ -165,8 +165,8 @@ legend {
 .h-radio-option {
   display: flex;
   align-items: center;
-  gap: 12px;
-  min-height: 44px;
+  gap: var(--h-gap);
+  min-height: var(--h-choice-height);
   cursor: pointer;
 }
 input {

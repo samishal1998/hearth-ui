@@ -82,7 +82,7 @@ figcaption {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 44px;
+  min-height: var(--h-row-height);
   padding: 5px 14px;
   background: var(--h-surface);
   border-bottom: 1px solid var(--h-border);

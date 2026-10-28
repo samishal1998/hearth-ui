@@ -95,7 +95,7 @@ test("studio isolates both modes and exported CSS round-trips through Vue-style 
     await page
       .locator("#css-theme-nested")
       .evaluate((el) => getComputedStyle(el).getPropertyValue("--h-bg").trim()),
-  ).toBe("#f3f7f2");
+  ).toBe("#f5f6f8");
   await page.goto("/elements.html");
   await page.addStyleTag({ content: elementCSS });
   await page.evaluate(() => {
@@ -116,7 +116,7 @@ test("studio isolates both modes and exported CSS round-trips through Vue-style 
   await expect(web).toHaveCSS("background-color", "rgb(237, 244, 254)");
   await expect(page.locator("hearth-theme#nested-exported .h-theme")).toHaveCSS(
     "background-color",
-    "rgb(243, 247, 242)",
+    "rgb(245, 246, 248)",
   );
 });
 
@@ -142,7 +142,7 @@ test("modeTokens properties update across OS changes and clear stale overrides w
   await page.getByLabel("Color mode", { exact: true }).selectOption("light");
   await expect(page.locator(".h-theme").first()).toHaveCSS(
     "background-color",
-    "rgb(242, 247, 251)",
+    "rgb(245, 246, 248)",
   );
   expect(
     await page.evaluate(
@@ -182,7 +182,7 @@ test("modeTokens properties update across OS changes and clear stale overrides w
   );
   await expect(base).toHaveCSS("background-color", "rgb(255, 255, 255)");
   await page.emulateMedia({ colorScheme: "dark" });
-  await expect(base).toHaveCSS("background-color", "rgb(11, 18, 32)");
+  await expect(base).toHaveCSS("background-color", "rgb(16, 18, 22)");
 });
 
 test("Vue public primitives compose a compact form with hidden but accessible labels", async ({
@@ -310,7 +310,7 @@ test("web component slots, custom icons, hidden labels, clear events, and resets
     input = page.locator("hearth-input#foundation-search");
   await expect(surface.locator("section.h-surface")).toHaveCSS(
     "padding",
-    "8px",
+    "7px",
   );
   await expect(input.getByText("Find", { exact: true })).toBeVisible();
   await expect(input.getByText("⌘ K")).toBeVisible();
