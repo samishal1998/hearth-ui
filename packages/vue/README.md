@@ -2,7 +2,11 @@
 
 **A home for what you build.** Native Vue components for dashboards, public pages, and authentication.
 
-Hearth UI includes **94 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. Version **0.8.0** adds neutral main surfaces, contrasting palette accents, and three token-driven density levels. Density now defaults to `medium`; use `low` or `comfortable` for roomy 44px controls.
+Hearth UI **0.9.0** includes **103 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. This release adds nine developer/diagram components, refined interactions, a redesigned gallery, and resilient table layouts. Density defaults to `medium`; use `low` or `comfortable` for roomy 44px controls.
+
+New components: `HCodeSnippet`, `HPackageInstall`, `HTerminal`, `HKeyboardKey`, `HWaveform`, `HBarChart`, `HStackedBarChart`, `HDivergingBarChart`, and `HStackedWaveform`. The stacked waveform preserves ordered colored amounts and repeated colors, with centered pillars and 0.5px segment gaps. See the included component references for APIs and examples.
+
+Migration: tables now default to `layout="fixed"`; opt into `layout="auto"` for content-sized columns. Error/action toasts stay until dismissed. Motion respects reduced-motion preferences, and `HButton static` disables press scaling.
 
 [Component registry](https://hearth-ui.samyx.net/#components) · [Page recipes](https://hearth-ui.samyx.net/#recipes) · [Theme studio](https://hearth-ui.samyx.net/#themes) · [GitHub](https://github.com/samishal1998/hearth-ui)
 

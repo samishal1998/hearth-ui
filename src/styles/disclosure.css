@@ -1,0 +1,36 @@
+/* Native details keep keyboard, semantics and hidden-content behavior. */
+summary > .h-icon {
+  flex-shrink: 0;
+}
+summary > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (hover: hover) {
+  summary:not([aria-disabled="true"]):hover {
+    background: var(--h-accent-subtle);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  summary > .h-icon {
+    transition: transform var(--h-motion-enter) var(--h-ease);
+  }
+  @supports (interpolate-size: allow-keywords) {
+    details {
+      interpolate-size: allow-keywords;
+    }
+    details::details-content {
+      block-size: 0;
+      opacity: 0;
+      overflow: clip;
+      transition:
+        block-size var(--h-motion-enter) var(--h-ease),
+        opacity var(--h-motion) var(--h-ease),
+        content-visibility var(--h-motion-enter) allow-discrete;
+    }
+    details[open]::details-content {
+      block-size: auto;
+      opacity: 1;
+    }
+  }
+}

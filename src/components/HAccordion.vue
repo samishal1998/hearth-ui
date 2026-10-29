@@ -92,6 +92,7 @@ function toggle(item: AccordionItem, e: Event) {
 </template>
 <style scoped>
 @import "../styles/base.css";
+@import "../styles/disclosure.css";
 .h-accordion {
   display: grid;
   gap: 10px;

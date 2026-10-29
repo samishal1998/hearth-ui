@@ -2,7 +2,7 @@
 
 > Escaped, copyable code or configuration text with optional wrapping and line numbers.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.8.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.9.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -39,7 +39,7 @@ type Props = {
 ### Defaults
 
 ```ts
-{ language: "text", copyable: true }
+{ code: "", language: "text", copyable: true }
 ```
 
 ### Events

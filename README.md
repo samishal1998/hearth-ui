@@ -8,7 +8,7 @@ Hearth carries the visual direction of Apptrail into a standalone library. **Sun
 
 ## Agent references
 
-Start at **[llms.txt](llms.txt)**. It routes agents to focused references for all 94 source components under **`docs/components/<slug>/llms.txt`**, plus [behavior and native-markup primitives](docs/primitives/llms.txt), for example:
+Start at **[llms.txt](llms.txt)**. It routes agents to focused references for all 103 source components under **`docs/components/<slug>/llms.txt`**, plus [behavior and native-markup primitives](docs/primitives/llms.txt), for example:
 
 - [Authentication page](docs/components/auth-page/llms.txt)
 - [Dashboard shell](docs/components/dashboard-shell/llms.txt)
@@ -63,7 +63,7 @@ The registry preview exposes a **Mobile breakpoint (px)** control for applicable
 
 ## Install
 
-This source prepares **0.8.0** for release. Install the distribution you need after publication, or use the prepared package archives:
+This source prepares **0.9.0** for release. Install the distribution you need after publication, or use the prepared package archives:
 
 ```sh
 # Native Vue
@@ -160,11 +160,34 @@ Keep the files inside `dist/elements/` together: entry points import a shared ru
 | `HTextarea`       | `HPagination`       |                     |
 | `HRange`          | `HAccordion`        |                     |
 
-The source component catalog includes interactive previews and documents props, events, slots, and CSS parts for all **94 components**. Vue declarations and web-component constructors are included for every component. The [hosted catalog](https://samishal1998.github.io/hearth-ui/#components) reflects the most recent deployed build.
+The source component catalog includes interactive previews and documents props, events, slots, and CSS parts for all **103 components**. Vue declarations and web-component constructors are included for every component. The [hosted catalog](https://samishal1998.github.io/hearth-ui/#components) reflects the most recent deployed build.
 
 The registry provides search, category filters, and 12 results per page. Each component has a shareable route such as `#components/HCalendar`, with a focused preview, usage example, and API reference. Full composed demos are at `#examples`; the seven page recipes, including the authentication page, are at `#recipes`.
 
 Date, time, and local date-time fields now use Hearth picker popovers and formatted text entry instead of native browser dropdowns. Their ISO string values and form submission contracts are preserved; invalid dates, bounds, and time steps participate in form validation.
+
+### New in 0.9.0
+
+The refinement release adds nine developer and native-HTML diagram components, bringing both distributions to **103 components**, alongside a redesigned gallery, interaction polish, and stronger layout/accessibility behavior.
+
+- Persistent component navigation, visual gallery cards, preview/code tabs, Vue/web-component examples, preview frame sizing, and property tables. Try `#components` and the composed `#technical` showcase.
+- Buttons provide hover/press/focus/loading feedback; `static` disables press scaling. Native disclosures progressively enhance with interruptible open/close transitions, and native overlays use short enter/exit transitions. `--h-motion`, `--h-motion-enter`, `--h-motion-exit`, and `--h-ease` control timing. Reduced motion disables transforms and animation, including waveform autoplay.
+- Tables default to `layout="fixed"`, wrap long values/headers, and constrain wide slot content inside cells. Explicit column minimum widths scroll inside the table; `layout="auto"` remains available for content-sized tables. Truncation is opt-in; mobile cards retain full readable values.
+- **Developer components:** `HCodeSnippet` (tabbed code and copy), `HPackageInstall` (npm/pnpm/Yarn/Bun), `HTerminal` (bounded read-only output), and `HKeyboardKey` (shortcut hints).
+- **HTML diagrams:** `HWaveform`, `HBarChart`, `HDivergingBarChart`, and `HStackedBarChart`. Bars use spans and divs, with no charting dependency, SVG, or canvas. Charts provide focus/hover inspection, arrow-key navigation, selection events, labeled series, and exact-value data tables. `HDivergingBarChart` uses slim 6px bars above/below zero on a fixed ±100% scale, with a 96px default plot and configurable tones/width. Values are percentage points (35 = +35%); out-of-range values cap visually but remain exact in tooltips and the data table. Stacked columns normalize each interval to 100%; applications supply updates. Waveforms are illustrative signals, not audio analysis. Code remains escaped plain text, not a syntax highlighter.
+
+`HStackedWaveform` adds dense, vertically centered pillars made of ordered colored amounts. For `(1 green, 10 red, 5 blue)`, `(2 green, 12 red, 7 blue)`, and `(5 green, 12 red, 12 green)`, total heights scale as **16 : 21 : 29**. Segment arrays preserve order and repeated colors; the default **0.5px gap** separates pieces. Pillars use a shared amount scale rather than normalizing every column to 100%. One native range control handles keyboard/touch inspection across the dense plot, with tooltips and an ordered data table for exact values. See [HStackedWaveform](docs/components/stacked-waveform/llms.txt).
+
+**Migration:** tables now default to `layout="fixed"`; set `layout="auto"` to retain content-sized columns. Error toasts and toasts with an action remain until dismissed, even with a positive duration. `HButton static` disables press scaling, and reduced-motion preferences suppress motion automatically. The density default remains `medium` from v0.8.0.
+
+#### Accessibility basics
+
+- Use native buttons, links, inputs, details, and dialogs; add ARIA only for semantics native HTML does not supply. Keep one primary main landmark and a logical heading outline.
+- Every field needs a label, including `hideLabel` fields. Icon-only buttons need a meaningful `label`. Put labels/descriptions in the same DOM root as their control; cross-shadow ID references do not work.
+- Composite widgets use arrow/Home/End navigation and roving focus; Tab moves between widgets. Modals retain native focus containment and restore focus on close. Escape dismisses menus and tooltips.
+- Focus rings use `:focus-visible` with forced-color support. Touch targets expand on coarse pointers. Error messages use `aria-invalid` and `aria-describedby`; use stable polite status regions for routine updates.
+- Error/action toasts remain until dismissed. Waveform motion has a pause control and honors reduced motion. Charts include labels and data tables so color and animation are not the only information.
+- Automated axe checks and keyboard regressions cover the technical showcase and representative gallery/custom-element controls. Complete applications still need manual screen-reader, zoom, and target-browser checks.
 
 ### New in 0.8.0
 

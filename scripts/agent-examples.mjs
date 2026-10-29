@@ -1,6 +1,200 @@
 // Component-specific recipes complement the API extracted from source and catalog.
 // `props` are assigned before connection, preserving custom-element form reset defaults.
 export const examples = {
+  HCodeSnippet: {
+    vue: `<HCodeSnippet label="API request" :options="[{id:'curl',label:'cURL',language:'sh',code:'curl https://api.example.com/status'},{id:'js',label:'JavaScript',language:'js',code:'const response = await fetch(endpoint);'}]" />`,
+    props: {
+      label: "API request",
+      options: [
+        {
+          id: "curl",
+          label: "cURL",
+          language: "sh",
+          code: "curl https://api.example.com/status",
+        },
+        {
+          id: "js",
+          label: "JavaScript",
+          language: "js",
+          code: 'const response = await fetch("/status");',
+        },
+      ],
+    },
+    notes: [
+      "Options are properties, never JSON attributes. Each option has a stable id, visible label and literal code. Native tab semantics, arrow/Home/End navigation, copy feedback, wrap and bounded scrolling work in both builds. Code is escaped plain text, not a syntax highlighter. copied emits the active option id.",
+    ],
+    related: ["HCodeBlock", "HPackageInstall", "HTabs"],
+    event: "change",
+  },
+  HPackageInstall: {
+    vue: "<HPackageInstall :packages=\"['@hearth-ui/vue', 'vue']\" />",
+    props: { packages: ["@hearth-ui/vue", "vue"] },
+    notes: [
+      "Generates install commands for package names with optional simple versions/tags. Rejects shell fragments, URLs and local paths. Commands are copied, never executed. dev adds -D. The selected package manager is local unless update:manager is handled by the application.",
+    ],
+    related: ["HCodeSnippet", "HTerminal"],
+    event: "copied",
+  },
+  HKeyboardKey: {
+    vue: "<HKeyboardKey :keys=\"['Ctrl', 'K']\" label=\"Control plus K\" />",
+    props: { keys: ["Ctrl", "K"], label: "Control plus K" },
+    notes: [
+      "This is a visual shortcut hint, not a key binding. The application owns keyboard listeners. Supply label for symbols that need a spoken equivalent.",
+    ],
+    related: ["HButton", "HCommandPalette"],
+  },
+  HTerminal: {
+    vue: "<HTerminal title=\"Build output\" :lines=\"[{id:'1',kind:'command',text:'npm run build'},{id:'2',kind:'success',text:'Build complete'}]\" />",
+    props: {
+      title: "Build output",
+      lines: [
+        { id: "1", kind: "command", text: "npm run build" },
+        { id: "2", kind: "success", text: "Build complete" },
+      ],
+    },
+    notes: [
+      "Read-only escaped text, not a terminal emulator or shell. Displays the latest maxLines (default 200, maximum 2000). Copy includes only visible lines with command/status prefixes. It does not auto-scroll or announce every update; use an application-owned status for completion.",
+    ],
+    related: ["HCodeBlock", "HLogViewer", "HPackageInstall"],
+  },
+  HBarChart: {
+    vue: "<HBarChart label=\"Build duration\" unit=\"s\" :items=\"[{id:'mon',label:'Mon',value:24},{id:'tue',label:'Tue',value:42},{id:'wed',label:'Wed',value:31}]\" />",
+    props: {
+      label: "Build duration",
+      unit: "s",
+      items: [
+        { id: "mon", label: "Mon", value: 24 },
+        { id: "tue", label: "Tue", value: 42 },
+        { id: "wed", label: "Wed", value: 31 },
+        { id: "thu", label: "Thu", value: 18 },
+        { id: "fri", label: "Fri", value: 37 },
+      ],
+    },
+    notes: [
+      "Native HTML bars, no SVG/canvas/charting dependency. Hover or focus a column to inspect; arrow keys, Home and End move between bars. Activating emits select(id); selected is application-owned. A data-table disclosure provides exact values. Nonfinite/negative values render as zero. Shows the latest maxPoints (default 60, maximum 240). Positive values use a zero baseline scaled to the largest column. Narrow containers scroll internally. --h-chart-1 through --h-chart-5 are color tokens.",
+    ],
+    related: ["HStackedBarChart", "HWaveform", "HSparkline"],
+    event: "select",
+  },
+  HDivergingBarChart: {
+    vue: "<HDivergingBarChart label=\"Throughput change\" :items=\"[{id:'a',label:'09:00',value:35},{id:'b',label:'10:00',value:-55},{id:'c',label:'11:00',value:20}]\" />",
+    props: {
+      label: "Throughput change",
+      items: [
+        { id: "a", label: "09:00", value: 35 },
+        { id: "b", label: "09:15", value: -55 },
+        { id: "c", label: "09:30", value: 20 },
+        { id: "d", label: "09:45", value: 80 },
+        { id: "e", label: "10:00", value: -25 },
+        { id: "f", label: "10:15", value: 55 },
+        { id: "g", label: "10:30", value: -70 },
+        { id: "h", label: "10:45", value: 40 },
+        { id: "i", label: "11:00", value: 65 },
+        { id: "j", label: "11:15", value: -15 },
+        { id: "k", label: "11:30", value: -40 },
+        { id: "l", label: "11:45", value: 25 },
+      ],
+    },
+    notes: [
+      "Values are percentage points, not fractions: 35 means +35%, and -55 means -55%. Positive bars rise above the zero center line; negative bars extend below it. The fixed range is -100% to +100%, so identical values keep their scale as new points arrive. Out-of-range bars cap at the scale boundary while tooltips and the data table retain exact values. Nonfinite values render as zero, and zero values have no filled bar.",
+      "Visual bars default to 6px wide and a 96px plot; barWidth is bounded to 2–12px and height to 64–600px. Pointer targets stay 24px wide (44px on coarse pointers), without overlapping; narrow charts scroll inside their own viewport. Per-point labels live in tooltips and the data table to keep the waveform-like plot uncluttered.",
+      "Hover or focus to inspect; arrow/Home/End keys navigate, Escape dismisses the tooltip, and activation emits select(id). selected is application-owned. positiveTone defaults to accent and negativeTone to info; direction and signed text communicate meaning beyond color. App-owned updates transition smoothly, with reduced-motion support. Shows the latest maxPoints (default 60, maximum 240).",
+    ],
+    related: ["HWaveform", "HBarChart", "HStackedBarChart"],
+    event: "select",
+  },
+  HStackedBarChart: {
+    vue: "<HStackedBarChart label=\"Request outcomes\" :series=\"[{id:'ok',label:'Success'},{id:'retry',label:'Retry'}]\" :columns=\"[{id:'a',label:'09:00',values:{ok:80,retry:20}},{id:'b',label:'10:00',values:{ok:95,retry:5}}]\" />",
+    props: {
+      label: "Request outcomes",
+      series: [
+        { id: "ok", label: "Success", tone: "success" },
+        { id: "retry", label: "Retry", tone: "warning" },
+        { id: "error", label: "Error", tone: "danger" },
+      ],
+      columns: [
+        { id: "a", label: "09:00", values: { ok: 80, retry: 15, error: 5 } },
+        { id: "b", label: "10:00", values: { ok: 65, retry: 25, error: 10 } },
+        { id: "c", label: "11:00", values: { ok: 92, retry: 6, error: 2 } },
+      ],
+    },
+    notes: [
+      "Each column independently normalizes nonnegative finite values to 100%; all-zero columns stay empty. Up to eight series, identified by stable ids. The application supplies time-ordered columns and owns live updates. Heights transition under normal motion; reduced motion is immediate. Keyboard inspection, legend labels and an exact-value/percentage data table convey meaning beyond color. The latest maxPoints columns are shown (default 60, maximum 240).",
+    ],
+    related: ["HBarChart", "HWaveform"],
+    event: "select",
+  },
+  HStackedWaveform: {
+    script:
+      "const columns = [{id:'one',label:'Pillar 1',segments:[{id:'green',label:'Green',value:1,tone:'success' as const},{id:'red',label:'Red',value:10,tone:'danger' as const},{id:'blue',label:'Blue',value:5,tone:'info' as const}]},{id:'two',label:'Pillar 2',segments:[{id:'green',label:'Green',value:2,tone:'success' as const},{id:'red',label:'Red',value:12,tone:'danger' as const},{id:'blue',label:'Blue',value:7,tone:'info' as const}]},{id:'three',label:'Pillar 3',segments:[{id:'green-top',label:'Green',value:5,tone:'success' as const},{id:'red',label:'Red',value:12,tone:'danger' as const},{id:'green-bottom',label:'Green',value:12,tone:'success' as const}]}];",
+    vue: '<HStackedWaveform label="Stacked amounts" :columns="columns" />',
+    props: {
+      label: "Stacked amounts",
+      description:
+        "Each narrow pillar stacks ordered amounts. Taller totals make taller pillars.",
+      columns: [
+        {
+          id: "one",
+          label: "Pillar 1",
+          segments: [
+            { id: "green", label: "Green", value: 1, tone: "success" },
+            { id: "red", label: "Red", value: 10, tone: "danger" },
+            { id: "blue", label: "Blue", value: 5, tone: "info" },
+          ],
+        },
+        {
+          id: "two",
+          label: "Pillar 2",
+          segments: [
+            { id: "green", label: "Green", value: 2, tone: "success" },
+            { id: "red", label: "Red", value: 12, tone: "danger" },
+            { id: "blue", label: "Blue", value: 7, tone: "info" },
+          ],
+        },
+        {
+          id: "three",
+          label: "Pillar 3",
+          segments: [
+            { id: "green-top", label: "Green", value: 5, tone: "success" },
+            { id: "red", label: "Red", value: 12, tone: "danger" },
+            { id: "green-bottom", label: "Green", value: 12, tone: "success" },
+          ],
+        },
+        ...Array.from({ length: 21 }, (_, i) => ({
+          id: `sample-${i}`,
+          label: `Pillar ${i + 4}`,
+          segments: [
+            {
+              id: "green",
+              label: "Green",
+              value: 1 + (i % 6),
+              tone: "success",
+            },
+            { id: "red", label: "Red", value: 4 + (i % 9), tone: "danger" },
+            { id: "blue", label: "Blue", value: 2 + (i % 7), tone: "info" },
+          ],
+        })),
+      ],
+    },
+    notes: [
+      "Each column is a centered stack of ordered segments, read top to bottom. Repeated colors/labels remain separate segments: use unique segment ids within each column and stable column ids. Values are amounts, not normalized percentages. Total pillar height is proportional to its sum on a shared scale set by the largest visible total.",
+      "The 0.5px default gap separates colored pieces. Gaps are deducted from the pillar height before distributing fill by amount; tiny pillars reduce gaps to retain proportions. segmentGap is clamped to 0–0.9px. Zero, negative and nonfinite amounts have no fill and appear as zero in the data table.",
+      "Bars default to 8px with 3px column gaps; the row stays dense and centered like HWaveform, shrinking to fit narrow containers. height is bounded to 44–320px, barWidth to 2–12px, columnGap to 0–8px. The latest maxPoints columns are shown (default/maximum 128).",
+      "One native range input covers the whole plot for keyboard and touch inspection without widening individual pillars. Hover inspects; arrows/Home/End and touch dragging use native range behavior. change commits select(id); selected is application-owned. Tooltips and a data-table disclosure expose totals and every ordered segment; no per-frame live announcements.",
+      "Use tone for theme-aware colors, or color for trusted application-authored CSS colors. Updated amounts transition under normal motion; reduced-motion changes are immediate. There is no illustrative autoplay because the heights encode actual data. Overflowing numeric totals are marked Above numeric range while individual finite amounts remain available.",
+    ],
+    related: ["HWaveform", "HStackedBarChart", "HDivergingBarChart"],
+    event: "select",
+  },
+  HWaveform: {
+    vue: '<HWaveform label="Microphone signal" :values="[0.2,0.5,0.9,0.4,0.7,0.3,0.6,0.8]" />',
+    props: { label: "Microphone signal", active: false },
+    notes: [
+      "Decorative signal visualization, not an audio analyser. Values are absolute amplitudes clamped to 0–1; the latest 128 samples are rendered. active enables illustrative CSS motion, with a visible pause/resume control. Reduced motion disables animation entirely. No timers or random values; SSR output is deterministic. Label and state remain available to assistive technology.",
+    ],
+    related: ["HBarChart", "HStackedBarChart"],
+    event: "update:active",
+  },
   HStack: {
     vue: '<HStack direction="row" :gap="3" wrap><HButton>Save</HButton><HButton>Cancel</HButton></HStack>',
     imports: ["HButton"],
@@ -508,8 +702,8 @@ export const examples = {
     props: { title: "Preferences saved", tone: "success", duration: 5000 },
     js: "element.addEventListener('dismiss', () => element.remove());",
     notes: [
-      "The timer pauses while hovered, focused, or the document is hidden. duration=0 persists until dismissed.",
-      "dismiss requests removal; remove the toast in the consuming app. Use an appropriate lifetime for important errors.",
+      "The timer pauses while hovered, focused, or the document is hidden. duration=0 persists until dismissed. Danger toasts and toasts with actionLabel never auto-dismiss, regardless of duration.",
+      "dismiss requests removal; remove the toast in the consuming app. Keep error/action notices available until the user acts.",
       "action requests the supplied action; application code handles it.",
     ],
     related: ["HToaster", "HAlert"],
@@ -568,6 +762,7 @@ export const examples = {
     event: "selection-change",
     notes: [
       "Supply unique string row IDs and column keys. Default rendering escapes cell text and handles flat primitive values.",
+      "layout=fixed is the default: long headers/values wrap without allocating the whole table to one column. Wide slotted content scrolls within its cell. Explicit column minWidth values in px/rem/em/ch contribute to the table minimum width and scroll inside its viewport. layout=auto opts into content-sized columns. Truncation is explicit; full text remains in the DOM and in mobile cards.",
       "tableCellSlot(rowId, columnKey) returns a stable per-cell slot name usable in Vue and native slots. Scoped slots are not required.",
       "Vue can use a generic cell slot with {row,column,value}; a per-cell named slot takes precedence. Generic scoped rendering is not a native-slot capability. Rows can carry arbitrary metadata; format complex cell values explicitly.",
       "rowActions maps row IDs to commands, while getRowActions(row) is an optional callback. Command disabled flags are per row. rowActivatable adds a named first-cell action and row-activate(row); nested links/controls are excluded from row-background activation.",
@@ -960,6 +1155,7 @@ export const examples = {
       "click is a native event, not a Vue-emitted array payload. Do not read event.detail[0] from a click.",
       'The default type is button. Set type="submit" or type="reset" explicitly inside forms. href creates a link for supported HTTP(S)/relative URLs.',
       "For icon-only controls, provide label or aria-label. loading disables the control and sets aria-busy.",
+      "Hover is pointer-aware; press scaling is disabled by static or reduced-motion preference. The original text stays visible while loading. Long labels wrap inside the available width.",
       "Custom glyphs can use the icon and trailing-icon slots. iconOnly also renders a custom default-slot glyph when no icon prop or icon slot is supplied. Icon slots are decorative content, not nested interactive controls. The icon/trailingIcon properties accept IconDefinition objects as well as built-in names.",
       "The web-component submit button invokes its owning form; do not rely on native SubmitEvent.submitter name/value semantics.",
     ],

@@ -1,7 +1,31 @@
 /* Native dialogs remain modal; popovers retain native light-dismiss semantics. */
+@media (prefers-reduced-motion: no-preference) {
+  .h-mobile-overlay:is(dialog, [popover]) {
+    opacity: 0;
+    translate: 0 4px;
+    transition:
+      opacity var(--h-motion-exit) var(--h-ease),
+      translate var(--h-motion-exit) var(--h-ease),
+      display var(--h-motion-exit) allow-discrete,
+      overlay var(--h-motion-exit) allow-discrete;
+  }
+  .h-mobile-overlay:is([open], :popover-open) {
+    opacity: 1;
+    translate: 0 0;
+    transition-duration: var(--h-motion-enter);
+  }
+  @starting-style {
+    .h-mobile-overlay:is([open], :popover-open) {
+      opacity: 0;
+      translate: 0 6px;
+    }
+  }
+}
 .h-mobile-overlay.h-mobile:is([open], :popover-open) {
   --h-field-font-size: 16px;
   --h-control-height: 44px;
+  --h-field-height: 44px;
+  --h-choice-height: 44px;
   --h-adornment-size: 44px;
   --h-calendar-day-height: 44px;
   position: fixed;

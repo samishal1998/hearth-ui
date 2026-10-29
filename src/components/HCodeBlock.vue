@@ -13,7 +13,7 @@ withDefaults(
     maxHeight?: string;
     bare?: boolean;
   }>(),
-  { language: "text", copyable: true },
+  { code: "", language: "text", copyable: true },
 );
 const emit = defineEmits<{ copied: []; "copy-error": [message: string] }>();
 const copied = ref(false);
@@ -59,7 +59,7 @@ onBeforeUnmount(() => clearTimeout(timer));
       part="code"
     ><code><span v-for="(line,i) in code.split('\n')" :key="i" class="h-code-line" :data-line="i+1">{{line||'\u200b'}}</span></code></pre>
     <p v-if="error" role="status" class="h-code-error">{{ error }}</p>
-    <span v-else class="h-sr-only" role="status">{{
+    <span class="h-sr-only" role="status" aria-atomic="true">{{
       copied ? "Copied to clipboard." : ""
     }}</span>
   </figure>
@@ -82,12 +82,18 @@ figcaption {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
   min-height: var(--h-row-height);
   padding: 5px 14px;
   background: var(--h-surface);
   border-bottom: 1px solid var(--h-border);
   font-size: max(var(--h-font-min-size, 12px), 11px);
   color: var(--h-muted);
+}
+figcaption > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  flex: 1;
 }
 pre {
   border: 0;

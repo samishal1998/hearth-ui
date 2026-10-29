@@ -223,9 +223,13 @@ watch(mobile, async () => {
   font: inherit;
   cursor: pointer;
 }
-[role="menuitem"]:hover,
 [role="menuitem"]:focus-visible {
   background: var(--h-accent-subtle);
+}
+@media (hover: hover) {
+  [role="menuitem"]:hover:not(:disabled) {
+    background: var(--h-accent-subtle);
+  }
 }
 button:disabled {
   opacity: 0.4;

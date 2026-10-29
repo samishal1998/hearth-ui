@@ -12,6 +12,7 @@ withDefaults(
     type?: "button" | "submit" | "reset";
     disabled?: boolean;
     loading?: boolean;
+    static?: boolean;
     icon?: IconValue;
     trailingIcon?: IconValue;
     label?: string;
@@ -30,10 +31,22 @@ controlSync(emit);
   <component
     ref="root"
     :is="safeHref(href) ? 'a' : 'button'"
+    @click="
+      (e: MouseEvent) => {
+        if (disabled || loading) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+        }
+      }
+    "
     v-bind="$attrs"
     class="h-button"
     part="control"
-    :class="[variant, size, { 'icon-only': iconOnly }]"
+    :class="[
+      variant,
+      size,
+      { 'icon-only': iconOnly, static, 'is-loading': loading },
+    ]"
     :href="disabled || loading ? undefined : safeHref(href)"
     :target="target"
     :rel="target === '_blank' ? 'noopener noreferrer' : undefined"
@@ -43,14 +56,6 @@ controlSync(emit);
     :aria-busy="loading || undefined"
     :aria-label="label ?? ($attrs['aria-label'] as string | undefined)"
     :tabindex="href && (disabled || loading) ? -1 : undefined"
-    @click="
-      (e: MouseEvent) => {
-        if (disabled || loading) {
-          e.preventDefault();
-          e.stopImmediatePropagation();
-        }
-      }
-    "
     ><span v-if="loading" class="h-spinner" aria-hidden="true" />
     <span
       v-else-if="iconOnly"
@@ -100,18 +105,36 @@ controlSync(emit);
   font-weight: 600;
   text-decoration: none;
   line-height: 1.4;
-  white-space: nowrap;
+  max-width: 100%;
+  white-space: normal;
   transition:
     background var(--h-motion),
     border-color var(--h-motion),
     transform var(--h-motion);
 }
-.h-button:hover {
-  border-color: var(--h-border-strong);
-  background: var(--h-raised);
+@media (hover: hover) {
+  .h-button:not(:disabled):not([aria-disabled="true"]):hover {
+    border-color: var(--h-border-strong);
+    background: var(--h-raised);
+  }
 }
-.h-button:active {
+.h-button:active:not(:disabled):not([aria-disabled="true"]):not(.static) {
   transform: scale(0.96);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .h-button {
+    transition-timing-function: var(--h-ease);
+  }
+}
+.h-button > [part="label"] {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.h-button[aria-expanded="true"] > [part="trailing-icon"] {
+  transform: rotate(180deg);
+}
+.h-button > [part="trailing-icon"] {
+  transition: transform var(--h-motion) var(--h-ease);
 }
 .primary {
   background: var(--h-accent);
@@ -119,19 +142,23 @@ controlSync(emit);
   color: var(--h-on-accent);
   box-shadow: 0 3px 15px var(--h-accent-subtle);
 }
-.primary:hover {
-  background: var(--h-accent-hover);
-  border-color: var(--h-accent-hover);
+@media (hover: hover) {
+  .primary:not(:disabled):not([aria-disabled="true"]):hover {
+    background: var(--h-accent-hover);
+    border-color: var(--h-accent-hover);
+  }
 }
 .ghost {
   background: transparent;
   border-color: transparent;
   color: var(--h-muted);
 }
-.ghost:hover {
-  background: var(--h-accent-subtle);
-  color: var(--h-text);
-  border-color: transparent;
+@media (hover: hover) {
+  .ghost:not(:disabled):not([aria-disabled="true"]):hover {
+    background: var(--h-accent-subtle);
+    color: var(--h-text);
+    border-color: transparent;
+  }
 }
 .danger {
   background: color-mix(in srgb, var(--h-danger) 10%, var(--h-surface));

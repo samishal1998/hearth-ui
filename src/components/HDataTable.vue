@@ -37,6 +37,7 @@ const props = withDefaults(
     getRowActions?: (row: TableRow) => MenuAction[];
     rowActivatable?: boolean;
     actionDisplay?: "icon" | "label";
+    layout?: "fixed" | "auto";
   }>(),
   {
     rows: () => [],
@@ -51,6 +52,7 @@ const props = withDefaults(
     stickyActions: true,
     mobileLayout: "cards",
     actionDisplay: "icon",
+    layout: "fixed",
   },
 );
 const emit = defineEmits<{
@@ -74,15 +76,27 @@ const root = ref<HTMLElement>(),
   mobile = useMobileLayout(root, () => props.mobileBreakpoint),
   containerWidth = ref(Infinity);
 let observer: ResizeObserver | undefined;
+let measureFrame = 0;
 onMounted(() => {
   if (!root.value) return;
   containerWidth.value = root.value.clientWidth;
-  observer = new ResizeObserver(
-    (entries) => (containerWidth.value = entries[0].contentRect.width),
-  );
+  observer = new ResizeObserver((entries) => {
+    const width = entries[0].contentRect.width;
+    cancelAnimationFrame(measureFrame);
+    measureFrame = requestAnimationFrame(() => (containerWidth.value = width));
+  });
   observer.observe(root.value);
 });
-onBeforeUnmount(() => observer?.disconnect());
+onBeforeUnmount(() => {
+  observer?.disconnect();
+  cancelAnimationFrame(measureFrame);
+});
+const minimumWidth = computed(() => {
+  const widths = shownColumns.value
+    .map((column) => column.minWidth || "0px")
+    .filter((width) => /^(?:\d+(?:\.\d+)?)(?:px|rem|em|ch)$/.test(width));
+  return `calc(${[props.selectable ? "56px" : "0px", hasActions.value ? (props.actionDisplay === "label" ? "180px" : "64px") : "0px", ...widths].join(" + ")})`;
+});
 const shownColumns = computed(() =>
   props.columns.filter(
     (column, index) =>
@@ -253,7 +267,26 @@ watch(
       :aria-label="label"
       part="viewport"
     >
-      <table :aria-label="label" role="table">
+      <table
+        :aria-label="label"
+        role="table"
+        :style="{
+          tableLayout: layout,
+          minWidth: cards ? undefined : minimumWidth,
+        }"
+      >
+        <colgroup v-if="!cards">
+          <col v-if="selectable" style="width: 56px" />
+          <col
+            v-for="column in shownColumns"
+            :key="column.key"
+            :style="{ width: column.width || column.minWidth }"
+          />
+          <col
+            v-if="hasActions"
+            :style="{ width: actionDisplay === 'label' ? '180px' : '64px' }"
+          />
+        </colgroup>
         <caption v-if="caption">
           {{
             caption
@@ -285,7 +318,6 @@ watch(
               scope="col"
               role="columnheader"
               :style="{
-                width: column.width,
                 minWidth: cards ? undefined : column.minWidth,
                 textAlign: column.align || 'start',
               }"
@@ -375,9 +407,6 @@ watch(
                 class="h-table-cell-value"
                 :title="column.truncate ? cellText(row[column.key]) : undefined"
                 :class="{ truncate: column.truncate }"
-                :style="{
-                  '--h-cell-width': column.width || column.minWidth || '240px',
-                }"
               >
                 <slot :name="tableCellSlot(row.id, column.key)"
                   ><slot
@@ -438,12 +467,16 @@ watch(
   color: var(--h-text);
   font-family: var(--h-font);
   min-width: 0;
+  max-width: 100%;
+  width: 100%;
 }
 .h-table-scroll {
   position: relative;
   overflow: auto;
   max-height: var(--h-table-max-height, none);
   border-radius: inherit;
+  max-width: 100%;
+  overscroll-behavior-inline: contain;
 }
 table {
   border-collapse: collapse;
@@ -469,7 +502,7 @@ th {
   font-weight: 550;
   color: var(--h-muted);
   background: var(--h-raised);
-  white-space: nowrap;
+  white-space: normal;
 }
 th button {
   display: inline-flex;
@@ -544,10 +577,37 @@ footer > span {
   box-shadow: -1px 0 0 var(--h-border);
 }
 .h-table-cell-value.truncate {
-  max-width: var(--h-cell-width);
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.h-table-cell-value {
+  min-width: 0;
+  max-width: 100%;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+.h-table-cell-value :deep(pre) {
+  max-width: 100%;
+  overflow: auto;
+}
+.h-table-cell-value :deep(img),
+.h-table-cell-value :slotted(*) {
+  max-width: 100%;
+}
+th button {
+  max-width: 100%;
+  text-align: inherit;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+th button > .h-icon {
+  flex-shrink: 0;
+}
+.h-table-activate {
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 .h-table-activate {
   background: none;
@@ -622,6 +682,9 @@ footer > span {
 }
 .cards .h-table-cell-value.truncate {
   max-width: 100%;
+  white-space: normal;
+  overflow: auto;
+  text-overflow: clip;
 }
 .cards td.h-table-title > .h-table-card-label {
   display: none;

@@ -2,7 +2,7 @@
 
 > Semantic data tables with sorting, selection, paging, loading/empty states, and row actions.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.8.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.9.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -15,6 +15,7 @@
 ## Choose and use it correctly
 
 - Supply unique string row IDs and column keys. Default rendering escapes cell text and handles flat primitive values.
+- layout=fixed is the default: long headers/values wrap without allocating the whole table to one column. Wide slotted content scrolls within its cell. Explicit column minWidth values in px/rem/em/ch contribute to the table minimum width and scroll inside its viewport. layout=auto opts into content-sized columns. Truncation is explicit; full text remains in the DOM and in mobile cards.
 - tableCellSlot(rowId, columnKey) returns a stable per-cell slot name usable in Vue and native slots. Scoped slots are not required.
 - Vue can use a generic cell slot with {row,column,value}; a per-cell named slot takes precedence. Generic scoped rendering is not a native-slot capability. Rows can carry arbitrary metadata; format complex cell values explicitly.
 - rowActions maps row IDs to commands, while getRowActions(row) is an optional callback. Command disabled flags are per row. rowActivatable adds a named first-cell action and row-activate(row); nested links/controls are excluded from row-background activation.
@@ -54,6 +55,7 @@ type Props = {
     getRowActions?: (row: TableRow) => MenuAction[];
     rowActivatable?: boolean;
     actionDisplay?: "icon" | "label";
+    layout?: "fixed" | "auto";
 };
 ```
 
@@ -73,6 +75,7 @@ type Props = {
     stickyActions: true,
     mobileLayout: "cards",
     actionDisplay: "icon",
+    layout: "fixed",
   }
 ```
 

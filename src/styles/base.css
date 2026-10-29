@@ -27,6 +27,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
+summary:focus-visible,
 [tabindex]:focus-visible {
   outline: var(--h-focus-width, 2px) solid var(--h-focus, #ffb15c);
   outline-offset: 3px;
@@ -44,6 +45,49 @@ h3 {
 }
 p {
   text-wrap: pretty;
+}
+h1,
+h2,
+h3,
+p,
+label,
+summary {
+  overflow-wrap: anywhere;
+}
+img,
+video {
+  max-width: 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  button,
+  a,
+  summary,
+  input,
+  select,
+  textarea {
+    transition:
+      background-color var(--h-motion, 150ms) var(--h-ease, ease-out),
+      border-color var(--h-motion, 150ms) var(--h-ease, ease-out),
+      color var(--h-motion, 150ms) var(--h-ease, ease-out),
+      box-shadow var(--h-motion, 150ms) var(--h-ease, ease-out);
+  }
+}
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 2px solid Highlight !important;
+  }
+  button,
+  input,
+  select,
+  textarea,
+  summary {
+    border-color: ButtonText;
+  }
+  [aria-selected="true"],
+  [aria-pressed="true"] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
 }
 .h-sr-only {
   position: absolute;
@@ -63,5 +107,8 @@ p {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+  .h-button:active {
+    transform: none !important;
   }
 }

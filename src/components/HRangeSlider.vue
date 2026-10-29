@@ -413,6 +413,11 @@ input:focus-visible + .h-range-thumb {
   outline: var(--h-focus-width) solid var(--h-focus);
   outline-offset: 3px;
 }
+@media (hover: hover) {
+  input:not(:disabled):hover + .h-range-thumb {
+    box-shadow: 0 0 0 4px var(--h-accent-subtle);
+  }
+}
 .h-range-slider:has(input[part="lower"]:focus-visible)
   .h-range-bound:first-child
   output,

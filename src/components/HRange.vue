@@ -164,7 +164,9 @@ input:disabled::-moz-range-thumb {
   background: var(--h-raised);
   box-shadow: 0 2px 5px #0003;
   pointer-events: none;
-  transition: box-shadow 120ms;
+  transition:
+    box-shadow var(--h-motion) var(--h-ease),
+    background-color var(--h-motion);
 }
 .h-range-thumb::after {
   content: "";
@@ -201,6 +203,11 @@ input:active + .h-range-thumb {
   box-shadow:
     0 0 0 4px var(--h-accent-subtle),
     0 2px 5px #0003;
+}
+@media (hover: hover) {
+  input:not(:disabled):hover + .h-range-thumb {
+    box-shadow: 0 0 0 4px var(--h-accent-subtle);
+  }
 }
 input:focus-visible + .h-range-thumb {
   outline: var(--h-focus-width) solid var(--h-focus);

@@ -2,7 +2,7 @@
 
 > Themeable Vue and web components for self-hosted dashboards, public pages, and authentication. Start here, then read only the component references needed for the task.
 
-This index covers 94 public components in source version 0.8.0. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
+This index covers 103 public components in source version 0.9.0. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
 
 ## Agent workflow
 
@@ -157,6 +157,21 @@ Start with HSurface, HStack/HGrid/HContainer, HText/HHeading/HLink, and HToolbar
 - [HText](docs/components/text/llms.txt): Semantic body text with token-driven size, weight, and tone.
 - [HTheme](docs/components/theme/llms.txt): A scoped theme island. CSS variables flow through Vue trees, native slots, and shadow roots.
 - [HVisuallyHidden](docs/components/visually-hidden/llms.txt): Content retained for assistive technology without visible layout.
+
+## Developer
+
+- [HCodeSnippet](docs/components/code-snippet/llms.txt): Copyable code examples with keyboard-accessible language, file, or framework tabs.
+- [HKeyboardKey](docs/components/keyboard-key/llms.txt): Readable keyboard shortcuts using native kbd elements.
+- [HPackageInstall](docs/components/package-install/llms.txt): One package list, copy-ready commands for npm, pnpm, Yarn, and Bun.
+- [HTerminal](docs/components/terminal/llms.txt): Bounded, copyable command and output transcripts without executing code.
+
+## Diagrams
+
+- [HBarChart](docs/components/bar-chart/llms.txt): Native HTML bars with focusable values, selection, and a readable data table.
+- [HDivergingBarChart](docs/components/diverging-bar-chart/llms.txt): Slender percentage bars above and below zero, with a fixed ±100% scale and exact-value inspection.
+- [HStackedBarChart](docs/components/stacked-bar-chart/llms.txt): Normalized percentage columns for changing multi-series data, built from HTML spans.
+- [HStackedWaveform](docs/components/stacked-waveform/llms.txt): Dense, centered waveform pillars built from ordered colored amounts with subpixel segment gaps.
+- [HWaveform](docs/components/waveform/llms.txt): A lightweight signal visualization with CSS motion, pause control, and reduced-motion support.
 
 ## Project references
 

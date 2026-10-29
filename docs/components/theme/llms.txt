@@ -2,7 +2,7 @@
 
 > A scoped theme island. CSS variables flow through Vue trees, native slots, and shadow roots.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.8.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.9.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -150,6 +150,11 @@ mount.append(element);
   --h-warning: #f4b21a;
   --h-danger: #ff8290;
   --h-info: #86b8f5;
+  --h-chart-1: var(--h-accent);
+  --h-chart-2: var(--h-info);
+  --h-chart-3: var(--h-success);
+  --h-chart-4: var(--h-warning);
+  --h-chart-5: var(--h-danger);
   --h-focus: var(--h-accent-text);
   --h-focus-width: 2px;
   --h-font:
@@ -201,6 +206,9 @@ mount.append(element);
   --h-shadow: 0 12px 40px rgb(0 0 0 / 0.18);
   --h-shadow-soft: 0 4px 14px rgb(0 0 0 / 0.1);
   --h-motion: 150ms;
+  --h-motion-enter: 180ms;
+  --h-motion-exit: 120ms;
+  --h-ease: cubic-bezier(0.2, 0, 0, 1);
   --h-scene-bg: linear-gradient(145deg, #162338, #0d1727 65%, #292934);
   --h-scene-text: #f7f8fb;
   --h-scene-muted: #b5bfd1;

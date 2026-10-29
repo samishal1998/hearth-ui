@@ -37,6 +37,15 @@ import {
   HTreeView,
   HResizablePane,
   HListSpacer,
+  HCodeSnippet,
+  HPackageInstall,
+  HKeyboardKey,
+  HTerminal,
+  HBarChart,
+  HDivergingBarChart,
+  HStackedBarChart,
+  HWaveform,
+  HStackedWaveform,
   HAppCard,
   HStatCard,
   HAlert,
@@ -648,7 +657,38 @@ export const HearthErrorPageElement: Constructor<typeof HErrorPage> =
 export const HearthFirstRunSetupElement: Constructor<typeof HFirstRunSetup> =
   element(HFirstRunSetup);
 
+export const HearthCodeSnippetElement: Constructor<typeof HCodeSnippet> =
+  element(HCodeSnippet);
+export const HearthPackageInstallElement: Constructor<typeof HPackageInstall> =
+  element(HPackageInstall);
+export const HearthKeyboardKeyElement: Constructor<typeof HKeyboardKey> =
+  element(HKeyboardKey, true);
+export const HearthTerminalElement: Constructor<typeof HTerminal> =
+  element(HTerminal);
+export const HearthBarChartElement: Constructor<typeof HBarChart> =
+  element(HBarChart);
+export const HearthDivergingBarChartElement: Constructor<
+  typeof HDivergingBarChart
+> = element(HDivergingBarChart);
+export const HearthStackedBarChartElement: Constructor<
+  typeof HStackedBarChart
+> = element(HStackedBarChart);
+export const HearthWaveformElement: Constructor<typeof HWaveform> =
+  element(HWaveform);
+export const HearthStackedWaveformElement: Constructor<
+  typeof HStackedWaveform
+> = element(HStackedWaveform);
+
 const elements: Record<string, VueElementConstructor<unknown>> = {
+  "code-snippet": HearthCodeSnippetElement,
+  "package-install": HearthPackageInstallElement,
+  "keyboard-key": HearthKeyboardKeyElement,
+  terminal: HearthTerminalElement,
+  "bar-chart": HearthBarChartElement,
+  "diverging-bar-chart": HearthDivergingBarChartElement,
+  "stacked-bar-chart": HearthStackedBarChartElement,
+  waveform: HearthWaveformElement,
+  "stacked-waveform": HearthStackedWaveformElement,
   theme: HearthThemeElement,
   icon: HearthIconElement,
   brand: HearthBrandElement,

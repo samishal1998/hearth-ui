@@ -162,6 +162,7 @@ button:disabled {
 section {
   margin-top: 20px;
   min-width: 0;
+  overflow-wrap: anywhere;
 }
 section[hidden] {
   display: none;

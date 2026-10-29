@@ -551,9 +551,13 @@ input::placeholder {
   text-align: left;
   font-size: 13px;
 }
-[role="option"].active,
-[role="option"]:hover {
+[role="option"].active {
   background: var(--h-accent-subtle);
+}
+@media (hover: hover) {
+  [role="option"]:hover:not(:disabled) {
+    background: var(--h-accent-subtle);
+  }
 }
 [role="option"][aria-selected="true"] {
   color: var(--h-accent-text);

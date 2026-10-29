@@ -53,6 +53,10 @@ try {
       "dist/primitives.css",
       "llms.txt",
       "docs/components/multi-select/llms.txt",
+      "docs/components/code-snippet/llms.txt",
+      "docs/components/stacked-bar-chart/llms.txt",
+      "docs/components/diverging-bar-chart/llms.txt",
+      "docs/components/stacked-waveform/llms.txt",
       "docs/primitives/llms.txt",
       "LICENSE",
       "README.md",
@@ -92,6 +96,10 @@ import {HStack,HGrid,HHeading,HPane,HMessage,HListbox,HTreeView,HVirtualList,HRe
 h(HStack,{direction:'row',wrap:true});h(HGrid,{minColumnWidth:'240px'});h(HHeading,{level:3,size:'lg'});h(HPane,{title:'Inspector',open:true});h(HMessage,{roleLabel:'Assistant'});
 const nodes:TreeItem[]=[{id:'one',label:'First',children:[{id:'child',label:'Child'}]}];h(HTreeView,{label:'Tree',items:nodes});h(HListbox,{label:'Choose',options:[{value:'one',label:'First'}]});h(HVirtualList,{label:'Window',items:[{id:'one',label:'First'}]});h(HResizablePane,{modelValue:320});
 const next:string|undefined=nextCollectionId([{id:'one'},{id:'two'}],'one','ArrowDown');
+import {HCodeSnippet,HPackageInstall,HTerminal,HKeyboardKey,HBarChart,HStackedBarChart,HWaveform,type ChartColumn,type CodeSnippetOption} from '@hearth-ui/vue';
+import {HDivergingBarChart} from '@hearth-ui/vue';h(HDivergingBarChart,{label:'Change',items:[{id:'up',label:'Up',value:35},{id:'down',label:'Down',value:-20}],barWidth:6,positiveTone:'accent',negativeTone:'info'});
+import {HStackedWaveform,type StackedWaveformColumn} from '@hearth-ui/vue';const stacks:StackedWaveformColumn[]=[{id:'one',label:'One',segments:[{id:'g1',label:'Green',value:1,tone:'success'},{id:'r',label:'Red',value:10,tone:'danger'},{id:'g2',label:'Green',value:5,tone:'success'}]}];h(HStackedWaveform,{label:'Amounts',columns:stacks,segmentGap:0.5});
+const examples:CodeSnippetOption[]=[{id:'sh',label:'Shell',code:'npm test'}];h(HCodeSnippet,{options:examples});h(HPackageInstall,{packages:['vue']});h(HTerminal,{lines:[{id:'a',text:'Done',kind:'success'}]});h(HKeyboardKey,{keys:['Ctrl','K']});h(HBarChart,{label:'Duration',items:[{id:'a',label:'A',value:2}]});const columns:ChartColumn[]=[{id:'a',label:'A',values:{ok:5}}];h(HStackedBarChart,{label:'Outcomes',columns,series:[{id:'ok',label:'OK'}]});h(HWaveform,{label:'Signal',values:[0.1,0.8]});h(HButton,{static:true});
 `,
       );
       execFileSync(
@@ -156,6 +164,10 @@ import {HearthPaneElement,HearthMessageElement,HearthStackElement,HearthTreeView
 const nodes:TreeItem[]=[{id:'one',label:'First',children:[{id:'child',label:'Child'}]}];new HearthTreeViewElement({label:'Tree',items:nodes}).addEventListener('activate',event=>{const id:string=event.detail[0]});
 new HearthVirtualListElement({label:'Window',items:[{id:'one',label:'First'}],rowHeight:48});new HearthPaneElement({title:'Inspector',open:true}).addEventListener('update:open',event=>{const open:boolean=event.detail[0]});
 new HearthStackElement({direction:'row',wrap:true});new HearthMessageElement({roleLabel:'Assistant'});new HearthListboxElement({label:'Choose',options:[{value:'one',label:'First'}]});new HearthResizablePaneElement({modelValue:320});
+import {HearthCodeSnippetElement,HearthPackageInstallElement,HearthTerminalElement,HearthKeyboardKeyElement,HearthBarChartElement,HearthStackedBarChartElement,HearthWaveformElement} from '@hearth-ui/elements';
+import {HearthDivergingBarChartElement} from '@hearth-ui/elements';new HearthDivergingBarChartElement({label:'Change',items:[{id:'down',label:'Down',value:-20}],barWidth:6,negativeTone:'info'}).addEventListener('select',event=>{const id:string=event.detail[0];});
+import {HearthStackedWaveformElement,type WaveformSegment} from '@hearth-ui/elements';const segments:WaveformSegment[]=[{id:'a',label:'Green',value:1,tone:'success'},{id:'b',label:'Red',value:10,color:'#ff8290'}];new HearthStackedWaveformElement({label:'Amounts',columns:[{id:'one',label:'One',segments}],segmentGap:0.5}).addEventListener('select',event=>{const id:string=event.detail[0];});
+new HearthCodeSnippetElement({options:[{id:'a',label:'A',code:'npm test'}]}).addEventListener('copied',event=>{const id:string=event.detail[0];});new HearthPackageInstallElement({packages:['vue']});new HearthTerminalElement({lines:[]});new HearthKeyboardKeyElement({keys:['Ctrl','K']});new HearthBarChartElement({label:'Bars',items:[]});new HearthStackedBarChartElement({label:'Outcomes',columns:[],series:[]});new HearthWaveformElement({label:'Signal',active:false});button.static=true;
 const native=document.createElement('input'),label=document.createElement('label');const binding=bindField(native,{label});binding.update({validationMessage:'Required'});binding.dispose();
 const popup=document.createElement('div'),placement=observePopup(()=>new DOMRect(0,0,1,1),popup);placement.update();placement.dispose();const overlay=createOverlayController(document.createElement('dialog'));overlay.dispose();
 import {createFormControlController} from '@hearth-ui/elements';

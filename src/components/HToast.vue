@@ -32,6 +32,8 @@ function run() {
     hovered.value ||
     focused.value ||
     props.duration <= 0 ||
+    props.tone === "danger" ||
+    !!props.actionLabel ||
     document.hidden
   )
     return;
@@ -57,7 +59,7 @@ onBeforeUnmount(() => {
   document.removeEventListener("visibilitychange", visibility);
 });
 watch(
-  () => props.duration,
+  () => [props.duration, props.tone, props.actionLabel],
   () => {
     pause();
     remaining = props.duration;

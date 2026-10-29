@@ -9,9 +9,12 @@ async function docked(panel: Locator, page: Page) {
   const box = (await panel.boundingBox())!;
   expect(Math.abs(box.x)).toBeLessThanOrEqual(1);
   expect(box.y).toBeGreaterThanOrEqual(0);
-  expect(
-    Math.abs(box.y + box.height - page.viewportSize()!.height),
-  ).toBeLessThanOrEqual(1);
+  await expect
+    .poll(async () => {
+      const rect = (await panel.boundingBox())!;
+      return Math.abs(rect.y + rect.height - page.viewportSize()!.height);
+    })
+    .toBeLessThanOrEqual(1);
 }
 
 test("Vue dialogs and side sheets switch at the breakpoint without losing input or focus", async ({

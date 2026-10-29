@@ -2,7 +2,7 @@
 
 > A dismissible notification with optional action, a timer, and pause-on-hover/focus behavior.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.8.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.9.0. Match documentation to your installed source/release.
 
 ## Identity
 
@@ -14,8 +14,8 @@
 
 ## Choose and use it correctly
 
-- The timer pauses while hovered, focused, or the document is hidden. duration=0 persists until dismissed.
-- dismiss requests removal; remove the toast in the consuming app. Use an appropriate lifetime for important errors.
+- The timer pauses while hovered, focused, or the document is hidden. duration=0 persists until dismissed. Danger toasts and toasts with actionLabel never auto-dismiss, regardless of duration.
+- dismiss requests removal; remove the toast in the consuming app. Keep error/action notices available until the user acts.
 - action requests the supplied action; application code handles it.
 
 ## Public API

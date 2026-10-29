@@ -47,6 +47,7 @@ function toggle(event: Event) {
 </template>
 <style scoped>
 @import "../styles/base.css";
+@import "../styles/disclosure.css";
 .h-collapsible {
   min-width: 0;
   font: 13px/1.8 var(--h-font);

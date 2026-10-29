@@ -6,6 +6,7 @@ import { useFloating } from "../floating";
 import { useMobileLayout } from "../mobile";
 import { useSlotPresence } from "../slots";
 import type { MenuAction, IconValue } from "../themes";
+import { createTypeahead } from "../primitives";
 const props = withDefaults(
   defineProps<{
     items: MenuAction[];
@@ -30,6 +31,7 @@ const hasSlot = useSlotPresence(() => panel.value?.parentElement ?? undefined);
 const mobile = useMobileLayout(panel, () => props.mobileBreakpoint);
 const visible = ref(false);
 const id = useId();
+const typeahead = createTypeahead();
 useFloating(
   anchor,
   panel,
@@ -51,6 +53,7 @@ async function show(last = false) {
   (last ? buttons.at(-1) : buttons[0])?.focus();
 }
 function close(focus = true) {
+  typeahead.reset();
   panel.value?.hidePopover();
   if (focus) anchor.value?.focus();
 }
@@ -83,12 +86,18 @@ function key(e: KeyboardEvent) {
   } else if (e.key === "Tab") {
     close();
   } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-    const ordered = [...buttons.slice(at + 1), ...buttons.slice(0, at + 1)];
-    ordered
-      .find((b) =>
-        b.textContent?.trim().toLowerCase().startsWith(e.key.toLowerCase()),
-      )
-      ?.focus();
+    const next = typeahead.search(
+      buttons.map((button, index) => ({
+        id: String(index),
+        textValue: button.textContent?.trim(),
+      })),
+      e.key,
+      String(at),
+    );
+    if (next !== undefined) {
+      e.preventDefault();
+      buttons[Number(next)]?.focus();
+    }
   }
 }
 onMounted(() => {
@@ -202,10 +211,22 @@ onBeforeUnmount(() => close(false));
   color: var(--h-text);
   font-size: 12px;
   text-align: left;
+  overflow-wrap: anywhere;
 }
-[role="menuitem"]:hover,
+[role="menuitem"] > span {
+  min-width: 0;
+  flex: 1;
+}
+kbd {
+  flex-shrink: 0;
+}
 [role="menuitem"]:focus-visible {
   background: var(--h-accent-subtle);
+}
+@media (hover: hover) {
+  [role="menuitem"]:hover:not(:disabled) {
+    background: var(--h-accent-subtle);
+  }
 }
 [role="menuitem"]:disabled {
   opacity: 0.45;

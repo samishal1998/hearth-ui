@@ -38,6 +38,7 @@ import RecipeExamples from "./RecipeExamples.vue";
 import ComponentRegistry from "./ComponentRegistry.vue";
 import FoundationExamples from "./FoundationExamples.vue";
 import WorkspaceExamples from "./WorkspaceExamples.vue";
+import TechnicalExamples from "./TechnicalExamples.vue";
 import {
   restoreThemeProfile,
   resolvedProfile,
@@ -334,6 +335,7 @@ const shownApps = computed(() =>
   ),
 );
 const publicNav = [
+  { id: "technical", label: "Developer", href: "#technical" },
   { id: "foundation", label: "Primitives", href: "#foundation" },
   { id: "components", label: "Components", href: "#components" },
   { id: "themes", label: "Themes", href: "#themes" },
@@ -610,9 +612,14 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
         v-if="
           route === 'home' ||
           (!route.startsWith('components') &&
-            !['examples', 'foundation', 'themes', 'guide', 'recipes'].includes(
-              route,
-            ))
+            ![
+              'examples',
+              'foundation',
+              'technical',
+              'themes',
+              'guide',
+              'recipes',
+            ].includes(route))
         "
       >
         <section class="landing-hero">
@@ -771,6 +778,7 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
         v-else-if="route === 'components' || route.startsWith('components/')"
         :selected="route.split('/')[1] || ''"
       />
+      <TechnicalExamples v-else-if="route === 'technical'" />
       <template v-else-if="route === 'foundation'"
         ><section class="page-intro">
           <HPageHeader
@@ -1477,6 +1485,43 @@ select.options = [{ value: 'media', label: 'Media' }]</code></pre>
                 respects reduced-motion preferences. Custom palettes should be
                 checked for contrast in your actual application.
               </p>
+            </section>
+            <section id="accessibility">
+              <h2>Start with native semantics.</h2>
+              <p>
+                Use buttons for actions and links for navigation. Give every
+                field a label and every icon-only action an accessible name.
+                Keep one main landmark and a clear heading hierarchy.
+              </p>
+              <ul>
+                <li>
+                  Tab moves between widgets; arrow keys move within tabs, menus,
+                  lists, and charts. Escape dismisses overlays and returns
+                  focus.
+                </li>
+                <li>
+                  Field errors use aria-invalid and same-root descriptions.
+                  Routine updates use a polite status region, rather than
+                  interrupting announcements.
+                </li>
+                <li>
+                  Focus stays visible, including in forced-color modes. Reduced
+                  motion disables animated signal bars and press transforms.
+                </li>
+                <li>
+                  Use chart labels and data tables alongside color. Pause
+                  controls keep moving visualizations optional. Action and error
+                  notifications remain until dismissed.
+                </li>
+              </ul>
+              <p>
+                Native dialogs provide modal focus containment. Custom-element
+                labels and their inputs live inside the same shadow root;
+                external ID references cannot replace those associations.
+              </p>
+              <HButton href="#technical"
+                >Try keyboard and diagram examples</HButton
+              >
             </section>
           </article>
         </div>

@@ -160,6 +160,46 @@ export interface TableColumn {
   truncate?: boolean;
   hideBelow?: number;
 }
+export interface CodeSnippetOption {
+  id: string;
+  label: string;
+  code: string;
+  language?: string;
+  filename?: string;
+  disabled?: boolean;
+}
+export interface TerminalLine {
+  id: string;
+  text: string;
+  kind?: "command" | "output" | "success" | "error";
+}
+export interface ChartPoint {
+  id: string;
+  label: string;
+  value: number;
+}
+export interface ChartSeries {
+  id: string;
+  label: string;
+  tone?: Tone;
+}
+export interface ChartColumn {
+  id: string;
+  label: string;
+  values: Record<string, number>;
+}
+export interface WaveformSegment {
+  id: string;
+  label: string;
+  value: number;
+  tone?: Tone;
+  color?: string;
+}
+export interface StackedWaveformColumn {
+  id: string;
+  label: string;
+  segments: WaveformSegment[];
+}
 export interface TableSort {
   key: string;
   direction: "ascending" | "descending";

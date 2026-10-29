@@ -77,7 +77,12 @@ test("modal registry previews have working open controls and can be reopened on 
     await expect(dialog).toHaveClass(/h-mobile(?: |$)/);
     const box = (await dialog.boundingBox())!;
     expect(Math.round(box.width)).toBe(390);
-    expect(Math.round(box.y + box.height)).toBe(844);
+    await expect
+      .poll(async () => {
+        const rect = (await dialog.boundingBox())!;
+        return Math.round(rect.y + rect.height);
+      })
+      .toBe(844);
     await page.keyboard.press("Escape");
     await expect(dialog).not.toBeVisible();
     await trigger.click();

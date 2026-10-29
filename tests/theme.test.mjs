@@ -20,7 +20,87 @@ import {
   HMessage,
   HTreeView,
   themes,
+  HCodeSnippet,
+  HPackageInstall,
+  HTerminal,
+  HKeyboardKey,
+  HBarChart,
+  HDivergingBarChart,
+  HStackedBarChart,
+  HWaveform,
+  HStackedWaveform,
 } from "../dist/vue/index.js";
+
+test("technical components and HTML diagrams render deterministic, escaped SSR markup", async () => {
+  const render = () =>
+    renderToString(
+      createSSRApp({
+        render: () =>
+          h(HTheme, {}, () => [
+            h(HCodeSnippet, {
+              options: [
+                {
+                  id: "js",
+                  label: "JavaScript",
+                  code: "<script>untrusted</script>",
+                },
+              ],
+            }),
+            h(HPackageInstall, { packages: ["vue"] }),
+            h(HTerminal, {
+              lines: [{ id: "1", text: "Build complete", kind: "success" }],
+            }),
+            h(HKeyboardKey, { keys: ["Ctrl", "K"] }),
+            h(HBarChart, {
+              label: "Builds",
+              items: [{ id: "one", label: "One", value: 5 }],
+            }),
+            h(HStackedBarChart, {
+              label: "Outcomes",
+              columns: [
+                { id: "one", label: "One", values: { ok: 3, retry: 1 } },
+              ],
+              series: [
+                { id: "ok", label: "Success" },
+                { id: "retry", label: "Retry" },
+              ],
+            }),
+            h(HWaveform, { label: "Signal", active: true }),
+            h(HStackedWaveform, {
+              label: "Stacked amounts",
+              columns: [
+                {
+                  id: "one",
+                  label: "One",
+                  segments: [
+                    { id: "green", label: "Green", value: 1, tone: "success" },
+                    { id: "red", label: "Red", value: 10, tone: "danger" },
+                    { id: "blue", label: "Blue", value: 5, tone: "info" },
+                  ],
+                },
+              ],
+            }),
+            h(HDivergingBarChart, {
+              label: "Signed",
+              items: [
+                { id: "up", label: "Up", value: 35 },
+                { id: "down", label: "Down", value: -50 },
+              ],
+            }),
+          ]),
+      }),
+    );
+  const html = await render();
+  assert.equal(html, await render());
+  assert.match(html, /&lt;script&gt;untrusted/);
+  assert.match(html, /75\.0%/);
+  assert.match(html, /role="tablist"/);
+  assert.match(html, /Pause animation/);
+  assert.doesNotMatch(html, /<canvas/);
+  assert.match(html, /aria-label="Down: -50%"/);
+  assert.match(html, /aria-label="Up: \+35%"/);
+  assert.match(html, /aria-valuetext="One: total 16; Green 1, Red 10, Blue 5"/);
+});
 
 test("theme exports filter unrelated properties and the native Vue build renders on the server", async () => {
   assert.deepEqual(themes, ["sunset", "ocean", "forest", "dusk", "rose"]);

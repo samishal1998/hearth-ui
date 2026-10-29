@@ -1,6 +1,6 @@
 {
   "name": "@hearth-ui/vue",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Themeable native Vue components for self-hosted dashboards, public pages, and authentication.",
   "license": "MIT",
   "type": "module",

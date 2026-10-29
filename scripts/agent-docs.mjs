@@ -23,6 +23,8 @@ const categories = [
   "Surfaces",
   "Feedback",
   "Foundation",
+  "Developer",
+  "Diagrams",
 ];
 const sourceURL = "https://github.com/samishal1998/hearth-ui/blob/main/";
 const slug = (c) => c.tag.slice("hearth-".length);
