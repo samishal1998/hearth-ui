@@ -2,7 +2,7 @@
 
 > Themeable Vue and web components for self-hosted dashboards, public pages, and authentication. Start here, then read only the component references needed for the task.
 
-This index covers 103 public components in source version 0.9.0. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
+This index covers 119 public components in source version 0.10.0. The working tree may contain unpublished changes. Check package versions and registry/release availability before assuming a new feature is published.
 
 ## Agent workflow
 
@@ -56,6 +56,7 @@ Start with HSurface, HStack/HGrid/HContainer, HText/HHeading/HLink, and HToolbar
 - [HDashboardShell](docs/components/dashboard-shell/llms.txt): A dashboard frame with desktop sidebar, configurable mobile navigation bottom sheet, account controls, and content area.
 - [HErrorPage](docs/components/error-page/llms.txt): Not-found, access-denied, and unavailable page treatments with clear recovery actions.
 - [HFirstRunSetup](docs/components/first-run-setup/llms.txt): An application-controlled owner-account, provider, and completion setup recipe.
+- [HMessageScroller](docs/components/message-scroller/llms.txt): Variable-height message scrolling with reading-position preservation and jump-to-latest.
 - [HNavigationMenu](docs/components/navigation-menu/llms.txt): A navigation disclosure menu with native links, nested groups, outside-click dismissal, and Escape support.
 - [HPageHeader](docs/components/page-header/llms.txt): A plain page introduction or the signature atmospheric dashboard hero.
 - [HPane](docs/components/pane/llms.txt): Persistent desktop inspector that moves into a full-screen mobile dialog without remounting content.
@@ -101,6 +102,7 @@ Start with HSurface, HStack/HGrid/HContainer, HText/HHeading/HLink, and HToolbar
 - [HSelect](docs/components/select/llms.txt): A native select with labeled options, not a recreated browser picker.
 - [HSwitch](docs/components/switch/llms.txt): A keyboard-operable switch backed by a real checkbox, with form participation in custom-element mode.
 - [HTabs](docs/components/tabs/llms.txt): Tabs with roving focus, arrow/Home/End keys, and properly associated panels.
+- [HTagInput](docs/components/tag-input/llms.txt): Free-form tags with bulk paste, validation, deduplication and repeated form values.
 - [HTextarea](docs/components/textarea/llms.txt): A labeled multiline field with native constraints and form reset support.
 - [HThemeSwitcher](docs/components/theme-switcher/llms.txt): A light, dark, and system preference selector. Bind its value to HTheme mode.
 - [HTimePicker](docs/components/time-picker/llms.txt): Time entry with an inset clock button and step-aware hour, minute, and second columns.
@@ -132,6 +134,7 @@ Start with HSurface, HStack/HGrid/HContainer, HText/HHeading/HLink, and HToolbar
 - [HConnectionState](docs/components/connection-state/llms.txt): Connection lifecycle feedback with an optional application-owned retry action.
 - [HDialog](docs/components/dialog/llms.txt): A native modal dialog that becomes a bottom sheet on mobile, preserving focus containment, Escape dismissal, and focus return.
 - [HEmptyState](docs/components/empty-state/llms.txt): An inviting first-run or no-results state, with room for a useful next action.
+- [HMeter](docs/components/meter/llms.txt): Native measured-value semantics for storage, capacity, quotas, and thresholds.
 - [HProgress](docs/components/progress/llms.txt): Native determinate or indeterminate progress, with percentage text and semantic colors.
 - [HSheet](docs/components/sheet/llms.txt): A native modal side panel for inspection and editing without leaving the current page.
 - [HSkeleton](docs/components/skeleton/llms.txt): Text, rectangle, and circular loading placeholders with reduced-motion support.
@@ -160,17 +163,30 @@ Start with HSurface, HStack/HGrid/HContainer, HText/HHeading/HLink, and HToolbar
 
 ## Developer
 
+- [HAttachment](docs/components/attachment/llms.txt): File artifacts with preview/download/removal requests and processing states.
+- [HCodeDiff](docs/components/code-diff/llms.txt): Escaped unified and split diff views for application-supplied hunks.
 - [HCodeSnippet](docs/components/code-snippet/llms.txt): Copyable code examples with keyboard-accessible language, file, or framework tabs.
+- [HInlineCopyText](docs/components/inline-copy-text/llms.txt): Compact inline clipboard actions for identifiers, hashes and endpoints.
+- [HJsonViewer](docs/components/json-viewer/llms.txt): Bounded JSON inspection with expandable values and copyable JSON Pointer paths.
 - [HKeyboardKey](docs/components/keyboard-key/llms.txt): Readable keyboard shortcuts using native kbd elements.
 - [HPackageInstall](docs/components/package-install/llms.txt): One package list, copy-ready commands for npm, pnpm, Yarn, and Bun.
 - [HTerminal](docs/components/terminal/llms.txt): Bounded, copyable command and output transcripts without executing code.
+- [HTraceView](docs/components/trace-view/llms.txt): Expandable execution steps with status, durations and nested details.
 
 ## Diagrams
 
 - [HBarChart](docs/components/bar-chart/llms.txt): Native HTML bars with focusable values, selection, and a readable data table.
 - [HDivergingBarChart](docs/components/diverging-bar-chart/llms.txt): Slender percentage bars above and below zero, with a fixed ±100% scale and exact-value inspection.
-- [HStackedBarChart](docs/components/stacked-bar-chart/llms.txt): Normalized percentage columns for changing multi-series data, built from HTML spans.
+- [HDonutChart](docs/components/donut-chart/llms.txt): A CSS-gradient ring summary with legend-driven inspection and exact amounts.
+- [HFlow](docs/components/flow/llms.txt): Read-only sequential and parallel workflow stages with native scrolling and node selection.
+- [HHeatmap](docs/components/heatmap/llms.txt): Keyboard-inspectable numeric matrices with missing-data cells and a shared intensity scale.
+- [HSpanTimeline](docs/components/span-timeline/llms.txt): Timing rows for overlapping requests and nested execution spans.
+- [HStackedBarChart](docs/components/stacked-bar-chart/llms.txt): Percentage or absolute stacked columns/rows for changing multi-series data, built from HTML spans.
 - [HStackedWaveform](docs/components/stacked-waveform/llms.txt): Dense, centered waveform pillars built from ordered colored amounts with subpixel segment gaps.
+- [HTimeSeriesChart](docs/components/time-series-chart/llms.txt): Native SVG line/area metrics with real x-spacing, missing-data gaps, thresholds and markers.
+- [HUptimeHistory](docs/components/uptime-history/llms.txt): Duration-weighted status intervals with explicit unknown coverage and interval inspection.
+- [HWaffleChart](docs/components/waffle-chart/llms.txt): A native CSS grid composition chart with whole-cell apportionment and exact amounts.
+- [HWaterfallChart](docs/components/waterfall-chart/llms.txt): Cumulative increases, decreases and subtotal resets drawn as offset HTML bars.
 - [HWaveform](docs/components/waveform/llms.txt): A lightweight signal visualization with CSS motion, pause control, and reduced-motion support.
 
 ## Project references

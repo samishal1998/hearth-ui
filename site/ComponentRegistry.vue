@@ -99,6 +99,14 @@ async function preview() {
           "HStackedBarChart",
           "HDivergingBarChart",
           "HStackedWaveform",
+          "HHeatmap",
+          "HUptimeHistory",
+          "HFlow",
+          "HSpanTimeline",
+          "HWaffleChart",
+          "HDonutChart",
+          "HWaterfallChart",
+          "HTimeSeriesChart",
         ].includes(selected.value?.name || "")
       )
         Object.assign(element, {
@@ -114,6 +122,13 @@ async function preview() {
       "close",
       "update:modelValue",
       "update:open",
+      "update:expanded",
+      "update:follow",
+      "update:view",
+      "copied",
+      "copy-error",
+      "remove",
+      "preview",
     ])
       element.addEventListener(event, (e) => {
         const detail = (e as CustomEvent).detail;
@@ -122,6 +137,12 @@ async function preview() {
           Object.assign(element, { modelValue: detail?.[0] });
         if (event === "update:open")
           Object.assign(element, { open: detail?.[0] });
+        if (event === "update:expanded")
+          Object.assign(element, { expanded: detail?.[0] });
+        if (event === "update:follow")
+          Object.assign(element, { follow: detail?.[0] });
+        if (event === "update:view")
+          Object.assign(element, { view: detail?.[0] });
         if (event === "close" && "open" in element)
           Object.assign(element, { open: false });
         if (event === "submit") e.preventDefault();
@@ -270,7 +291,7 @@ const apiRows = computed(
             <HButton href="#components" variant="ghost"
               >← All components</HButton
             ><HBadge :label="selected.category" /><HBadge
-              label="Hearth UI 0.9"
+              label="Hearth UI 0.10"
               tone="accent"
             />
           </nav>

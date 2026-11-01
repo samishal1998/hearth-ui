@@ -29,7 +29,110 @@ import {
   HStackedBarChart,
   HWaveform,
   HStackedWaveform,
+  HHeatmap,
+  HUptimeHistory,
+  HMeter,
+  HTagInput,
+  HInlineCopyText,
+  HAttachment,
+  HFlow,
+  HSpanTimeline,
+  HTraceView,
+  HMessageScroller,
+  HJsonViewer,
+  HCodeDiff,
+  HWaffleChart,
+  HDonutChart,
+  HWaterfallChart,
+  HTimeSeriesChart,
 } from "../dist/vue/index.js";
+
+test("operations components render safely on the server with bounded cyclic data and extreme chart values", async () => {
+  let accesses = 0;
+  const value = { safe: "<script>literal</script>" };
+  value.self = value;
+  Object.defineProperty(value, "accessor", {
+    enumerable: true,
+    get() {
+      accesses++;
+      return "never";
+    },
+  });
+  const flow = { id: "loop", label: "Loop" };
+  flow.parallel = [[flow]];
+  const html = await renderToString(
+    createSSRApp({
+      render: () =>
+        h(HTheme, {}, () => [
+          h(HHeatmap, {
+            label: "Heat",
+            cells: [{ id: "one", row: "R", column: "C", value: 1 }],
+          }),
+          h(HUptimeHistory, {
+            label: "Status",
+            intervals: [
+              { id: "one", label: "One", start: 0, end: 10, status: "up" },
+            ],
+          }),
+          h(HMeter, { label: "Meter", value: 12 }),
+          h(HTagInput, { label: "Tags", value: ["one"], name: "tags" }),
+          h(HInlineCopyText, { value: "ID" }),
+          h(HAttachment, { name: "file.json" }),
+          h(HFlow, { label: "Flow", items: [flow] }),
+          h(HSpanTimeline, {
+            label: "Spans",
+            spans: [{ id: "one", label: "One", start: 0, end: 2 }],
+          }),
+          h(HTraceView, {
+            label: "Trace",
+            items: [{ id: "one", label: "One" }],
+          }),
+          h(HMessageScroller, { label: "Messages" }, () => h("p", "Message")),
+          h(HJsonViewer, { value }),
+          h(HCodeDiff, {
+            hunks: [
+              {
+                id: "one",
+                lines: [{ kind: "added", text: "<script>literal</script>" }],
+              },
+            ],
+          }),
+          h(HWaffleChart, {
+            label: "Waffle",
+            items: [{ id: "one", label: "One", value: 1 }],
+          }),
+          h(HDonutChart, {
+            label: "Donut",
+            items: [{ id: "one", label: "One", value: 1 }],
+          }),
+          h(HWaterfallChart, {
+            label: "Waterfall",
+            items: [{ id: "one", label: "One", value: 1 }],
+          }),
+          h(HTimeSeriesChart, {
+            label: "Metrics",
+            series: [
+              {
+                id: "one",
+                label: "One",
+                points: [
+                  { x: -1e308, y: -1e308 },
+                  { x: 1e308, y: 1e308 },
+                ],
+              },
+            ],
+          }),
+        ]),
+    }),
+  );
+  assert.equal(accesses, 0);
+  assert.match(html, /\[Circular\]/);
+  assert.match(html, /&lt;script&gt;literal/);
+  assert.match(html, /because of a cycle/);
+  assert.doesNotMatch(html, /<script>/);
+  assert.doesNotMatch(html, /d="[^"]*(?:NaN|Infinity)/);
+  assert.match(html, /<meter/);
+});
 
 test("technical components and HTML diagrams render deterministic, escaped SSR markup", async () => {
   const render = () =>

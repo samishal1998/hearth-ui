@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, reactive, onMounted, onBeforeUnmount } from "vue";
 import {
   HPageHeader,
   HButton,
-  HCard,
+  HBadge,
   HCodeSnippet,
   HPackageInstall,
   HTerminal,
@@ -20,16 +20,58 @@ import {
   HSwitch,
   type ChartColumn,
 } from "../src";
-const selected = ref(""),
-  signal = ref(false),
+import HCard from "./TechnicalCard.vue";
+import OperationsExamples from "./OperationsExamples.vue";
+const root = ref<HTMLElement>();
+const sections = [
+  { id: "technical-code", label: "Code & installation" },
+  { id: "technical-signals", label: "Signals & amounts" },
+  { id: "technical-observability", label: "Observability" },
+  { id: "technical-workflows", label: "Workflows & traces" },
+  { id: "technical-data", label: "Data & artifacts" },
+  { id: "technical-charts", label: "Chart variants" },
+  { id: "technical-interactions", label: "Interaction lab" },
+];
+const activeSection = ref(sections[0].id);
+function jump(id: string) {
+  const heading = root.value?.querySelector<HTMLElement>(`#${id}`);
+  if (!heading) return;
+  activeSection.value = id;
+  heading.scrollIntoView({ block: "start", behavior: "instant" });
+  heading.focus({ preventScroll: true });
+}
+let observer: IntersectionObserver | undefined;
+onMounted(() => {
+  observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (visible[0]) activeSection.value = visible[0].target.id;
+    },
+    { rootMargin: "-80px 0px -65% 0px" },
+  );
+  root.value
+    ?.querySelectorAll("h2[data-technical-section]")
+    .forEach((heading) => observer!.observe(heading));
+});
+onBeforeUnmount(() => observer?.disconnect());
+const selected = reactive({
+  amounts: "",
+  changes: "",
+  duration: "",
+  outcomes: "",
+});
+const signal = ref(false),
   volume = ref(45),
   busy = ref(false),
-  stress = ref(false);
+  stress = ref(false),
+  lastAction = ref("");
 const sample = ref(0);
 const columns = ref<ChartColumn[]>(
   Array.from({ length: 8 }, (_, i) => ({
     id: String(i),
-    label: `${i + 9}:00`,
+    label: `${String(i + 9).padStart(2, "0")}:00`,
     values: { success: 70 + i * 3, retry: 20 - i, error: 10 - i },
   })),
 );
@@ -79,8 +121,8 @@ function next() {
   columns.value = [
     ...columns.value.slice(1),
     {
-      id: String(i + 1),
-      label: `${i + 10}:00`,
+      id: String(i),
+      label: `${String((i + 9) % 24).padStart(2, "0")}:00`,
       values: {
         success: 65 + (i % 4) * 7,
         retry: 25 - (i % 4) * 4,
@@ -133,31 +175,58 @@ const rows = computed(() => [
 </script>
 <template>
   <section
+    ref="root"
     class="technical-examples"
     aria-label="Developer and diagram examples"
   >
     <HPageHeader
       title="Tools for technical interfaces."
-      description="Copyable code, inspectable data, and small interactions built on native HTML."
-      eyebrow="Developer components & diagrams"
+      description="Interactive examples for code, diagrams, workflows, and data tools, with links to every API."
+      eyebrow="Developer playground"
       ><HButton href="#components">Component gallery</HButton></HPageHeader
     >
-    <div class="technical-grid">
-      <HCard
-        title="One example. Several ways in."
-        description="Arrow keys switch between examples. Copy uses the active tab."
-        ><HCodeSnippet
-          :options="options"
-          label="API request language"
-          line-numbers
-      /></HCard>
-      <div class="technical-stack">
-        <HCard title="Install in your stack"
+    <nav class="technical-nav" aria-label="Technical sections">
+      <button
+        v-for="section in sections"
+        :key="section.id"
+        type="button"
+        :aria-current="activeSection === section.id ? 'location' : undefined"
+        @click="jump(section.id)"
+      >
+        {{ section.label }}
+      </button>
+    </nav>
+    <div class="technical-meta">
+      <HBadge label="Vue + Elements" /><HBadge label="Local examples" /><span
+        >Open the API links for props and events.</span
+      >
+    </div>
+    <section class="technical-section" aria-labelledby="technical-code">
+      <header class="technical-section-heading">
+        <h2 id="technical-code" data-technical-section tabindex="-1">
+          Code &amp; installation
+        </h2>
+        <p>
+          Switch frameworks, copy the active example, and inspect command
+          output.
+        </p>
+      </header>
+      <div class="technical-grid technical-code-grid">
+        <HCard
+          title="One example. Several ways in."
+          description="Arrow keys switch between examples. Copy uses the active tab."
+          :components="['HCodeSnippet']"
+          ><HCodeSnippet
+            :options="options"
+            label="API request language"
+            line-numbers
+        /></HCard>
+        <HCard title="Install in your stack" :components="['HPackageInstall']"
           ><HPackageInstall :packages="['@hearth-ui/vue', 'vue']" />
           <p class="technical-note">
             Native Vue and standalone web components share the same source.
           </p></HCard
-        ><HCard title="Terminal transcript"
+        ><HCard title="Terminal transcript" :components="['HTerminal']"
           ><HTerminal
             :lines="[
               { id: '1', kind: 'command', text: 'npm run build' },
@@ -166,103 +235,234 @@ const rows = computed(() => [
             ]"
         /></HCard>
       </div>
-      <HCard title="Amounts, stacked like a waveform"
-        ><HStackedWaveform
-          :columns="stackedAmounts"
-          label="Amount composition"
-          description="Each pillar is a stack of amounts, separated by 0.5px gaps. The first three totals are 16, 21, and 29."
-          :selected="selected"
-          @select="selected = $event"
-        /><HButton @click="next">Update amounts</HButton></HCard
-      >
-      <HCard title="Signals and change"
-        ><HWaveform v-model:active="signal" label="Microphone activity" />
-        <p class="technical-note">
-          Illustrative motion. Pause at any time; reduced-motion settings keep
-          the bars still.
+    </section>
+    <section class="technical-section" aria-labelledby="technical-signals">
+      <header class="technical-section-heading">
+        <h2 id="technical-signals" data-technical-section tabindex="-1">
+          Signals &amp; amounts
+        </h2>
+        <p>
+          Compare amounts, signed percentages, and changing time intervals. Each
+          chart keeps its own selection.
         </p>
-        <div class="technical-signed">
-          <HDivergingBarChart
-            :items="changes"
-            label="Throughput change"
-            description="Slim bars, a centered zero, and a fixed ±100% scale."
-            :selected="selected"
-            @select="selected = $event"
-          /><HButton @click="next">Update changes</HButton>
-        </div></HCard
-      >
-      <HCard title="Small details"
-        ><div class="technical-stack">
-          <div class="technical-actions">
-            <HButton variant="primary" :loading="busy" @click="busy = true"
-              >Run build</HButton
-            ><HButton @click="busy = false">Reset state</HButton
-            ><HKeyboardKey
-              :keys="['Ctrl', 'Enter']"
-              label="Control plus Enter"
-            />
-          </div>
-          <HRange v-model="volume" label="Output level" /><HDropdownMenu
-            label="Workspace actions"
-            :items="[
-              { id: 'copy', label: 'Copy endpoint' },
-              { id: 'logs', label: 'View logs' },
-              { id: 'remove', label: 'Remove workspace', danger: true },
+      </header>
+      <div class="technical-grid">
+        <HCard
+          title="Amounts, stacked like a waveform"
+          :components="['HStackedWaveform']"
+          ><HStackedWaveform
+            :columns="stackedAmounts"
+            label="Amount composition"
+            description="Each pillar is a stack of amounts, separated by 0.5px gaps. The first three totals are 16, 21, and 29."
+            :selected="selected.amounts"
+            @select="selected.amounts = $event"
+          /><HButton @click="next">Update amounts</HButton></HCard
+        >
+        <HCard
+          title="Signals and change"
+          :components="['HWaveform', 'HDivergingBarChart']"
+          ><HWaveform v-model:active="signal" label="Microphone activity" />
+          <p class="technical-note">
+            Illustrative motion. Pause at any time; reduced-motion settings keep
+            the bars still.
+          </p>
+          <div class="technical-signed">
+            <HDivergingBarChart
+              :items="changes"
+              label="Throughput change"
+              description="Slim bars, a centered zero, and a fixed ±100% scale."
+              :selected="selected.changes"
+              @select="selected.changes = $event"
+            /><HButton @click="next">Update changes</HButton>
+          </div></HCard
+        >
+        <HCard title="Build duration" :components="['HBarChart']"
+          ><HBarChart
+            :items="durations"
+            label="Duration by interval"
+            unit="s"
+            :selected="selected.duration"
+            @select="selected.duration = $event"
+        /></HCard>
+        <HCard title="Outcomes over time" :components="['HStackedBarChart']"
+          ><HStackedBarChart
+            :columns="columns"
+            :series="[
+              { id: 'success', label: 'Success', tone: 'success' },
+              { id: 'retry', label: 'Retry', tone: 'warning' },
+              { id: 'error', label: 'Error', tone: 'danger' },
             ]"
-          /><HCollapsible label="Connection details"
-            ><p>
-              The native disclosure opens and closes without remounting its
-              content. Press Enter or Space on its trigger.
-            </p></HCollapsible
-          >
-        </div></HCard
-      >
-      <HCard title="Build duration"
-        ><HBarChart
-          :items="durations"
-          label="Duration by interval"
-          unit="s"
-          :selected="selected"
-          @select="selected = $event"
-      /></HCard>
-      <HCard title="Outcomes over time"
-        ><HStackedBarChart
-          :columns="columns"
-          :series="[
-            { id: 'success', label: 'Success', tone: 'success' },
-            { id: 'retry', label: 'Retry', tone: 'warning' },
-            { id: 'error', label: 'Error', tone: 'danger' },
+            label="Request outcomes"
+            :selected="selected.outcomes"
+            @select="selected.outcomes = $event"
+          /><HButton @click="next">Next interval</HButton></HCard
+        >
+      </div>
+    </section>
+    <OperationsExamples embedded id-prefix="technical" />
+    <section class="technical-section" aria-labelledby="technical-interactions">
+      <header class="technical-section-heading">
+        <h2 id="technical-interactions" data-technical-section tabindex="-1">
+          Interaction lab
+        </h2>
+        <p>
+          Try loading, keyboard shortcuts, menus, disclosures, and deliberately
+          awkward content.
+        </p>
+      </header>
+      <div class="technical-grid">
+        <HCard
+          title="Small details"
+          :components="[
+            'HButton',
+            'HKeyboardKey',
+            'HRange',
+            'HDropdownMenu',
+            'HCollapsible',
           ]"
-          label="Request outcomes"
-          :selected="selected"
-          @select="selected = $event"
-        /><HButton @click="next">Next interval</HButton></HCard
-      >
-    </div>
-    <HCard class="technical-table" title="Content should fit the layout."
-      ><HSwitch v-model="stress" label="Stress test long content" /><HDataTable
-        :rows="rows"
-        :columns="[
-          { key: 'service', label: 'Service', sortable: true },
-          { key: 'endpoint', label: 'Endpoint' },
-          { key: 'state', label: 'State', width: '100px' },
-        ]"
-        :actions="[{ id: 'inspect', label: 'Inspect service' }]"
-        label="Service endpoints"
-    /></HCard>
+          @keydown.ctrl.enter.prevent="busy = true"
+        >
+          <div class="technical-stack">
+            <div class="technical-actions">
+              <HButton variant="primary" :loading="busy" @click="busy = true"
+                >Run build</HButton
+              ><HButton @click="busy = false">Reset state</HButton
+              ><HKeyboardKey
+                :keys="['Ctrl', 'Enter']"
+                label="Control plus Enter"
+              />
+            </div>
+            <p class="technical-note">
+              Ctrl+Enter also activates the local loading-state example while
+              focus is in this card.
+            </p>
+            <HRange v-model="volume" label="Output level" />
+            <HDropdownMenu
+              label="Workspace actions"
+              :items="[
+                { id: 'copy', label: 'Copy endpoint' },
+                { id: 'logs', label: 'View logs' },
+                { id: 'remove', label: 'Remove workspace', danger: true },
+              ]"
+              @select="lastAction = $event"
+            />
+            <output class="technical-event" role="status" aria-atomic="true">{{
+              lastAction ? `Selected action: ${lastAction}` : ""
+            }}</output>
+            <HCollapsible label="Connection details"
+              ><p>
+                The native disclosure opens and closes without remounting its
+                content. Press Enter or Space on its trigger.
+              </p></HCollapsible
+            >
+          </div>
+        </HCard>
+        <HCard
+          class="technical-table"
+          title="Content should fit the layout."
+          :components="['HDataTable', 'HSwitch']"
+          ><HSwitch
+            v-model="stress"
+            label="Stress test long content" /><HDataTable
+            :rows="rows"
+            :columns="[
+              { key: 'service', label: 'Service', sortable: true },
+              { key: 'endpoint', label: 'Endpoint' },
+              { key: 'state', label: 'State', width: '100px' },
+            ]"
+            :actions="[{ id: 'inspect', label: 'Inspect service' }]"
+            label="Service endpoints"
+        /></HCard>
+      </div>
+    </section>
   </section>
 </template>
 <style scoped>
+:global(html:has(.technical-examples)) {
+  scroll-padding-block-start: 72px;
+}
 .technical-examples {
   padding-block: 32px 64px;
   min-width: 0;
+}
+.technical-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--h-muted);
+}
+.technical-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  gap: 4px;
+  max-width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+  padding: 6px;
+  margin-top: 24px;
+  border: 1px solid var(--h-border);
+  border-radius: var(--h-radius-control);
+  background: var(--h-bg);
+  box-shadow: var(--h-shadow-soft);
+  scrollbar-width: thin;
+}
+.technical-nav button {
+  flex-shrink: 0;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: calc(var(--h-radius-control) - 3px);
+  background: none;
+  color: var(--h-muted);
+  font: 12px/1.5 var(--h-font);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.technical-nav button[aria-current="location"] {
+  background: var(--h-accent-subtle);
+  color: var(--h-accent-text);
+  border-color: var(--h-border);
+}
+.technical-nav button:focus-visible {
+  outline: var(--h-focus-width) solid var(--h-focus);
+  outline-offset: 2px;
+}
+.technical-section {
+  margin-top: 40px;
+}
+.technical-section-heading h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.5;
+  font-weight: 550;
+  scroll-margin-top: 24px;
+  overflow-wrap: anywhere;
+}
+.technical-section-heading h2:focus-visible {
+  outline: var(--h-focus-width) solid var(--h-focus);
+  outline-offset: 5px;
+}
+.technical-section-heading p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--h-muted);
+  max-width: 72ch;
 }
 .technical-grid {
   display: grid;
   align-items: start;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
-  margin-top: 32px;
+  margin-top: 20px;
+}
+.technical-code-grid {
+  grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(0, 1fr));
 }
 .technical-stack {
   display: grid;
@@ -283,16 +483,43 @@ const rows = computed(() => [
   margin-top: 16px;
 }
 .technical-table {
-  margin-top: 24px;
+  min-width: 0;
+}
+.technical-event {
+  font: 12px/1.6 var(--h-font-mono);
+  color: var(--h-muted);
+  overflow-wrap: anywhere;
 }
 .technical-signed {
   margin-top: 24px;
   padding-top: 20px;
   border-top: 1px solid var(--h-border);
 }
+@media (max-width: 1100px) {
+  .technical-code-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .technical-code-grid > :first-child {
+    grid-column: 1/-1;
+  }
+}
 @media (max-width: 900px) {
   .technical-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .technical-code-grid > :first-child {
+    grid-column: auto;
+  }
+}
+@media (hover: hover) {
+  .technical-nav button:hover {
+    background: var(--h-raised);
+    color: var(--h-text);
+  }
+}
+@media (pointer: coarse) {
+  .technical-nav button {
+    min-height: 44px;
   }
 }
 </style>

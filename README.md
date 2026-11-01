@@ -8,7 +8,7 @@ Hearth carries the visual direction of Apptrail into a standalone library. **Sun
 
 ## Agent references
 
-Start at **[llms.txt](llms.txt)**. It routes agents to focused references for all 103 source components under **`docs/components/<slug>/llms.txt`**, plus [behavior and native-markup primitives](docs/primitives/llms.txt), for example:
+Start at **[llms.txt](llms.txt)**. It routes agents to focused references for all 119 source components under **`docs/components/<slug>/llms.txt`**, plus [behavior and native-markup primitives](docs/primitives/llms.txt), for example:
 
 - [Authentication page](docs/components/auth-page/llms.txt)
 - [Dashboard shell](docs/components/dashboard-shell/llms.txt)
@@ -63,7 +63,7 @@ The registry preview exposes a **Mobile breakpoint (px)** control for applicable
 
 ## Install
 
-This source prepares **0.9.0** for release. Install the distribution you need after publication, or use the prepared package archives:
+This source prepares **0.10.0** for release. Install the distribution you need after publication, or use the prepared package archives. Match documentation to the package version you install:
 
 ```sh
 # Native Vue
@@ -160,11 +160,33 @@ Keep the files inside `dist/elements/` together: entry points import a shared ru
 | `HTextarea`       | `HPagination`       |                     |
 | `HRange`          | `HAccordion`        |                     |
 
-The source component catalog includes interactive previews and documents props, events, slots, and CSS parts for all **103 components**. Vue declarations and web-component constructors are included for every component. The [hosted catalog](https://samishal1998.github.io/hearth-ui/#components) reflects the most recent deployed build.
+The source component catalog includes interactive previews and documents props, events, slots, and CSS parts for all **119 components**. Vue declarations and web-component constructors are included for every component. The [hosted catalog](https://samishal1998.github.io/hearth-ui/#components) reflects the most recent deployed build.
 
 The registry provides search, category filters, and 12 results per page. Each component has a shareable route such as `#components/HCalendar`, with a focused preview, usage example, and API reference. Full composed demos are at `#examples`; the seven page recipes, including the authentication page, are at `#recipes`.
 
 Date, time, and local date-time fields now use Hearth picker popovers and formatted text entry instead of native browser dropdowns. Their ISO string values and form submission contracts are preserved; invalid dates, bounds, and time steps participate in form validation.
+
+### New in 0.10.0
+
+The operations/workflow release adds sixteen public components, bringing both distributions to **119 components**, with expanded chart modes and a consolidated technical playground.
+
+The `#technical` hub includes the complete technical collection, with sticky section navigation, component API links, and the sixteen additions below. The same operations examples are also available as a standalone workspace at `#operations`:
+
+| Area | Components |
+| --- | --- |
+| Observability | `HHeatmap`, duration-weighted `HUptimeHistory`, native `HMeter` |
+| Everyday technical UI | `HTagInput`, `HInlineCopyText`, `HAttachment` |
+| Workflow inspection | sequential/parallel `HFlow`, `HSpanTimeline`, expandable `HTraceView` |
+| Developer data | anchored `HMessageScroller`, bounded `HJsonViewer`, supplied-hunk `HCodeDiff` |
+| Charts | `HWaffleChart`, CSS `HDonutChart`, cumulative `HWaterfallChart`, native-SVG `HTimeSeriesChart` |
+
+Existing `HBarChart` supports horizontal bars, grouped `columns`/`series`, and histogram-style supplied bins. `HStackedBarChart` supports `mode="absolute"` alongside its percentage default, plus horizontal orientation. Multi-series legends toggle visibility.
+
+These use existing Hearth tokens/behaviors, native controls, HTML/CSS and small native SVG paths, with no added runtime dependency. Diagrams expose exact-value tables or native inspection controls. Unknown uptime coverage stays explicit; time-series nulls break paths; waffle cells use whole-unit rounding with exact amounts retained. Flow diagrams represent sequences/parallel branches rather than arbitrary editable graphs. Diff calculation, uploads, application data, and streaming announcements remain application-owned. Message scrollers preserve a stable direct child's position when earlier history is prepended; they are not variable-height virtualization.
+
+Tag input supports Enter/comma commits, bulk paste, validation, IME, native form reset and disabled fieldsets, including repeated FormData values in custom elements. JSON display has entry/depth limits and renders accessors without invoking them; value copying uses normal JSON serialization and reports unsupported/cyclic values.
+
+The `#technical` page groups code, signals, observability, workflows, data/artifacts, chart variants, and interactions under seven keyboard-accessible navigation targets. Examples retain their state across section jumps, provide component API links, and keep independent chart selections. Existing single-series bar inputs and the stacked chart's percentage default remain supported; the new modes are opt-in.
 
 ### New in 0.9.0
 

@@ -11,8 +11,10 @@ withDefaults(
     selected?: string;
     height?: number;
     maxPoints?: number;
+    mode?: "percentage" | "absolute";
+    orientation?: "vertical" | "horizontal";
   }>(),
-  { columns: () => [], series: () => [] },
+  { columns: () => [], series: () => [], mode: "percentage" },
 );
 const emit = defineEmits<{ select: [id: string] }>();
 </script>
@@ -26,7 +28,8 @@ const emit = defineEmits<{ select: [id: string] }>();
     :selected="selected"
     :height="height"
     :max-points="maxPoints"
-    percentage
+    :percentage="mode === 'percentage'"
+    :orientation="orientation"
     @select="emit('select', $event)"
   />
 </template>

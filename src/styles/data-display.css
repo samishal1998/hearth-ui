@@ -1,0 +1,87 @@
+/* Shared presentation for small native diagrams and technical data views. */
+.h-data-figure {
+  margin: 0;
+  min-width: 0;
+  max-width: 100%;
+  color: var(--h-text);
+  font: var(--h-font-size)/1.6 var(--h-font);
+}
+.h-data-figure > figcaption,
+.h-data-heading {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.h-data-note {
+  color: var(--h-muted);
+  font-size: max(var(--h-font-min-size, 12px), 12px);
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+.h-data-viewport {
+  max-width: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.h-data-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.h-data-table th,
+.h-data-table td {
+  padding: 8px;
+  text-align: start;
+  border-bottom: 1px solid var(--h-border);
+  overflow-wrap: anywhere;
+}
+.h-data-table tbody th {
+  font-weight: 500;
+}
+.h-data-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 0;
+  margin: 12px 0;
+  list-style: none;
+}
+.h-data-legend button,
+.h-data-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--h-muted);
+  font: 12px/1.6 var(--h-font);
+}
+.h-data-legend button {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--h-radius-control);
+  padding: 4px 8px;
+  min-height: var(--h-control-height);
+  cursor: pointer;
+}
+.h-data-legend button[aria-pressed="true"] {
+  color: var(--h-text);
+  border-color: var(--h-border-strong);
+  background: var(--h-accent-subtle);
+}
+.h-data-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.h-data-empty {
+  padding: 24px;
+  margin-block: 12px;
+  border: 1px dashed var(--h-border);
+  border-radius: var(--h-radius-control);
+  color: var(--h-muted);
+}
+.h-data-figure summary {
+  cursor: pointer;
+  color: var(--h-accent-text);
+  min-height: var(--h-control-height);
+}

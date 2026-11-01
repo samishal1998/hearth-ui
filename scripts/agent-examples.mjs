@@ -1,6 +1,330 @@
 // Component-specific recipes complement the API extracted from source and catalog.
 // `props` are assigned before connection, preserving custom-element form reset defaults.
 export const examples = {
+  HHeatmap: {
+    vue: "<HHeatmap label=\"Request activity\" :cells=\"[{id:'a',row:'API',column:'09:00',value:12},{id:'b',row:'API',column:'10:00',value:28},{id:'c',row:'Worker',column:'09:00',value:6},{id:'d',row:'Worker',column:'10:00',value:null}]\" />",
+    props: {
+      label: "Request activity",
+      cells: [
+        { id: "a", row: "API", column: "09:00", value: 12 },
+        { id: "b", row: "API", column: "10:00", value: 28 },
+        { id: "c", row: "Worker", column: "09:00", value: 6 },
+        { id: "d", row: "Worker", column: "10:00", value: null },
+      ],
+    },
+    notes: [
+      "Rows and columns follow first appearance in cells. Missing/nonfinite values show No data, distinct from zero. Cells use native table headers and named buttons with arrow/Home/End navigation; select emits a cell ID. The shared intensity scale uses min/max when provided. Default limits are 32 rows and 64 columns, each configurable up to 128; omitted axes are disclosed.",
+    ],
+    related: ["HBarChart", "HUptimeHistory"],
+    event: "select",
+  },
+  HUptimeHistory: {
+    vue: "<HUptimeHistory label=\"API availability\" unit=\"minutes\" :intervals=\"[{id:'a',label:'09:00–09:30',start:0,end:30,status:'up'},{id:'b',label:'09:30–09:35',start:30,end:35,status:'down'},{id:'c',label:'09:40–10:00',start:40,end:60,status:'up'}]\" />",
+    props: {
+      label: "API availability",
+      unit: "minutes",
+      intervals: [
+        { id: "a", label: "09:00–09:30", start: 0, end: 30, status: "up" },
+        { id: "b", label: "09:30–09:35", start: 30, end: 35, status: "down" },
+        { id: "c", label: "09:40–10:00", start: 40, end: 60, status: "up" },
+      ],
+    },
+    notes: [
+      "start/end are numeric positions in one shared unit; label supplies human-readable timestamps. Widths encode durations and gaps remain unknown. Up percentage excludes unknown time; unknown coverage is reported separately. Overlaps suppress the availability calculation. Invalid/nonpositive intervals are omitted. A native select and interval table make every narrow interval accessible. maxIntervals defaults to 240 (maximum 1000).",
+    ],
+    related: ["HStatusPage", "HSpanTimeline"],
+    event: "select",
+  },
+  HMeter: {
+    vue: '<HMeter label="Storage used" :value="76" :max="100" :low="70" :high="90" :optimum="0" unit="GB" />',
+    props: {
+      label: "Storage used",
+      value: 76,
+      max: 100,
+      low: 70,
+      high: 90,
+      optimum: 0,
+      unit: "GB",
+    },
+    notes: [
+      "Native meter represents a measured amount within a range, while HProgress represents task completion. min/max/low/high/optimum retain native meter semantics; values and thresholds are clamped to a valid range. valueText overrides the displayed/spoken formatted value. This is read-only and does not submit a form value.",
+    ],
+    related: ["HProgress", "HStatCard"],
+  },
+  HTagInput: {
+    vue: '<HTagInput v-model="tags" label="Allowed hosts" name="hosts" required :max-tags="5" />',
+    script: "const tags = ref(['api.internal']);",
+    props: {
+      label: "Allowed hosts",
+      name: "hosts",
+      value: ["api.internal"],
+      required: true,
+      maxTags: 5,
+    },
+    mountTag: "form",
+    notes: [
+      "Enter/comma commits a tag; comma/newline paste accepts multiple values. Trimmed exact duplicates are ignored. Backspace with an empty draft removes the last tag; IME composition is preserved. validateValue may return true, false, or an error message. Unaccepted values remain in the draft, and only committed tags submit.",
+      "Named tags submit repeated FormData values in Vue and custom elements. Required validation needs at least one committed tag. Reset restores initial values; disabled fieldsets and readonly states are supported. maxTags defaults to 100. Use hideLabel only while providing an accessible label.",
+    ],
+    related: ["HCombobox", "HChipGroup"],
+    event: "change",
+  },
+  HInlineCopyText: {
+    vue: '<HInlineCopyText value="req_7c9a31f084b2" display="req_7c9a…84b2" label="request ID" />',
+    props: {
+      value: "req_7c9a31f084b2",
+      display: "req_7c9a…84b2",
+      label: "request ID",
+    },
+    notes: [
+      "Display may be abbreviated while value remains the exact clipboard payload. A native button and stable polite status announce success or failure. Use HCopyField when a full read-only input is appropriate. Clipboard access requires a secure context or the existing fallback.",
+    ],
+    related: ["HCopyField", "HCodeBlock"],
+    event: "copied",
+  },
+  HAttachment: {
+    vue: '<HAttachment name="build-report.json" :size="4096" description="Build artifact" state="done" href="/artifacts/build-report.json" removable @remove="remove" />',
+    script:
+      "function remove() { /* Update the application-owned attachment list. */ }",
+    props: {
+      name: "build-report.json",
+      size: 4096,
+      description: "Build artifact",
+      state: "done",
+      href: "/artifacts/build-report.json",
+      removable: true,
+    },
+    notes: [
+      "Display-only artifact UI; the app owns upload, download URLs, preview handling and removal. preview/remove emit requests. href and previewSrc accept safe HTTP(S)/relative links and application-owned blob URLs; the application owns Blob URL revocation. Native download behavior remains browser-controlled, especially cross-origin. Upload progress is supplied by the app; processing/error/done have visible state labels.",
+    ],
+    related: ["HFileUpload", "HMessage"],
+    event: "preview",
+  },
+  HFlow: {
+    vue: '<HFlow label="Build workflow" :items="stages" />',
+    script:
+      "const stages = [{id:'fetch',label:'Fetch',status:'success' as const},{id:'checks',label:'Checks',status:'running' as const,parallel:[[{id:'test',label:'Test',status:'running' as const}],[{id:'lint',label:'Lint',status:'success' as const}]]},{id:'deploy',label:'Deploy',status:'pending' as const}];",
+    props: {
+      label: "Build workflow",
+      items: [
+        { id: "fetch", label: "Fetch", status: "success" },
+        {
+          id: "checks",
+          label: "Checks",
+          status: "running",
+          parallel: [
+            [{ id: "test", label: "Test", status: "running" }],
+            [{ id: "lint", label: "Lint", status: "success" }],
+          ],
+        },
+        { id: "deploy", label: "Deploy", status: "pending" },
+      ],
+    },
+    notes: [
+      "A read-only sequence/parallel workflow, not an arbitrary graph editor. Each parallel entry is a branch containing another sequence. Native lists, node buttons and CSS connectors preserve document order. Narrow containers stack stages; larger diagrams scroll natively. select emits a stage ID; selected is application-owned. Cycles/depth/excess nodes are omitted with a notice. Defaults: maxNodes=200, maxDepth=6.",
+    ],
+    related: ["HStepper", "HTraceView", "HSpanTimeline"],
+    event: "select",
+  },
+  HSpanTimeline: {
+    vue: "<HSpanTimeline label=\"Request timing\" :spans=\"[{id:'req',label:'Request',start:0,end:120,status:'success'},{id:'db',parentId:'req',label:'Database',start:20,end:95,status:'success'},{id:'cache',parentId:'req',label:'Cache',start:25,end:40,status:'success'}]\" />",
+    props: {
+      label: "Request timing",
+      spans: [
+        { id: "req", label: "Request", start: 0, end: 120, status: "success" },
+        {
+          id: "db",
+          parentId: "req",
+          label: "Database",
+          start: 20,
+          end: 95,
+          status: "success",
+        },
+        {
+          id: "cache",
+          parentId: "req",
+          label: "Cache",
+          start: 25,
+          end: 40,
+          status: "success",
+        },
+      ],
+    },
+    notes: [
+      "start/end share a numeric unit (ms by default). Bars encode timing offsets and duration, including overlap. parentId supplies indentation with cycle/depth protection, while input order is preserved. Native table headers and named buttons expose exact starts/durations/statuses. maxRows defaults to 200 (maximum 1000); invalid and excess spans are reported as omitted.",
+    ],
+    related: ["HFlow", "HTraceView", "HTimeline"],
+    event: "select",
+  },
+  HTraceView: {
+    vue: "<HTraceView label=\"Agent execution\" :default-expanded=\"['run']\" :items=\"[{id:'run',label:'Investigate',status:'running',children:[{id:'search',label:'Search repository',status:'success',duration:240,details:'Found 8 matching files.'},{id:'read',label:'Read source',status:'running'}]}]\" />",
+    props: {
+      label: "Agent execution",
+      defaultExpanded: ["run"],
+      items: [
+        {
+          id: "run",
+          label: "Investigate",
+          status: "running",
+          children: [
+            {
+              id: "search",
+              label: "Search repository",
+              status: "success",
+              duration: 240,
+              details: "Found 8 matching files.",
+            },
+            { id: "read", label: "Read source", status: "running" },
+          ],
+        },
+      ],
+    },
+    notes: [
+      "Read-only execution steps with native details disclosures. duration is displayed in milliseconds. expanded is controlled through update:expanded; defaultExpanded initializes local state. Details are escaped plain text. Default node/depth limits are 300/8; cycles and truncated branches are disclosed. Streaming updates are application-owned and do not generate per-frame live announcements.",
+    ],
+    related: ["HFlow", "HSpanTimeline", "HLogViewer"],
+    event: "update:expanded",
+  },
+  HMessageScroller: {
+    vue: '<HMessageScroller label="Conversation" max-height="240px"><HMessage author="User">Can you check the build?</HMessage><HMessage author="Assistant">The build passed.</HMessage></HMessageScroller>',
+    imports: ["HMessage"],
+    props: { label: "Conversation", maxHeight: "240px" },
+    children:
+      '<hearth-message author="User">Can you check the build?</hearth-message><hearth-message author="Assistant">The build passed.</hearth-message>',
+    notes: [
+      "Use stable direct child elements as messages (Vue keys or persistent custom-element hosts). Native scrolling and ResizeObserver follow new/streaming content while at the end; scrolling away pauses follow. A retained visible child anchors reading position when history is prepended. Jump to latest resumes follow.",
+      "This is a variable-height scroll container, not virtualization or a log announcer. Keep live announcements in an application-owned status. Wrapper elements grouping all messages into one child reduce prepend anchoring precision. follow is controlled through update:follow; default true.",
+    ],
+    related: ["HMessage", "HScrollArea", "HLogViewer"],
+    event: "update:follow",
+  },
+  HJsonViewer: {
+    vue: "<HJsonViewer label=\"Response payload\" :value=\"{requestId:'req_42',status:'ok',metrics:{duration:42,cached:true},items:[1,2,3]}\" />",
+    props: {
+      label: "Response payload",
+      value: {
+        requestId: "req_42",
+        status: "ok",
+        metrics: { duration: 42, cached: true },
+        items: [1, 2, 3],
+      },
+    },
+    notes: [
+      "Read-only inspection reuses HTreeView keyboard navigation. Select a node, then copy its value or RFC 6901 JSON Pointer path; root path is the empty string. Rendering is bounded by maxDepth=6 and maxEntries=300, reports cycles, and displays accessors without invoking them.",
+      "Copy value uses normal JSON serialization; non-JSON/cyclic values report failure. Output over one million characters is rejected. The tree preview truncates long strings; copying uses the selected original value. The app owns editing and redaction.",
+    ],
+    related: ["HTreeView", "HCodeBlock", "HInlineCopyText"],
+    event: "select",
+  },
+  HCodeDiff: {
+    vue: "<HCodeDiff label=\"Configuration changes\" :hunks=\"[{id:'h1',header:'@@ -1 +1 @@',lines:[{kind:'removed',oldLine:1,text:'retries: 2'},{kind:'added',newLine:1,text:'retries: 4'}]}]\" />",
+    props: {
+      label: "Configuration changes",
+      hunks: [
+        {
+          id: "h1",
+          header: "@@ -1 +1 @@",
+          lines: [
+            { kind: "removed", oldLine: 1, text: "retries: 2" },
+            { kind: "added", newLine: 1, text: "retries: 4" },
+          ],
+        },
+      ],
+    },
+    notes: [
+      "Supply parsed diff hunks; this component renders changes and does not compute diffs. Unified/split modes use literal escaped text, line numbers and +/- cues. Consecutive removed/added lines pair in split view. Copy includes visible hunks only. maxLines defaults to 500 (maximum 5000); omitted lines are disclosed. Long code scrolls internally or wraps when requested.",
+    ],
+    related: ["HCodeBlock", "HCodeSnippet"],
+    event: "update:view",
+  },
+  HWaffleChart: {
+    vue: "<HWaffleChart label=\"Storage allocation\" unit=\"GB\" :items=\"[{id:'media',label:'Media',value:60},{id:'docs',label:'Documents',value:25},{id:'free',label:'Free',value:15}]\" />",
+    props: {
+      label: "Storage allocation",
+      unit: "GB",
+      items: [
+        { id: "media", label: "Media", value: 60 },
+        { id: "docs", label: "Documents", value: 25 },
+        { id: "free", label: "Free", value: 15 },
+      ],
+    },
+    notes: [
+      "Native HTML/CSS unit grid. Largest-remainder apportionment assigns exactly cells visible units across positive categories; legend/table retain actual amounts. Default 100 cells in 10 columns, maximum 400 cells/40 columns/100 categories. Zero/nonfinite/negative values have no fill. Legend buttons provide selection; the decorative grid is excluded from the accessibility tree.",
+    ],
+    related: ["HDonutChart", "HStackedBarChart"],
+    event: "select",
+  },
+  HDonutChart: {
+    vue: "<HDonutChart label=\"Request mix\" :items=\"[{id:'cached',label:'Cached',value:72},{id:'origin',label:'Origin',value:28}]\" />",
+    props: {
+      label: "Request mix",
+      items: [
+        { id: "cached", label: "Cached", value: 72 },
+        { id: "origin", label: "Origin", value: 28 },
+      ],
+    },
+    notes: [
+      "CSS conic-gradient ring, with no charting library. A central total, named legend buttons and exact-value table carry meaning beyond color. Inspection/selection is legend-driven, not slice hit-testing. Positive finite values contribute; at most 100 categories are shown. size defaults to 160px, thickness to 18px, and the ring fits its container.",
+    ],
+    related: ["HWaffleChart", "HMeter"],
+    event: "select",
+  },
+  HWaterfallChart: {
+    vue: "<HWaterfallChart label=\"Monthly cost\" unit=\"USD\" :items=\"[{id:'base',label:'Base',value:100,kind:'total'},{id:'compute',label:'Compute',value:45},{id:'credit',label:'Credit',value:-20},{id:'total',label:'Total',value:125,kind:'total'}]\" />",
+    props: {
+      label: "Monthly cost",
+      unit: "USD",
+      items: [
+        { id: "base", label: "Base", value: 100, kind: "total" },
+        { id: "compute", label: "Compute", value: 45 },
+        { id: "credit", label: "Credit", value: -20 },
+        { id: "total", label: "Total", value: 125, kind: "total" },
+      ],
+    },
+    notes: [
+      "Delta items move the running total; kind=total draws from zero and resets it. initial defaults to zero. Native HTML bars encode positive/negative changes with named keyboard controls and a running-total table. The first maxPoints items are shown (default 60, maximum 240). Invalid numbers become zero. Narrow containers scroll within the chart.",
+    ],
+    related: ["HDivergingBarChart", "HBarChart"],
+    event: "select",
+  },
+  HTimeSeriesChart: {
+    vue: "<HTimeSeriesChart label=\"Response latency\" unit=\"ms\" :series=\"[{id:'api',label:'API',points:[{x:0,y:24,label:'09:00'},{x:10,y:null,label:'09:10'},{x:20,y:38,label:'09:20'},{x:30,y:29,label:'09:30'}]}]\" :thresholds=\"[{value:50,label:'SLO',tone:'warning'}]\" />",
+    props: {
+      label: "Response latency",
+      unit: "ms",
+      series: [
+        {
+          id: "api",
+          label: "API",
+          points: [
+            { x: 0, y: 24, label: "09:00" },
+            { x: 10, y: null, label: "09:10" },
+            { x: 20, y: 38, label: "09:20" },
+            { x: 30, y: 29, label: "09:30" },
+          ],
+        },
+        {
+          id: "worker",
+          label: "Worker",
+          points: [
+            { x: 0, y: 18 },
+            { x: 10, y: 22 },
+            { x: 20, y: 30 },
+            { x: 30, y: 20 },
+          ],
+        },
+      ],
+      thresholds: [{ value: 50, label: "SLO", tone: "warning" }],
+      markers: [{ x: 15, label: "Deployment" }],
+    },
+    notes: [
+      "Small native SVG renderer, not a third-party chart engine. Numeric x positions preserve real spacing; optional point labels provide formatted timestamps. formatX(value) can supply consistent axis/inspector/marker labels, including between sampled positions. null/nonfinite y values break lines/areas rather than joining across missing data. mode supports line and unstacked area.",
+      "Threshold values and event-marker positions extend the plotted domain. The y domain includes zero. Series legend buttons toggle visibility. One native range control supports inspection, arrows/Home/End and select(x); nearest sampled positions are inspected without interpolating missing series values.",
+      "Displays at most eight series and the latest supplied maxPoints samples per series (default 240, maximum 2000), sorted by x. The sample table shows the latest 200 unique positions; the plot/inspector retain all displayed samples. Large-data downsampling, stacked areas and zoom/brush tools remain application concerns.",
+    ],
+    related: ["HSparkline", "HBarChart", "HSpanTimeline"],
+    event: "select",
+  },
   HCodeSnippet: {
     vue: `<HCodeSnippet label="API request" :options="[{id:'curl',label:'cURL',language:'sh',code:'curl https://api.example.com/status'},{id:'js',label:'JavaScript',language:'js',code:'const response = await fetch(endpoint);'}]" />`,
     props: {
@@ -71,6 +395,7 @@ export const examples = {
       ],
     },
     notes: [
+      "orientation=horizontal lays out labeled rows. Supplying columns and series instead of items renders grouped bars using a shared value scale. histogram removes gaps for application-supplied bins; bin calculation stays in the application. Multi-series legend buttons toggle visibility while keeping series colors stable.",
       "Native HTML bars, no SVG/canvas/charting dependency. Hover or focus a column to inspect; arrow keys, Home and End move between bars. Activating emits select(id); selected is application-owned. A data-table disclosure provides exact values. Nonfinite/negative values render as zero. Shows the latest maxPoints (default 60, maximum 240). Positive values use a zero baseline scaled to the largest column. Narrow containers scroll internally. --h-chart-1 through --h-chart-5 are color tokens.",
     ],
     related: ["HStackedBarChart", "HWaveform", "HSparkline"],
@@ -119,6 +444,7 @@ export const examples = {
       ],
     },
     notes: [
+      "mode=percentage remains the default. mode=absolute scales total column heights to their summed amounts. orientation=horizontal renders stacked rows. Legend buttons toggle visible series; percentage normalization then uses those visible series.",
       "Each column independently normalizes nonnegative finite values to 100%; all-zero columns stay empty. Up to eight series, identified by stable ids. The application supplies time-ordered columns and owns live updates. Heights transition under normal motion; reduced motion is immediate. Keyboard inspection, legend labels and an exact-value/percentage data table convey meaning beyond color. The latest maxPoints columns are shown (default 60, maximum 240).",
     ],
     related: ["HBarChart", "HWaveform"],

@@ -91,13 +91,13 @@ test("HTML diagrams expose keyboard data, normalized stacks, live updates, and b
   await stacked.locator("summary").click();
   await expect(stacked.getByRole("table")).toContainText("%");
   const before = await stacked
-    .getByRole("button")
+    .locator("[part=column]")
     .last()
     .getAttribute("aria-label");
   await page
     .getByRole("button", { name: "Next interval", exact: true })
     .click();
-  await expect(stacked.getByRole("button").last()).not.toHaveAttribute(
+  await expect(stacked.locator("[part=column]").last()).not.toHaveAttribute(
     "aria-label",
     before!,
   );

@@ -39,6 +39,7 @@ import ComponentRegistry from "./ComponentRegistry.vue";
 import FoundationExamples from "./FoundationExamples.vue";
 import WorkspaceExamples from "./WorkspaceExamples.vue";
 import TechnicalExamples from "./TechnicalExamples.vue";
+import OperationsExamples from "./OperationsExamples.vue";
 import {
   restoreThemeProfile,
   resolvedProfile,
@@ -593,7 +594,9 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
       :active="
         route.startsWith('components') || route === 'examples'
           ? 'components'
-          : route
+          : route === 'operations'
+            ? 'technical'
+            : route
       "
       footer-text="A home for what you build."
     >
@@ -616,6 +619,7 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
               'examples',
               'foundation',
               'technical',
+              'operations',
               'themes',
               'guide',
               'recipes',
@@ -779,6 +783,7 @@ const wcExample = `<link rel="stylesheet" href="./dist/themes.css">\n<script typ
         :selected="route.split('/')[1] || ''"
       />
       <TechnicalExamples v-else-if="route === 'technical'" />
+      <OperationsExamples v-else-if="route === 'operations'" />
       <template v-else-if="route === 'foundation'"
         ><section class="page-intro">
           <HPageHeader

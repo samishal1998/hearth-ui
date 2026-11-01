@@ -2,11 +2,13 @@
 
 **A home for what you build.** Framework-independent web components for dashboards, public pages, and authentication.
 
-Hearth UI **0.9.0** includes **103 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. This release adds nine developer/diagram components, refined interactions, a redesigned gallery, and resilient table layouts. Density defaults to `medium`; use `low` or `comfortable` for roomy 44px controls.
+Hearth UI **0.10.0** includes **119 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. This release adds sixteen operations/workflow components, expanded chart modes, and the consolidated technical playground. Density defaults to `medium`; use `low` or `comfortable` for roomy 44px controls.
 
-New elements: `hearth-code-snippet`, `hearth-package-install`, `hearth-terminal`, `hearth-keyboard-key`, `hearth-waveform`, `hearth-bar-chart`, `hearth-stacked-bar-chart`, `hearth-diverging-bar-chart`, and `hearth-stacked-waveform`. The stacked waveform preserves ordered colored amounts and repeated colors, with centered pillars and 0.5px segment gaps. Assign arrays/objects as properties; see the included references for examples.
+New in 0.10.0: heatmap, uptime history, meter, tag input, inline copy, attachment, flow, span timeline, trace view, message scroller, JSON viewer, code diff, waffle/donut/waterfall/time-series charts. Use the corresponding `hearth-*` tags; arrays and objects are properties. Existing bar charts add grouped/horizontal/histogram and absolute-stack options. See the included references and the `#technical` playground or standalone `#operations` showcase.
 
-Migration: tables now default to `layout="fixed"`; opt into `layout="auto"` for content-sized columns. Error/action toasts stay until dismissed. Motion respects reduced-motion preferences, and the button `static` attribute disables press scaling.
+Added in v0.9.0: `hearth-code-snippet`, `hearth-package-install`, `hearth-terminal`, `hearth-keyboard-key`, `hearth-waveform`, `hearth-bar-chart`, `hearth-stacked-bar-chart`, `hearth-diverging-bar-chart`, and `hearth-stacked-waveform`. The stacked waveform preserves ordered colored amounts and repeated colors, with centered pillars and 0.5px segment gaps. Assign arrays/objects as properties; see the included references for examples.
+
+Migration from versions before v0.9.0: tables default to `layout="fixed"`; opt into `layout="auto"` for content-sized columns. Error/action toasts stay until dismissed. Motion respects reduced-motion preferences, and the button `static` attribute disables press scaling.
 
 [Component registry](https://hearth-ui.samyx.net/#components) · [HTML example](https://hearth-ui.samyx.net/elements.html) · [React example](https://hearth-ui.samyx.net/react.html) · [GitHub](https://github.com/samishal1998/hearth-ui)
 
@@ -68,11 +70,11 @@ Use a pinned CDN version:
     <title>Hearth UI</title>
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.9.0/dist/themes.css"
+      href="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.10.0/dist/themes.css"
     />
     <script
       type="module"
-      src="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.9.0/dist/elements/auto.js"
+      src="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.10.0/dist/elements/auto.js"
     ></script>
   </head>
   <body>

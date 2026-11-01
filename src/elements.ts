@@ -46,6 +46,22 @@ import {
   HStackedBarChart,
   HWaveform,
   HStackedWaveform,
+  HHeatmap,
+  HUptimeHistory,
+  HMeter,
+  HTagInput,
+  HInlineCopyText,
+  HAttachment,
+  HFlow,
+  HSpanTimeline,
+  HTraceView,
+  HMessageScroller,
+  HJsonViewer,
+  HCodeDiff,
+  HWaffleChart,
+  HDonutChart,
+  HWaterfallChart,
+  HTimeSeriesChart,
   HAppCard,
   HStatCard,
   HAlert,
@@ -679,7 +695,59 @@ export const HearthStackedWaveformElement: Constructor<
   typeof HStackedWaveform
 > = element(HStackedWaveform);
 
+export const HearthHeatmapElement: Constructor<typeof HHeatmap> =
+  element(HHeatmap);
+export const HearthUptimeHistoryElement: Constructor<typeof HUptimeHistory> =
+  element(HUptimeHistory);
+export const HearthMeterElement: Constructor<typeof HMeter> = element(HMeter);
+export const HearthTagInputElement: FormConstructor<typeof HTagInput> = element(
+  HTagInput,
+  false,
+  "compound",
+);
+export const HearthInlineCopyTextElement: Constructor<typeof HInlineCopyText> =
+  element(HInlineCopyText, true);
+export const HearthAttachmentElement: Constructor<typeof HAttachment> =
+  element(HAttachment);
+export const HearthFlowElement: Constructor<typeof HFlow> = element(HFlow);
+export const HearthSpanTimelineElement: Constructor<typeof HSpanTimeline> =
+  element(HSpanTimeline);
+export const HearthTraceViewElement: Constructor<typeof HTraceView> =
+  element(HTraceView);
+export const HearthMessageScrollerElement: Constructor<
+  typeof HMessageScroller
+> = element(HMessageScroller);
+export const HearthJsonViewerElement: Constructor<typeof HJsonViewer> =
+  element(HJsonViewer);
+export const HearthCodeDiffElement: Constructor<typeof HCodeDiff> =
+  element(HCodeDiff);
+export const HearthWaffleChartElement: Constructor<typeof HWaffleChart> =
+  element(HWaffleChart);
+export const HearthDonutChartElement: Constructor<typeof HDonutChart> =
+  element(HDonutChart);
+export const HearthWaterfallChartElement: Constructor<typeof HWaterfallChart> =
+  element(HWaterfallChart);
+export const HearthTimeSeriesChartElement: Constructor<
+  typeof HTimeSeriesChart
+> = element(HTimeSeriesChart);
+
 const elements: Record<string, VueElementConstructor<unknown>> = {
+  heatmap: HearthHeatmapElement,
+  "uptime-history": HearthUptimeHistoryElement,
+  meter: HearthMeterElement,
+  "tag-input": HearthTagInputElement,
+  "inline-copy-text": HearthInlineCopyTextElement,
+  attachment: HearthAttachmentElement,
+  flow: HearthFlowElement,
+  "span-timeline": HearthSpanTimelineElement,
+  "trace-view": HearthTraceViewElement,
+  "message-scroller": HearthMessageScrollerElement,
+  "json-viewer": HearthJsonViewerElement,
+  "code-diff": HearthCodeDiffElement,
+  "waffle-chart": HearthWaffleChartElement,
+  "donut-chart": HearthDonutChartElement,
+  "waterfall-chart": HearthWaterfallChartElement,
+  "time-series-chart": HearthTimeSeriesChartElement,
   "code-snippet": HearthCodeSnippetElement,
   "package-install": HearthPackageInstallElement,
   "keyboard-key": HearthKeyboardKeyElement,

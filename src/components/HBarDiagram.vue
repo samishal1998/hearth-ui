@@ -18,6 +18,9 @@ const props = withDefaults(
     label: string;
     description?: string;
     percentage?: boolean;
+    orientation?: "vertical" | "horizontal";
+    grouped?: boolean;
+    histogram?: boolean;
     diverging?: boolean;
     barWidth?: number;
     negativeTone?: Tone;
@@ -26,7 +29,14 @@ const props = withDefaults(
     height?: number;
     maxPoints?: number;
   }>(),
-  { unit: "", height: 180, maxPoints: 60, barWidth: 6, negativeTone: "info" },
+  {
+    unit: "",
+    height: 180,
+    maxPoints: 60,
+    barWidth: 6,
+    negativeTone: "info",
+    orientation: "vertical",
+  },
 );
 const emit = defineEmits<{ select: [id: string] }>();
 const id = useId(),
@@ -37,7 +47,21 @@ const id = useId(),
 const count = computed(() =>
   Math.max(1, Math.min(240, Math.floor(props.maxPoints) || 60)),
 );
-const series = computed(() => props.series.slice(0, 8));
+const hiddenSeries = ref<string[]>([]);
+const allSeries = computed(() => props.series.slice(0, 8));
+const series = computed(() =>
+  allSeries.value.filter((item) => !hiddenSeries.value.includes(item.id)),
+);
+const horizontal = computed(
+  () => props.orientation === "horizontal" && !props.diverging,
+);
+function toggleSeries(id: string) {
+  hiddenSeries.value = hiddenSeries.value.includes(id)
+    ? hiddenSeries.value.filter((value) => value !== id)
+    : [...hiddenSeries.value, id];
+  hovered.value = undefined;
+  focused.value = undefined;
+}
 const number = (value: number) =>
   Number.isFinite(value) ? (props.diverging ? value : Math.max(0, value)) : 0;
 const plotHeight = computed(() =>
@@ -58,8 +82,8 @@ const columns = computed(() =>
     values: series.value.map((s) => number(column.values?.[s.id])),
   })),
 );
-const maximum = computed(() =>
-  Math.max(1, ...columns.value.flatMap((column) => column.values)),
+const maximum = computed(
+  () => Math.max(0, ...columns.value.flatMap((column) => column.values)) || 1,
 );
 const largestTotal = computed(() =>
   Math.max(
@@ -120,6 +144,7 @@ const format = (value: number) =>
   `${new Intl.NumberFormat("en", { maximumFractionDigits: 2, signDisplay: props.diverging ? "exceptZero" : "auto" }).format(value)}${props.diverging ? "%" : props.unit ? ` ${props.unit}` : ""}`;
 function percent(column: (typeof columns.value)[number], value: number) {
   if (props.diverging) return Math.min(100, Math.abs(value)) / 2;
+  if (props.grouped) return (value / maximum.value) * 100;
   const total = column.values.reduce(
     (sum, item) => sum + item / maximum.value,
     0,
@@ -138,6 +163,10 @@ function name(column: (typeof columns.value)[number]) {
 const color = (index: number) =>
   series.value[index].tone
     ? `var(--h-${series.value[index].tone === "neutral" ? "muted" : series.value[index].tone})`
+    : `var(--h-chart-${(allSeries.value.findIndex((item) => item.id === series.value[index].id) % 5) + 1})`;
+const legendColor = (index: number) =>
+  allSeries.value[index].tone
+    ? `var(--h-${allSeries.value[index].tone === "neutral" ? "muted" : allSeries.value[index].tone})`
     : `var(--h-chart-${(index % 5) + 1})`;
 const negativeColor = computed(
   () =>
@@ -181,10 +210,11 @@ watch(columns, (values) => {
   <figure
     ref="root"
     class="h-bar-diagram"
-    :class="{ diverging }"
+    :class="{ diverging, horizontal, grouped, histogram }"
     :style="{
       '--h-diagram-height': `${plotHeight}px`,
       '--h-diagram-bar-width': `${barWidth}px`,
+      '--h-diagram-series-count': Math.max(1, series.length),
     }"
     part="base"
     :aria-labelledby="`${id}-title`"
@@ -222,7 +252,7 @@ watch(columns, (values) => {
           role="group"
           :aria-label="`${label} data points`"
           :style="{
-            height: `${plotHeight}px`,
+            height: horizontal ? undefined : `${plotHeight}px`,
             '--h-diagram-count': columns.length,
           }"
           @keydown="key"
@@ -250,7 +280,8 @@ watch(columns, (values) => {
                 :class="{ negative: diverging && value < 0 }"
                 part="segment"
                 :style="{
-                  height: `${percent(column, value)}%`,
+                  height: horizontal ? undefined : `${percent(column, value)}%`,
+                  width: horizontal ? `${percent(column, value)}%` : undefined,
                   background:
                     diverging && value < 0 ? negativeColor : color(index),
                   display: value !== 0 ? undefined : 'none',
@@ -288,15 +319,22 @@ watch(columns, (values) => {
       Hover or focus a bar to inspect. Use arrow keys to move between points.
     </p>
     <ul
-      v-if="series.length > 1"
+      v-if="allSeries.length > 1"
       class="h-diagram-legend"
       aria-label="Series"
       part="legend"
     >
-      <li v-for="(item, index) in series" :key="item.id">
-        <span aria-hidden="true" :style="{ background: color(index) }" />{{
-          item.label
-        }}
+      <li v-for="(item, index) in allSeries" :key="item.id">
+        <button
+          type="button"
+          :aria-pressed="!hiddenSeries.includes(item.id)"
+          @click="toggleSeries(item.id)"
+        >
+          <span
+            aria-hidden="true"
+            :style="{ background: legendColor(index) }"
+          />{{ item.label }}
+        </button>
       </li>
     </ul>
     <ul
@@ -562,6 +600,98 @@ figcaption {
   height: 9px;
   border-radius: 2px;
   flex-shrink: 0;
+}
+.h-diagram-legend button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--h-control-height);
+  padding: 4px 8px;
+  border: 1px solid var(--h-border);
+  border-radius: var(--h-radius-control);
+  background: none;
+  color: var(--h-text);
+  font: inherit;
+}
+.h-diagram-legend button span {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+.h-diagram-legend button[aria-pressed="false"] {
+  color: var(--h-muted);
+  text-decoration: line-through;
+}
+.grouped:not(.horizontal) .h-diagram-stack {
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 3px;
+}
+.grouped:not(.horizontal) .h-diagram-segment {
+  flex: 1;
+  min-width: 0;
+  max-width: 32px;
+  border-radius: 3px 3px 0 0;
+}
+.histogram .h-diagram-bars {
+  gap: 0;
+}
+.histogram .h-diagram-column {
+  padding-inline: 0;
+}
+.histogram .h-diagram-segment {
+  width: 100%;
+  border-radius: 0;
+}
+.horizontal .h-diagram-plot > .h-diagram-scroll {
+  max-height: calc(var(--h-diagram-height) + 16px);
+}
+.horizontal .h-diagram-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: none;
+}
+.horizontal .h-diagram-column {
+  display: grid;
+  grid-template-columns: minmax(80px, 30%) minmax(0, 1fr);
+  align-items: center;
+  min-height: var(--h-row-height);
+  gap: 10px;
+  padding: 3px;
+}
+.horizontal .h-diagram-label {
+  grid-column: 1;
+  grid-row: 1;
+  height: auto;
+  max-height: 3.2em;
+  white-space: normal;
+  text-align: start;
+  overflow-wrap: anywhere;
+  padding: 0;
+}
+.horizontal .h-diagram-stack {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: row;
+  height: 20px;
+}
+.horizontal .h-diagram-segment {
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+}
+.horizontal.grouped .h-diagram-stack {
+  flex-direction: column;
+  gap: 3px;
+  height: calc(var(--h-diagram-series-count) * 11px);
+}
+.horizontal.grouped .h-diagram-segment {
+  height: 8px;
+  border: 0;
+  border-radius: 2px;
 }
 summary {
   cursor: pointer;

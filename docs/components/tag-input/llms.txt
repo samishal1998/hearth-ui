@@ -1,0 +1,143 @@
+# HTagInput
+
+> Free-form tags with bulk paste, validation, deduplication and repeated form values.
+
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.10.0. Match documentation to your installed source/release.
+
+## Identity
+
+- Vue export: `HTagInput` from `@hearth-ui/vue`.
+- Custom element: `<hearth-tag-input>`.
+- Constructor: `HearthTagInputElement` from `@hearth-ui/elements`.
+- Category: Controls.
+- [Implementation](https://github.com/samishal1998/hearth-ui/blob/main/src/components/HTagInput.vue).
+
+## Choose and use it correctly
+
+- Enter/comma commits a tag; comma/newline paste accepts multiple values. Trimmed exact duplicates are ignored. Backspace with an empty draft removes the last tag; IME composition is preserved. validateValue may return true, false, or an error message. Unaccepted values remain in the draft, and only committed tags submit.
+- Named tags submit repeated FormData values in Vue and custom elements. Required validation needs at least one committed tag. Reset restores initial values; disabled fieldsets and readonly states are supported. maxTags defaults to 100. Use hideLabel only while providing an accessible label.
+- hideLabel visually hides the label while retaining the accessible name; keep supplying label. size=compact provides dense desktop controls, with larger touch targets on coarse pointers. Without size, controls inherit theme density. --h-font-min-size supplies a 12px default floor for caption/helper text and field typography.
+
+## Public API
+
+label, name, placeholder, hint, error: string · modelValue, value: string[] · maxTags: number · validateValue: function · required, disabled, readonly, hideLabel: boolean · size: ControlSize
+
+A `?` marks optional source props. Props with defaults may be omitted. Internal `formDisabled` and `control-sync` plumbing is excluded below; do not use it in application code.
+
+```ts
+type Props = {
+    label: string;
+    modelValue?: string[];
+    value?: string[];
+    name?: string;
+    placeholder?: string;
+    hint?: string;
+    error?: string;
+    required?: boolean;
+    disabled?: boolean;
+    readonly?: boolean;
+    hideLabel?: boolean;
+    size?: ControlSize;
+    maxTags?: number;
+    validateValue?: (value: string) => boolean | string;
+};
+```
+
+### Defaults
+
+```ts
+{ value: () => [], maxTags: 100, placeholder: "Add a tag…" }
+```
+
+### Events
+
+update:modelValue(string[]), change(string[])
+
+```ts
+type Emits = {
+    "update:modelValue": [
+        values: string[]
+    ];
+    change: [
+        values: string[]
+    ];
+};
+```
+
+Vue-emitted custom-element events expose argument arrays in `event.detail`. Listen on the element. Native events such as `click` retain their normal payloads. The elements package provides framework-independent DOM event types.
+
+### Slots
+
+None
+
+Vue uses `<template #slotName>`; custom elements use `<div slot="slotName">`. Web components do not support Vue scoped slots.
+
+### CSS parts
+
+base, label, frame, control, hint
+
+Use `hearth-tag-input::part(part-name)` for an exposed part or inherited `--h-*` tokens for shared styling. Native Vue components use the shared stylesheet and `h-*` classes.
+
+## Supporting types
+
+```ts
+export type ControlSize = "regular" | "compact";
+```
+
+## Vue example
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { HTagInput } from '@hearth-ui/vue';
+import '@hearth-ui/vue/styles.css';
+const tags = ref(['api.internal']);
+</script>
+
+<template>
+  <HTagInput v-model="tags" label="Allowed hosts" name="hosts" required :max-tags="5" />
+</template>
+```
+
+## Web-component example
+
+Provide a mount point. For field submission, use an owning native form; the auth page already contains its own form.
+
+```html
+<form id="example"></form>
+```
+
+This is bundler-based ESM. For raw HTML, load `dist/themes.css` with a link and import `registerElements` from `./dist/elements/index.js` instead. Initial array/object properties are assigned before connection to establish reset defaults.
+
+```js
+import { registerElements } from '@hearth-ui/elements';
+import '@hearth-ui/elements/themes.css';
+registerElements();
+
+const mount = document.querySelector('#example');
+const element = document.createElement('hearth-tag-input');
+Object.assign(element, {
+  "label": "Allowed hosts",
+  "name": "hosts",
+  "value": [
+    "api.internal"
+  ],
+  "required": true,
+  "maxTags": 5
+});
+
+element.addEventListener('change', event => {
+  const [value] = event.detail;
+  // Update your application state using value.
+});
+
+mount.append(element);
+```
+
+## Related components
+
+- [HCombobox](../combobox/llms.txt): Searchable single or multi-select with selected chips, disabled options, keyboard navigation, and repeated form values.
+- [HChipGroup](../chip-group/llms.txt): An array-valued filter group or removable set of selected tags.
+
+---
+Generated by `npm run docs:generate` from component source, `site/catalog.ts`, and `scripts/agent-examples.mjs`. Do not edit this generated file directly.

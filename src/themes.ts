@@ -200,6 +200,83 @@ export interface StackedWaveformColumn {
   label: string;
   segments: WaveformSegment[];
 }
+export interface HeatmapCell {
+  id: string;
+  row: string;
+  column: string;
+  value: number | null;
+}
+export type UptimeStatus = "up" | "degraded" | "down" | "unknown";
+export interface UptimeInterval {
+  id: string;
+  label: string;
+  start: number;
+  end: number;
+  status: UptimeStatus;
+}
+export type RunStatus = "pending" | "running" | "success" | "error" | "skipped";
+export interface FlowStage {
+  id: string;
+  label: string;
+  description?: string;
+  status?: RunStatus;
+  parallel?: FlowStage[][];
+}
+export interface TraceItem {
+  id: string;
+  label: string;
+  status?: RunStatus;
+  duration?: number;
+  description?: string;
+  details?: string;
+  children?: TraceItem[];
+}
+export interface SpanItem {
+  id: string;
+  label: string;
+  start: number;
+  end: number;
+  parentId?: string;
+  status?: RunStatus;
+}
+export interface DiffLine {
+  kind: "context" | "added" | "removed";
+  text: string;
+  oldLine?: number;
+  newLine?: number;
+}
+export interface DiffHunk {
+  id: string;
+  header?: string;
+  lines: DiffLine[];
+}
+export interface ChartSlice extends ChartPoint {
+  tone?: Tone;
+}
+export interface WaterfallItem extends ChartPoint {
+  kind?: "delta" | "total";
+}
+export interface TimeSeriesPoint {
+  x: number;
+  y: number | null;
+  label?: string;
+}
+export interface TimeSeries {
+  id: string;
+  label: string;
+  tone?: Tone;
+  points: TimeSeriesPoint[];
+}
+export interface ChartThreshold {
+  value: number;
+  label: string;
+  tone?: Tone;
+}
+export interface ChartMarker {
+  x: number;
+  label: string;
+  tone?: Tone;
+}
 export interface TableSort {
   key: string;
   direction: "ascending" | "descending";
