@@ -59,7 +59,7 @@ async function elementDeclarations() {
   if (!formAPI) throw new Error("Missing form-control API");
   const declarations = [
     "// Generated from the same Vue source; this public API depends only on DOM types.",
-    `import type { ${sharedNames.join(", ")} } from './themes.js';\nexport * from './themes.js';\nexport * from './primitives.js';\nexport { iconNames } from './icons.js';`,
+    `import type { ${sharedNames.join(", ")} } from './themes.js';\nexport * from './themes.js';\nexport * from './primitives.js';\nexport { iconNames, iconDefinitions, iconAliases } from './icons.js';`,
     `export interface HearthEventTarget<Events extends Record<string, unknown[]>> {
   addEventListener<K extends keyof Events & string>(type: K, listener: ((event: CustomEvent<Events[K]>) => void) | null, options?: boolean | AddEventListenerOptions): void;
   removeEventListener<K extends keyof Events & string>(type: K, listener: ((event: CustomEvent<Events[K]>) => void) | null, options?: boolean | EventListenerOptions): void;

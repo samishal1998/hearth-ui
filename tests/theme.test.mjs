@@ -12,6 +12,8 @@ import {
   HSurface,
   HIcon,
   iconNames,
+  iconDefinitions,
+  iconAliases,
   nextCollectionId,
   toggleSelection,
   createTypeahead,
@@ -46,6 +48,69 @@ import {
   HWaterfallChart,
   HTimeSeriesChart,
 } from "../dist/vue/index.js";
+
+test("built-in icons expose portable immutable definitions and retain unknown-name fallback", async () => {
+  const names = [
+    "refresh",
+    "download",
+    "upload",
+    "bell",
+    "users",
+    "user",
+    "key",
+    "shield",
+    "alert",
+    "help",
+    "trash",
+    "play",
+    "pause",
+    "send",
+    "keyboard",
+    "palette",
+    "list",
+    "package",
+    "container",
+    "file",
+    "filter",
+    "settings",
+    "error",
+    "success",
+    "retry",
+    "resend",
+    "save",
+    "cancel",
+    "time",
+    "snooze",
+    "admin",
+    "later",
+    "globe",
+    "link",
+    "unlink",
+  ];
+  for (const name of names) {
+    assert.ok(iconNames.includes(name));
+    assert.equal(iconDefinitions[name].strokeWidth, 1.8);
+    assert.equal(iconDefinitions[name].viewBox, "0 0 24 24");
+    assert.ok(Object.isFrozen(iconDefinitions[name].paths));
+  }
+  assert.ok(Object.isFrozen(iconDefinitions));
+  assert.ok(Object.isFrozen(iconAliases));
+  assert.equal(iconNames.length, new Set(iconNames).size);
+  for (const [alias, target] of Object.entries(iconAliases)) {
+    assert.ok(iconNames.includes(alias));
+    assert.deepEqual(iconDefinitions[alias], iconDefinitions[target]);
+  }
+  assert.notDeepEqual(iconDefinitions.error.paths, iconDefinitions.alert.paths);
+  assert.notDeepEqual(
+    iconDefinitions.success.paths,
+    iconDefinitions.check.paths,
+  );
+  const render = (name) =>
+    renderToString(createSSRApp({ render: () => h(HIcon, { name }) }));
+  assert.equal(await render("refresh"), await render(iconDefinitions.refresh));
+  assert.equal(await render("not-a-known-icon"), await render("apps"));
+  assert.equal(await render("constructor"), await render("apps"));
+});
 
 test("operations components render safely on the server with bounded cyclic data and extreme chart values", async () => {
   let accesses = 0;

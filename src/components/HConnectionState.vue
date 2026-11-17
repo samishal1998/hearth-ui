@@ -44,6 +44,7 @@ const labels = {
     <HButton
       v-if="retryable && (state === 'failed' || state === 'offline')"
       size="compact"
+      icon="refresh"
       @click="emit('retry')"
       >Retry connection</HButton
     >

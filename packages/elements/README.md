@@ -2,7 +2,7 @@
 
 **A home for what you build.** Framework-independent web components for dashboards, public pages, and authentication.
 
-Hearth UI **0.10.0** includes **119 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. This release adds sixteen operations/workflow components, expanded chart modes, and the consolidated technical playground. Density defaults to `medium`; use `low` or `comfortable` for roomy 44px controls.
+Hearth UI **0.11.0** includes **119 components**, **seven page recipes**, and **five palettes** with light, dark, and system modes. This release expands the icon set to **84 names** (74 glyphs plus 10 semantic aliases), with immutable `iconDefinitions` and `iconAliases` exports alongside `iconNames`. Existing names and the `apps` fallback remain compatible. Density defaults to `medium`; use `low` or `comfortable` for roomy 44px controls.
 
 New in 0.10.0: heatmap, uptime history, meter, tag input, inline copy, attachment, flow, span timeline, trace view, message scroller, JSON viewer, code diff, waffle/donut/waterfall/time-series charts. Use the corresponding `hearth-*` tags; arrays and objects are properties. Existing bar charts add grouped/horizontal/histogram and absolute-stack options. See the included references and the `#technical` playground or standalone `#operations` showcase.
 
@@ -70,11 +70,11 @@ Use a pinned CDN version:
     <title>Hearth UI</title>
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.10.0/dist/themes.css"
+      href="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.11.0/dist/themes.css"
     />
     <script
       type="module"
-      src="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.10.0/dist/elements/auto.js"
+      src="https://cdn.jsdelivr.net/npm/@hearth-ui/elements@0.11.0/dist/elements/auto.js"
     ></script>
   </head>
   <body>

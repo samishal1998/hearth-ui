@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { paths } from "../icons";
+import { iconDefinitions } from "../icons";
 import type { IconValue, IconDefinition } from "../themes";
 const props = withDefaults(defineProps<{ name?: IconValue; size?: number }>(), {
   name: "apps",
@@ -8,7 +8,9 @@ const props = withDefaults(defineProps<{ name?: IconValue; size?: number }>(), {
 });
 const definition = computed<IconDefinition>(() =>
   typeof props.name === "string"
-    ? { paths: [paths[props.name] || paths.apps] }
+    ? Object.hasOwn(iconDefinitions, props.name)
+      ? iconDefinitions[props.name]
+      : iconDefinitions.apps
     : props.name,
 );
 </script>

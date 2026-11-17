@@ -70,7 +70,7 @@ export { default as HDateRangePicker } from "./components/HDateRangePicker.vue";
 export { default as HRangeSlider } from "./components/HRangeSlider.vue";
 export { default as HStepper } from "./components/HStepper.vue";
 export { default as HSurface } from "./components/HSurface.vue";
-export { iconNames } from "./icons";
+export { iconNames, iconDefinitions, iconAliases } from "./icons";
 export * from "./primitives";
 export { default as HStack } from "./components/HStack.vue";
 export { default as HGrid } from "./components/HGrid.vue";

@@ -49,7 +49,8 @@ const detail = computed(() => presets[props.kind]);
       <HButtonBar align="center" label="Recovery actions"
         ><HButton :href="homeHref" variant="primary" icon="home"
           >Back to your workspace</HButton
-        ><HButton v-if="retryable" @click="emit('retry')">Try again</HButton
+        ><HButton v-if="retryable" icon="refresh" @click="emit('retry')"
+          >Try again</HButton
         ><slot name="actions"
       /></HButtonBar>
     </div>

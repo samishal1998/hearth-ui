@@ -14,6 +14,7 @@ import {
   HKeyboardKey,
 } from "../src";
 import RegistryThumbnail from "./RegistryThumbnail.vue";
+import IconGallery from "./IconGallery.vue";
 import { catalog, mobileOverlayComponents } from "./catalog";
 import { examples } from "../scripts/agent-examples.mjs";
 const props = defineProps<{ selected: string }>();
@@ -291,7 +292,7 @@ const apiRows = computed(
             <HButton href="#components" variant="ghost"
               >← All components</HButton
             ><HBadge :label="selected.category" /><HBadge
-              label="Hearth UI 0.10"
+              label="Hearth UI 0.11"
               tone="accent"
             />
           </nav>
@@ -320,6 +321,7 @@ const apiRows = computed(
               Usage notes
             </button>
           </nav>
+          <IconGallery v-if="selected.name === 'HIcon'" />
           <div class="registry-detail">
             <section
               id="registry-preview"
@@ -711,6 +713,8 @@ const apiRows = computed(
 }
 .registry-panel li,
 .registry-recipe {
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: 13px;
   line-height: 1.8;
   color: var(--h-muted);

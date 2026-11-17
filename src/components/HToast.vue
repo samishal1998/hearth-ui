@@ -96,7 +96,17 @@ watch(
       }
     "
   >
-    <HIcon :name="tone === 'success' ? 'check' : 'info'" />
+    <HIcon
+      :name="
+        tone === 'success'
+          ? 'success'
+          : tone === 'danger'
+            ? 'error'
+            : tone === 'warning'
+              ? 'warning'
+              : 'info'
+      "
+    />
     <div class="h-toast-copy">
       <strong part="title">{{ title }}</strong>
       <p v-if="description" part="description">{{ description }}</p>

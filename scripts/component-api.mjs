@@ -89,11 +89,18 @@ export function apiSource(name, shared = sharedTypes()) {
       name === "HIcon" &&
       ts.isVariableDeclaration(node) &&
       ts.isIdentifier(node.name) &&
-      node.name.text === "paths" &&
+      ["paths", "iconAliases"].includes(node.name.text) &&
       node.initializer &&
-      ts.isObjectLiteralExpression(node.initializer)
-    )
-      icons = node.initializer.properties.map(memberName);
+      (ts.isObjectLiteralExpression(node.initializer) ||
+        (ts.isCallExpression(node.initializer) &&
+          node.initializer.arguments[0] &&
+          ts.isObjectLiteralExpression(node.initializer.arguments[0])))
+    ) {
+      const object = ts.isObjectLiteralExpression(node.initializer)
+        ? node.initializer
+        : node.initializer.arguments[0];
+      icons = [...(icons || []), ...object.properties.map(memberName)];
+    }
     ts.forEachChild(node, visit);
   }
   visit(source);

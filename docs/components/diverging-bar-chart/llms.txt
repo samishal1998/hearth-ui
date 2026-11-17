@@ -2,7 +2,7 @@
 
 > Slender percentage bars above and below zero, with a fixed ±100% scale and exact-value inspection.
 
-[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.10.0. Match documentation to your installed source/release.
+[Start with the Hearth UI agent index](../../../llms.txt). This describes repository source for version 0.11.0. Match documentation to your installed source/release.
 
 ## Identity
 

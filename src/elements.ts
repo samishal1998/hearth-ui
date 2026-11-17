@@ -126,7 +126,7 @@ import {
 } from "./index";
 export * from "./themes";
 export * from "./primitives";
-export { iconNames } from "./icons";
+export { iconNames, iconDefinitions, iconAliases } from "./icons";
 
 type NativeControl =
   | HTMLInputElement

@@ -63,7 +63,7 @@ The registry preview exposes a **Mobile breakpoint (px)** control for applicable
 
 ## Install
 
-This source prepares **0.10.0** for release. Install the distribution you need after publication, or use the prepared package archives. Match documentation to the package version you install:
+This source prepares **0.11.0** for release. Install the distribution you need after publication, or use the prepared package archives. Match documentation to the package version you install:
 
 ```sh
 # Native Vue
@@ -165,6 +165,20 @@ The source component catalog includes interactive previews and documents props, 
 The registry provides search, category filters, and 12 results per page. Each component has a shareable route such as `#components/HCalendar`, with a focused preview, usage example, and API reference. Full composed demos are at `#examples`; the seven page recipes, including the authentication page, are at `#recipes`.
 
 Date, time, and local date-time fields now use Hearth picker popovers and formatted text entry instead of native browser dropdowns. Their ISO string values and form submission contracts are preserved; invalid dates, bounds, and time steps participate in form validation.
+
+### New in 0.11.0
+
+- **84 supported icon names:** 74 distinct glyphs and 10 documented semantic aliases, covering everyday actions, states, people, time, files, and navigation. Includes refresh/retry, save/edit, success/error/warning, resend/mail, snooze/later, user/admin, link/unlink, eye/eye-off, folders, undo/redo, and more. Addresses [#5](https://github.com/samishal1998/hearth-ui/issues/5); further technical icons are tracked in [#6](https://github.com/samishal1998/hearth-ui/issues/6).
+- Both packages export immutable `iconDefinitions` in the existing `IconDefinition` format and `iconAliases` alongside `iconNames`. Built-ins share a 24×24 grid, 1.8 stroke, round caps/joins, and `currentColor`. Existing names and the `apps` fallback remain supported.
+- The [icon gallery](https://hearth-ui.samyx.net/#components/HIcon) provides searchable, copyable names, labeled aliases, and action/direction guidance. Use action-specific glyphs instead of directional arrows or chevrons.
+- Retry controls and toast status icons use the matching glyphs. `unlink`/`link-off` show separated chain ends. Long gallery usage notes wrap correctly on narrow screens.
+
+```ts
+import { iconDefinitions, iconAliases } from '@hearth-ui/vue';
+// The same exports are available from @hearth-ui/elements.
+const refreshIcon = { ...iconDefinitions.refresh, strokeWidth: 2 };
+const canonicalName = iconAliases.retry; // "refresh"
+```
 
 ### New in 0.10.0
 

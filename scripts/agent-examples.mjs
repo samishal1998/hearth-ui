@@ -1458,6 +1458,10 @@ export const examples = {
     notes: [
       "Icons are decorative and aria-hidden. Name the containing button or link; an icon is not an accessible control on its own.",
       "Use a supported icon name. Unknown names fall back to apps.",
+      "Everyday actions include save/edit/undo/redo/archive, mail/resend, snooze/later/history, admin, eye/eye-off/unlock, stop/power, folder/folder-open, and link/unlink. success and error use circled status marks; check remains a plain checkmark and alert a warning triangle. settings, refresh, user, list, and globe remain supported.",
+      "iconAliases exports explicit semantic aliases: retry/reload→refresh, cancel→close, time→clock, warning→alert, delete→trash, link-off→unlink, notification→bell, account→user, duplicate→copy. All aliases are also included in iconNames and iconDefinitions. Icons do not automatically mirror in RTL; mirror directional navigation at the owning control when appropriate.",
+      "Style: 24×24 viewBox, 1.8 stroke, round caps/joins, currentColor and no fill by default. iconDefinitions exports immutable built-ins in IconDefinition shape from both package roots; extend with {...iconDefinitions.refresh, strokeWidth:2} rather than mutating shared data.",
+      "arrow points right; left/right/up/down are directional chevrons for navigation/disclosure, not action substitutes. Use refresh for retry/reload, download/upload for transfers, play/pause for execution, users/user for people, bell for notifications, alert for warnings, help for help, trash for deletion, and filter for filtering. launch means an external destination. The HIcon gallery shows all names with copy controls.",
       "iconNames exports the supported names. The name property also accepts a portable IconDefinition: {paths,viewBox?,fill?,fillRule?,strokeWidth?}. Definitions contain SVG path data, not Vue components or HTML, and work through icon properties on buttons, list items, stat cards, empty states, menus, and shell navigation.",
     ],
     related: ["HButton", "HBrand"],
